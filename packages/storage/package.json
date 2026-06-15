@@ -1,0 +1,17 @@
+{
+  "name": "@forumforge/storage",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ForumForge local-first storage layer — the on-device key/value seam features persist to.",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  }
+}

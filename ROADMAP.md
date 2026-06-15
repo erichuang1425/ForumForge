@@ -6,8 +6,9 @@ this file is the tracking view. Phases are ordered: foundation before features,
 features before the adapter ecosystem, AI last and always optional.
 
 > **Status:** Phase 0 in progress. The pnpm/TypeScript workspace is set up, and the
-> first two foundation pieces — the core post model and the generic extractor —
-> are built and unit-tested. The remaining Phase 0 items are next.
+> non-UI foundation pieces — the core post model, the generic extractor, and the
+> local storage layer — are built and unit-tested. The remaining (browser-dependent)
+> Phase 0 items are next.
 
 ## Phase 0 — Foundation
 
@@ -15,7 +16,7 @@ features before the adapter ecosystem, AI last and always optional.
 - [ ] Content script
 - [ ] Side panel UI
 - [x] Core post model — `packages/core` (`ForumForgePost` + helpers)
-- [ ] Local storage layer
+- [x] Local storage layer — `packages/storage` (`StorageBackend` + in-memory backend + `Collection`)
 - [x] Basic generic extractor — `packages/parser` (`extractThreadGeneric`)
 
 ## Phase 1 — First useful version

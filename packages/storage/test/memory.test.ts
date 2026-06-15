@@ -20,6 +20,13 @@ describe("MemoryStorageBackend", () => {
     expect(await backend.get<number>("n")).toBe(2);
   });
 
+  it("rejects storing undefined rather than creating an ambiguous key", async () => {
+    const backend = new MemoryStorageBackend();
+    await expect(backend.set("k", undefined)).rejects.toThrow();
+    // The rejected write must not leave a phantom key behind.
+    expect(await backend.keys()).toEqual([]);
+  });
+
   it("removes a key and treats removing an absent key as a no-op", async () => {
     const backend = new MemoryStorageBackend();
     await backend.set("k", "v");

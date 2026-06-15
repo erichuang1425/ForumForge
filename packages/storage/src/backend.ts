@@ -14,7 +14,13 @@
 export interface StorageBackend {
   /** Read the value at `key`, or `undefined` when nothing is stored there. */
   get<T>(key: string): Promise<T | undefined>;
-  /** Write `value` at `key`, replacing any existing value. */
+  /**
+   * Write `value` at `key`, replacing any existing value. `value` must not be
+   * `undefined`: that is the sentinel `get` returns for an absent key, so
+   * storing it would leave a key that `keys()` reports but `get()` cannot tell
+   * apart from "nothing here". Use `remove` to delete a key. Implementations
+   * reject an `undefined` value.
+   */
   set<T>(key: string, value: T): Promise<void>;
   /** Remove `key`. A no-op when the key is absent. */
   remove(key: string): Promise<void>;

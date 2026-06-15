@@ -32,6 +32,13 @@ export class MemoryStorageBackend implements StorageBackend {
   }
 
   set<T>(key: string, value: T): Promise<void> {
+    if (value === undefined) {
+      return Promise.reject(
+        new TypeError(
+          `Cannot store undefined at "${key}"; use remove() to delete a key`,
+        ),
+      );
+    }
     this.store.set(key, clone(value));
     return Promise.resolve();
   }

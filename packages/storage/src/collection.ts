@@ -24,6 +24,13 @@ export class Collection<T> {
     namespace: string,
   ) {
     if (!namespace) throw new Error("Collection requires a non-empty namespace");
+    // The namespace becomes the `<namespace>:` key prefix, so a colon inside it
+    // would let one collection's keys fall under another's prefix (e.g. `note`
+    // would see every key written by `note:archived`). Forbid it to keep the
+    // promised isolation between collections intact.
+    if (namespace.includes(":")) {
+      throw new Error('Collection namespace must not contain ":"');
+    }
     this.prefix = `${namespace}:`;
   }
 

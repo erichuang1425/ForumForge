@@ -8,6 +8,13 @@ describe("Collection", () => {
     expect(() => new Collection<Note>(new MemoryStorageBackend(), "")).toThrow();
   });
 
+  it("rejects a namespace containing a colon", () => {
+    // A colon would let `note` read keys written by `note:archived`.
+    expect(
+      () => new Collection<Note>(new MemoryStorageBackend(), "note:archived"),
+    ).toThrow();
+  });
+
   it("round-trips records by id", async () => {
     const notes = new Collection<Note>(new MemoryStorageBackend(), "note");
     await notes.set("ada", { text: "helpful" });

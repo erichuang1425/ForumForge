@@ -75,6 +75,24 @@ describe("renderThread", () => {
     expect(view.querySelector(".ff-post__author")?.textContent).toBe("<img src=x onerror=alert(1)>");
   });
 
+  it("resolves a post's relative links against the thread base URL", () => {
+    const thread: ExtractedThread = {
+      baseUrl: "https://forum.example.com/thread/5",
+      posts: [
+        {
+          id: "1",
+          author: "ada",
+          contentText: "see the other thread",
+          contentHtml: '<p>see <a href="/thread/9#post-2">the other thread</a></p>',
+        },
+      ],
+    };
+    const view = renderThread(freshDocument(), thread);
+    expect(view.querySelector(".ff-post__body a")?.getAttribute("href")).toBe(
+      "https://forum.example.com/thread/9#post-2",
+    );
+  });
+
   it("falls back to plain text when contentHtml sanitizes to nothing", () => {
     const thread: ExtractedThread = {
       posts: [

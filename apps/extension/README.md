@@ -31,8 +31,10 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
 - **`src/sanitize.ts`** — the **clean reading mode** sanitizer. Untrusted post
   HTML is parsed inertly and rebuilt from an allowlist of safe, semantic tags and
   attributes, so no script, inline handler, style, embed or unsafe URL survives
-  (see [SECURITY.md](../../SECURITY.md)). Images are dropped by default to avoid
-  third-party requests.
+  (see [SECURITY.md](../../SECURITY.md)). Relative/fragment links are resolved
+  against the thread's source page (`ExtractedThread.baseUrl`) before the scheme
+  allowlist, so internal forum links keep working. Images are dropped by default
+  to avoid third-party requests.
 - **`src/messaging.ts`** — the typed message protocol, validated with type guards
   because messages cross the untrusted page boundary.
 

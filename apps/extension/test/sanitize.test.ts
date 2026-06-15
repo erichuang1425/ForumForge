@@ -13,10 +13,10 @@ function freshDocument(): Document {
  * element holding the sanitized nodes. (Appending a fragment empties it, so the
  * host — not the fragment — is what we query in assertions.)
  */
-function clean(html: string): { html: string; root: HTMLElement } {
+function clean(html: string, baseUrl?: string): { html: string; root: HTMLElement } {
   const doc = freshDocument();
   const root = doc.createElement("div");
-  root.append(sanitizeHtml(doc, html));
+  root.append(sanitizeHtml(doc, html, baseUrl));
   return { html: root.innerHTML, root };
 }
 
@@ -92,6 +92,29 @@ describe("sanitizeHtml", () => {
   it("rejects hrefs that smuggle a scheme past with control characters", () => {
     const { root } = clean('<a href="java\tscript:alert(1)">text</a>');
     expect(root.querySelector("a")?.hasAttribute("href")).toBe(false);
+  });
+
+  it("resolves relative and fragment links against a base URL", () => {
+    const base = "https://forum.example.com/thread/5";
+    expect(
+      clean('<a href="/thread/9#post-2">x</a>', base).root.querySelector("a")?.getAttribute("href"),
+    ).toBe("https://forum.example.com/thread/9#post-2");
+    expect(
+      clean('<a href="#post-3">x</a>', base).root.querySelector("a")?.getAttribute("href"),
+    ).toBe("https://forum.example.com/thread/5#post-3");
+  });
+
+  it("keeps the scheme allowlist after resolving against a base", () => {
+    // A javascript: href stays javascript: after URL resolution, so it is still dropped.
+    const { root } = clean('<a href="javascript:alert(1)">x</a>', "https://forum.example.com/t");
+    expect(root.querySelector("a")?.hasAttribute("href")).toBe(false);
+  });
+
+  it("still drops relative links when no base URL is known", () => {
+    const { root } = clean('<a href="/thread/9">x</a>');
+    const anchor = root.querySelector("a");
+    expect(anchor?.hasAttribute("href")).toBe(false);
+    expect(anchor?.textContent).toBe("x");
   });
 
   it("unwraps unknown layout wrappers but keeps their sanitized children", () => {

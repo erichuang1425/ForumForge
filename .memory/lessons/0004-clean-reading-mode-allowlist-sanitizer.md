@@ -15,6 +15,12 @@ why, so a future session doesn't re-litigate it:
   gone — so on* handlers, `style`, `class`, `id`, unsafe URL schemes can't survive.
 - **Images are dropped by default** (privacy: no third-party requests). Opt-in
   image handling is a later clean-reading sub-feature.
+- **Relative/fragment links are resolved, then re-checked.** `contentHtml` is raw
+  `innerHTML`, so its hrefs are unresolved (unlike `permalink`/`links`). The
+  parser now exposes the page base as `ExtractedThread.baseUrl`; the sanitizer
+  resolves relative hrefs against it (when given) *before* applying the scheme
+  allowlist — resolution never widens what's safe (a resolved `javascript:` URL
+  still fails). Without a base, relative links are dropped as before.
 - **Inert parsing via `<template>`.** `sanitizeHtml` sets `template.innerHTML`;
   `<template>.content` lives in a document with no browsing context, so nothing
   executes or loads during parse. `document.implementation.createHTMLDocument` was

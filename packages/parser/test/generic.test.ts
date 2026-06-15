@@ -88,6 +88,10 @@ describe("extractThreadGeneric", () => {
     expect(post?.links).toEqual(["https://forum.example.com/wiki/fix"]);
   });
 
+  it("exposes the resolved base URL on the thread", () => {
+    expect(extract().baseUrl).toBe(baseUrl);
+  });
+
   it("returns an empty thread for markup with no recognizable posts", () => {
     const { document } = parseHTML("<main><p>just some prose</p></main>");
     const result = extractThreadGeneric(document as unknown as ParentNode);

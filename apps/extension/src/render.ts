@@ -34,13 +34,13 @@ export function renderThread(doc: Document, thread: ExtractedThread): HTMLElemen
   const list = doc.createElement("ol");
   list.className = "ff-posts";
   for (const post of thread.posts) {
-    list.append(renderPost(doc, post));
+    list.append(renderPost(doc, post, thread.baseUrl));
   }
   root.append(list);
   return root;
 }
 
-function renderPost(doc: Document, post: ForumForgePost): HTMLElement {
+function renderPost(doc: Document, post: ForumForgePost, baseUrl?: string): HTMLElement {
   const item = doc.createElement("li");
   item.className = "ff-post";
   if (post.role) item.setAttribute("data-role", post.role);
@@ -67,7 +67,7 @@ function renderPost(doc: Document, post: ForumForgePost): HTMLElement {
     meta.append(time);
   }
 
-  item.append(meta, renderBody(doc, post));
+  item.append(meta, renderBody(doc, post, baseUrl));
   return item;
 }
 
@@ -75,13 +75,14 @@ function renderPost(doc: Document, post: ForumForgePost): HTMLElement {
  * Render the post body: sanitized rich content when the post has usable
  * `contentHtml`, otherwise the plain-text body. A `div` (not `p`) wraps it so
  * sanitized block elements (`blockquote`, `pre`, lists, tables) nest validly.
+ * `baseUrl` (the thread's source page) resolves the post's relative links.
  */
-function renderBody(doc: Document, post: ForumForgePost): HTMLElement {
+function renderBody(doc: Document, post: ForumForgePost, baseUrl?: string): HTMLElement {
   const body = doc.createElement("div");
   body.className = "ff-post__body";
 
   if (typeof post.contentHtml === "string" && post.contentHtml !== "") {
-    body.append(sanitizeHtml(doc, post.contentHtml));
+    body.append(sanitizeHtml(doc, post.contentHtml, baseUrl));
     // Sanitizing can empty out a body (e.g. an image-only post): keep the rich
     // body only if it has visible text, otherwise fall back to plain text.
     if ((body.textContent ?? "").trim() !== "") return body;

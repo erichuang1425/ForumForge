@@ -64,17 +64,38 @@ function hasControlChar(value: string): boolean {
   return false;
 }
 
-/** Return a safe href, or undefined if the URL is missing or uses an unsafe scheme. */
-function safeHref(raw: string | null): string | undefined {
+/**
+ * Return a safe href, or undefined if the URL is missing or unsafe. A
+ * site-relative or fragment URL (common for internal forum links) is resolved
+ * against `baseUrl` — the page the post came from — so clean reading mode keeps
+ * those links working; the scheme allowlist is always applied to the *resolved*
+ * URL, so resolution never widens what is considered safe.
+ */
+function safeHref(raw: string | null, baseUrl: string | undefined): string | undefined {
   if (!raw) return undefined;
   const value = raw.trim();
+  if (!value) return undefined;
   // Control characters can smuggle a scheme past the check (e.g. a tab inside
   // "java<TAB>script:"); reject them outright rather than trying to normalize.
   if (hasControlChar(value)) return undefined;
-  return SAFE_URL.test(value) ? value : undefined;
+
+  let resolved = value;
+  if (baseUrl) {
+    try {
+      resolved = new URL(value, baseUrl).href;
+    } catch {
+      return undefined; // unparseable against the base — drop it
+    }
+  }
+  return SAFE_URL.test(resolved) ? resolved : undefined;
 }
 
-function appendSanitized(targetDoc: Document, parent: Node, node: Node): void {
+function appendSanitized(
+  targetDoc: Document,
+  parent: Node,
+  node: Node,
+  baseUrl: string | undefined,
+): void {
   if (node.nodeType === TEXT_NODE) {
     // Text becomes a fresh text node: inert by construction, markup never live.
     const text = node.textContent;
@@ -91,14 +112,14 @@ function appendSanitized(targetDoc: Document, parent: Node, node: Node): void {
   if (!ALLOWED_TAGS.has(tag)) {
     // Unknown wrapper: drop it, keep its sanitized children.
     for (const child of Array.from(element.childNodes)) {
-      appendSanitized(targetDoc, parent, child);
+      appendSanitized(targetDoc, parent, child, baseUrl);
     }
     return;
   }
 
   const clean = targetDoc.createElement(tag);
   if (tag === "a") {
-    const href = safeHref(element.getAttribute("href"));
+    const href = safeHref(element.getAttribute("href"), baseUrl);
     if (href) clean.setAttribute("href", href);
     // Links open in a new tab so they never navigate the panel away from itself,
     // and carry no referrer/opener to the forum's link targets.
@@ -109,7 +130,7 @@ function appendSanitized(targetDoc: Document, parent: Node, node: Node): void {
   // every data-* attribute are dropped simply by never carrying them over.
 
   for (const child of Array.from(element.childNodes)) {
-    appendSanitized(targetDoc, clean, child);
+    appendSanitized(targetDoc, clean, child, baseUrl);
   }
   parent.appendChild(clean);
 }
@@ -118,11 +139,17 @@ function appendSanitized(targetDoc: Document, parent: Node, node: Node): void {
  * Sanitize an already-parsed source tree into a fresh fragment owned by
  * `targetDoc`. This is the security boundary and is pure — it only reads the
  * source and only creates allowlisted nodes — so it is exhaustively unit-tested.
+ * `baseUrl`, when given, is the page the content came from: relative link hrefs
+ * are resolved against it before the scheme allowlist is applied.
  */
-export function sanitizeFragment(targetDoc: Document, source: Node): DocumentFragment {
+export function sanitizeFragment(
+  targetDoc: Document,
+  source: Node,
+  baseUrl?: string,
+): DocumentFragment {
   const fragment = targetDoc.createDocumentFragment();
   for (const child of Array.from(source.childNodes)) {
-    appendSanitized(targetDoc, fragment, child);
+    appendSanitized(targetDoc, fragment, child, baseUrl);
   }
   return fragment;
 }
@@ -131,9 +158,14 @@ export function sanitizeFragment(targetDoc: Document, source: Node): DocumentFra
  * Parse untrusted HTML inertly and return a sanitized fragment ready to insert
  * into the panel. Parsing uses a detached `<template>`, whose contents live in a
  * document with no browsing context, so nothing executes or loads during parse.
+ * Pass `baseUrl` to resolve the post's relative links against its source page.
  */
-export function sanitizeHtml(targetDoc: Document, html: string): DocumentFragment {
+export function sanitizeHtml(
+  targetDoc: Document,
+  html: string,
+  baseUrl?: string,
+): DocumentFragment {
   const template = targetDoc.createElement("template");
   template.innerHTML = html;
-  return sanitizeFragment(targetDoc, template.content);
+  return sanitizeFragment(targetDoc, template.content, baseUrl);
 }

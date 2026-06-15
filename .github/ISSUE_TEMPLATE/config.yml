@@ -1,0 +1,7 @@
+# Allow free-form issues in addition to the templates below.
+blank_issues_enabled: true
+# Add contact links once GitHub Discussions is enabled for the repo, e.g.:
+# contact_links:
+#   - name: Questions & discussion
+#     url: https://github.com/erichuang1425/ForumForge/discussions
+#     about: Ask questions and discuss ideas here instead of opening an issue.

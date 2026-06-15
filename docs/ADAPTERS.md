@@ -174,8 +174,9 @@ type PaginationInfo = {
 ## Testing adapters
 
 Test against **saved HTML fixtures**, not live sites — this keeps tests
-deterministic and avoids hammering real forums. The general pattern (fixture-based
-adapter tests land in Phase 5):
+deterministic and avoids hammering real forums. See **[FIXTURES.md](FIXTURES.md)**
+for how to capture and contribute one. The general pattern (fixture-based adapter
+tests land in Phase 5):
 
 1. Save a representative thread page as an HTML fixture.
 2. Run the adapter against the fixture.

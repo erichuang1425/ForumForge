@@ -112,7 +112,7 @@ and reviewed. See **[docs/PRIVACY.md](docs/PRIVACY.md)** and
 
 Contributions are welcome — especially forum support requests, HTML fixtures, JSON
 adapters, parser improvements, and documentation. See
-**[CONTRIBUTING.md](CONTRIBUTING.md)**.
+**[CONTRIBUTING.md](CONTRIBUTING.md)** and our **[Code of Conduct](CODE_OF_CONDUCT.md)**.
 
 Working with an AI coding agent in this repo? Read **[AGENTS.md](AGENTS.md)**
 (general agent guidance) and **[CLAUDE.md](CLAUDE.md)** (Claude-specific workflow).

@@ -7,6 +7,12 @@
  * cross-browser `chrome.*` namespace, so the extension stays portable.
  */
 declare namespace chrome {
+  namespace action {
+    const onClicked: {
+      addListener(callback: (tab: tabs.Tab) => void): void;
+    };
+  }
+
   namespace runtime {
     interface MessageSender {
       tab?: tabs.Tab;
@@ -43,8 +49,6 @@ declare namespace chrome {
   }
 
   namespace sidePanel {
-    function setPanelBehavior(behavior: {
-      openPanelOnActionClick: boolean;
-    }): Promise<void>;
+    function open(options: { tabId?: number; windowId?: number }): Promise<void>;
   }
 }

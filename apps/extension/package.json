@@ -1,0 +1,17 @@
+{
+  "name": "@forumforge/extension",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ForumForge browser extension — the MV3 shell, on-demand content script, and side panel that bring an extracted thread into a clean reading view.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "node build.mjs",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@forumforge/core": "workspace:*",
+    "@forumforge/parser": "workspace:*"
+  }
+}

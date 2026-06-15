@@ -426,9 +426,9 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 
 ### Phase 0 — Foundation
 
-* [ ] Extension shell
-* [ ] Content script
-* [ ] Side panel UI
+* [x] Extension shell
+* [x] Content script
+* [x] Side panel UI
 * [x] Core post model
 * [x] Local storage layer
 * [x] Basic generic extractor

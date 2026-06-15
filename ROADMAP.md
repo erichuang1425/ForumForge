@@ -5,16 +5,17 @@ A living, phase-by-phase checklist. The full product spec and rationale live in
 this file is the tracking view. Phases are ordered: foundation before features,
 features before the adapter ecosystem, AI last and always optional.
 
-> **Status:** Phase 0 in progress. The pnpm/TypeScript workspace is set up, and the
-> non-UI foundation pieces — the core post model, the generic extractor, and the
-> local storage layer — are built and unit-tested. The remaining (browser-dependent)
-> Phase 0 items are next.
+> **Status:** Phase 0 complete. The pnpm/TypeScript workspace is set up; the
+> foundation pieces — core post model, generic extractor, local storage layer —
+> and the `apps/extension` MV3 shell (background, on-demand content script, side
+> panel) are built and unit-tested, and the extension bundles via esbuild. Phase 1
+> (the first useful features) is next.
 
 ## Phase 0 — Foundation
 
-- [ ] Extension shell
-- [ ] Content script
-- [ ] Side panel UI
+- [x] Extension shell — `apps/extension` (MV3 manifest + background service worker)
+- [x] Content script — `apps/extension` (`content.ts`, injected on demand via `activeTab`)
+- [x] Side panel UI — `apps/extension` (`sidepanel.ts` + `renderThread`)
 - [x] Core post model — `packages/core` (`ForumForgePost` + helpers)
 - [x] Local storage layer — `packages/storage` (`StorageBackend` + in-memory backend + `Collection`)
 - [x] Basic generic extractor — `packages/parser` (`extractThreadGeneric`)

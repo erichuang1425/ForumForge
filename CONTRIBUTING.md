@@ -16,13 +16,14 @@ from your browser. Contributions are very welcome.
 - Read **[AGENTS.md](AGENTS.md)** if you're using an AI coding agent; it captures
   the project's conventions and boundaries.
 - Check existing issues before opening a new one.
+- Review our **[Code of Conduct](CODE_OF_CONDUCT.md)** — it applies to all project spaces.
 
 ## Good first contributions
 
 - **Request support for a forum** you use (open an issue with the URL pattern and
   a sample thread).
 - **Submit an HTML fixture** — a saved, representative thread page we can build and
-  test an adapter against.
+  test an adapter against (see **[docs/FIXTURES.md](docs/FIXTURES.md)**).
 - **Create a JSON adapter** for a forum (the safest, simplest adapter type).
 - **Improve parser accuracy** or the generic fallback extractor.
 - **Improve documentation.**
@@ -46,7 +47,7 @@ safest tier that can do the job:
 Guidelines:
 
 - Test adapters against **saved HTML fixtures**, not live sites — keep tests
-  deterministic and don't hammer real forums.
+  deterministic and don't hammer real forums. See **[docs/FIXTURES.md](docs/FIXTURES.md)**.
 - Adapters must **fail gracefully**: a missing field should degrade, not crash.
 - Document which forum software (and versions) the adapter targets, plus known
   limitations.

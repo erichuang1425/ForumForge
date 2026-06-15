@@ -429,9 +429,9 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 * [ ] Extension shell
 * [ ] Content script
 * [ ] Side panel UI
-* [ ] Core post model
-* [ ] Local storage layer
-* [ ] Basic generic extractor
+* [x] Core post model
+* [x] Local storage layer
+* [x] Basic generic extractor
 
 ### Phase 1 — First useful version
 

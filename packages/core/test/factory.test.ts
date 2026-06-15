@@ -13,6 +13,28 @@ describe("createPost", () => {
     expect(createPost({ id: "  101 " }).id).toBe("101");
   });
 
+  it("derives a stable fallback id from content when the forum exposes none", () => {
+    const input = { author: "ada", timestamp: "2026-01-02T10:00:00Z", contentText: "no signal" };
+    const a = createPost(input);
+    const b = createPost(input);
+    expect(a.id).toBe(b.id); // same post → same id across extractions
+    expect(a.id).toMatch(/^ffp-/);
+  });
+
+  it("gives posts with different content different fallback ids", () => {
+    const a = createPost({ author: "ada", contentText: "first" });
+    const b = createPost({ author: "ada", contentText: "second" });
+    expect(a.id).not.toBe(b.id);
+  });
+
+  it("generates a unique id only when there is no stable content to key on", () => {
+    const a = createPost({});
+    const b = createPost({});
+    expect(a.id).toBeTruthy();
+    expect(b.id).toBeTruthy();
+    expect(a.id).not.toBe(b.id);
+  });
+
   it("normalizes author and cleans content", () => {
     const post = createPost({ author: "  Ada  Lovelace ", contentText: "hi  \r\n there" });
     expect(post.author).toBe("Ada Lovelace");

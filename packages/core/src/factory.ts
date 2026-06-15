@@ -16,14 +16,47 @@ function generateId(): string {
   return `ffp-${Date.now().toString(36)}-${fallbackCounter}`;
 }
 
+/** FNV-1a (32-bit): small, dependency-free, and stable across environments. */
+function hashString(value: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+/**
+ * Derive a STABLE id for a post the forum gave no id of its own. The same post
+ * must keep the same id across reloads — read-history, new-post detection,
+ * saved-comment state, and `parentId` references all key on it — so we hash the
+ * post's own stable signal (permalink, author, timestamp, content) instead of
+ * generating a fresh random id on every extraction. Only when there is no stable
+ * signal at all do we fall back to a unique generated id, so that distinct empty
+ * posts don't collapse onto one shared key.
+ */
+function deriveFallbackId(input: PostInput): string {
+  const parts = [
+    input.permalink?.trim() ?? "",
+    input.author ? normalizeWhitespace(input.author) : "",
+    input.timestamp?.trim() ?? "",
+    cleanText(input.contentText),
+  ];
+  if (parts.every((part) => part === "")) return generateId();
+  // NUL separator keeps field boundaries unambiguous, so adjacent fields can't
+  // shift across each other and collide ("a b" + "c" vs "a" + "b c").
+  return `ffp-${hashString(parts.join("\u0000"))}`;
+}
+
 /**
  * Build a normalized ForumForgePost from loose adapter output. Missing required
  * fields degrade gracefully (a missing selector should not crash): missing id →
- * generated, missing author → "Unknown", missing content → empty string.
+ * derived from stable content (or generated when there is none), missing author →
+ * "Unknown", missing content → empty string.
  */
 export function createPost(input: PostInput): ForumForgePost {
   const post: ForumForgePost = {
-    id: input.id?.trim() || generateId(),
+    id: input.id?.trim() || deriveFallbackId(input),
     author: normalizeWhitespace(input.author ?? "") || "Unknown",
     contentText: cleanText(input.contentText),
   };

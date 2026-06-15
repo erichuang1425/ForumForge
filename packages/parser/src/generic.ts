@@ -77,6 +77,19 @@ function resolveUrl(href: string, baseUrl?: string): string {
   }
 }
 
+/**
+ * The base URL to resolve relative links against when the caller passes none.
+ * On a live page `getAttribute("href")` returns the raw, possibly-relative
+ * attribute (only properties like `HTMLAnchorElement.href` are auto-resolved),
+ * so we fall back to the document's own base URI. Detached documents report
+ * "about:blank"; treat that as "no base" rather than resolving against it.
+ */
+function documentBaseUrl(root: ParentNode): string | undefined {
+  const base = (root as { baseURI?: unknown }).baseURI;
+  if (typeof base !== "string" || !base || base === "about:blank") return undefined;
+  return base;
+}
+
 /** Pick the container selector that yields the most elements; ties favor earlier (more specific). */
 function chooseContainers(root: ParentNode): Element[] {
   let best: Element[] = [];
@@ -133,12 +146,19 @@ function extractTimestamp(post: Element): string | undefined {
 }
 
 function extractContent(post: Element): { text: string; html?: string; scope: Element } {
+  let firstBody: Element | undefined;
   for (const selector of CONTENT_SELECTORS) {
     const el = post.querySelector(selector);
-    const text = el?.textContent ? cleanText(el.textContent) : "";
-    if (el && text) return { text, html: el.innerHTML, scope: el };
+    if (!el) continue;
+    firstBody ??= el;
+    const text = el.textContent ? cleanText(el.textContent) : "";
+    if (text) return { text, html: el.innerHTML, scope: el };
   }
-  // Fallback: whole-post text. Imperfect, but it degrades instead of crashing.
+  // A recognized body that holds only media (image/video/embed) yields no text,
+  // but it is still the post body: keep its HTML so media-only posts aren't
+  // dropped or back-filled with header/author text from the whole post.
+  if (firstBody) return { text: "", html: firstBody.innerHTML, scope: firstBody };
+  // No recognized body at all: degrade to whole-post text instead of crashing.
   return { text: post.textContent ? cleanText(post.textContent) : "", scope: post };
 }
 
@@ -157,7 +177,8 @@ function extractLinks(scope: Element, baseUrl?: string): string[] {
     .map((href) => resolveUrl(href, baseUrl));
 }
 
-function extractRole(post: Element, isFirst: boolean): ForumRole | undefined {
+/** Role stated by the page itself (class names, badges, user-title labels). */
+function detectExplicitRole(post: Element): ForumRole | undefined {
   const haystacks = [post.className ?? ""];
   for (const selector of ROLE_NODE_SELECTORS) {
     const text = post.querySelector(selector)?.textContent;
@@ -167,8 +188,22 @@ function extractRole(post: Element, isFirst: boolean): ForumRole | undefined {
   for (const { pattern, role } of ROLE_KEYWORDS) {
     if (pattern.test(text)) return role;
   }
-  // Generic heuristic: the first post in a thread is usually the original poster.
-  return isFirst ? "op" : undefined;
+  return undefined;
+}
+
+function resolveRole(
+  post: Element,
+  context: { isFirst: boolean; author?: string; opAuthor?: string },
+): ForumRole | undefined {
+  const explicit = detectExplicitRole(post);
+  // An explicit moderator/admin label always wins over the OP heuristic.
+  if (explicit === "mod" || explicit === "admin") return explicit;
+  // The first post is the thread starter; later posts by that same author are
+  // the OP's too, so OP-highlighting follows them through the whole thread.
+  const { isFirst, author, opAuthor } = context;
+  if (isFirst) return "op";
+  if (opAuthor && author && author === opAuthor) return "op";
+  return explicit; // an explicit "op" label, or undefined
 }
 
 /**
@@ -183,15 +218,19 @@ export function extractThreadGeneric(
   root: ParentNode,
   options: GenericExtractOptions = {},
 ): ExtractedThread {
-  const { baseUrl } = options;
+  // Prefer an explicit base; otherwise resolve against the live document so a
+  // browser DOM also yields absolute URLs (see documentBaseUrl).
+  const baseUrl = options.baseUrl ?? documentBaseUrl(root);
+  let opAuthor: string | undefined;
   const posts = chooseContainers(root).map((el, index) => {
     const { author, authorUrl } = extractAuthor(el, baseUrl);
+    if (index === 0) opAuthor = author;
     const { text, html, scope } = extractContent(el);
     return createPost({
       id: pickId(el),
       author,
       authorUrl,
-      role: extractRole(el, index === 0),
+      role: resolveRole(el, { isFirst: index === 0, author, opAuthor }),
       timestamp: extractTimestamp(el),
       contentText: text,
       contentHtml: html,

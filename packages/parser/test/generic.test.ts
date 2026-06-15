@@ -20,7 +20,7 @@ describe("extractThreadGeneric", () => {
   });
 
   it("extracts every post container", () => {
-    expect(extract().posts).toHaveLength(3);
+    expect(extract().posts).toHaveLength(5);
   });
 
   it("captures ids, authors, and timestamps", () => {
@@ -51,12 +51,41 @@ describe("extractThreadGeneric", () => {
     expect(second?.role).toBe("mod");
   });
 
-  it("leaves an ordinary reply without a role", () => {
-    expect(extract().posts[2]?.role).toBeUndefined();
+  it("marks a later post from the original poster as op", () => {
+    const third = extract().posts[2];
+    expect(third?.author).toBe("ada");
+    expect(third?.role).toBe("op");
+  });
+
+  it("leaves an ordinary reply from another author without a role", () => {
+    const fourth = extract().posts[3];
+    expect(fourth?.author).toBe("carol");
+    expect(fourth?.role).toBeUndefined();
+  });
+
+  it("keeps an image-only body instead of falling back to the whole post", () => {
+    const fifth = extract().posts[4];
+    expect(fifth?.author).toBe("dave");
+    expect(fifth?.contentText).toBe("");
+    expect(fifth?.contentHtml).toContain("<img");
   });
 
   it("captures cleaned plain-text content", () => {
     expect(extract().posts[0]?.contentText).toContain("no signal");
+  });
+
+  it("resolves relative URLs against the document base URI when no baseUrl is given", () => {
+    const { document } = parseHTML(
+      `<!doctype html><html><head>` +
+        `<base href="https://forum.example.com/thread/9" />` +
+        `</head><body><article class="post">` +
+        `<a class="username" rel="author" href="/users/ivy">ivy</a>` +
+        `<div class="post-body"><a href="/wiki/fix">wiki</a></div>` +
+        `</article></body></html>`,
+    );
+    const [post] = extractThreadGeneric(document as unknown as ParentNode).posts;
+    expect(post?.authorUrl).toBe("https://forum.example.com/users/ivy");
+    expect(post?.links).toEqual(["https://forum.example.com/wiki/fix"]);
   });
 
   it("returns an empty thread for markup with no recognizable posts", () => {

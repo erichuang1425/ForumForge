@@ -16,11 +16,13 @@ site.**
 > Your favorite forum does not need to modernize. ForumForge can modernize it
 > from your browser.
 
-> **Status:** Phase 0 (Foundation) in progress. The non-UI foundation packages —
+> **Status:** Phase 0 (Foundation) is in place. The foundation packages —
 > [`@forumforge/core`](packages/core) (the post model),
 > [`@forumforge/parser`](packages/parser) (the generic extractor), and
-> [`@forumforge/storage`](packages/storage) (the local-first storage layer) — are
-> built and unit-tested. The canonical product spec is
+> [`@forumforge/storage`](packages/storage) (the local-first storage layer) — plus
+> the [`@forumforge/extension`](apps/extension) MV3 shell, on-demand content
+> script, and side panel are built, unit-tested, and the extension bundles. Phase
+> 1 (the first useful features) is next. The canonical product spec is
 > **[Initial Plan.md](Initial%20Plan.md)**; the phase checklist is in
 > **[ROADMAP.md](ROADMAP.md)**.
 
@@ -88,9 +90,10 @@ forumforge/
 ```
 
 This is the **target** layout. Packages are built only when there is real work for
-them — no placeholder scaffolding. So far Phase 0 has landed `packages/core`,
-`packages/parser`, and `packages/storage`; the remaining packages and apps arrive
-as their roadmap phase begins.
+them — no placeholder scaffolding. Phase 0 has landed `packages/core`,
+`packages/parser`, `packages/storage`, and the `apps/extension` shell (content
+script + side panel); the remaining packages and apps arrive as their roadmap
+phase begins.
 
 ## Roadmap
 

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ForumForge</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        font: 14px/1.5 system-ui, sans-serif;
+        margin: 0;
+        padding: 12px;
+      }
+      .ff-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .ff-app {
+        font-size: 15px;
+        margin: 0;
+        flex: 1;
+      }
+      #ff-extract {
+        font: inherit;
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+      #ff-status {
+        color: #777;
+        margin: 8px 0 12px;
+      }
+      .ff-thread__title {
+        font-size: 16px;
+        margin: 0 0 8px;
+      }
+      .ff-posts {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .ff-post {
+        padding: 10px 0;
+        border-top: 1px solid #8883;
+      }
+      .ff-post__meta {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        margin-bottom: 4px;
+      }
+      .ff-post__author {
+        font-weight: 600;
+      }
+      .ff-post__role {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: #8882;
+      }
+      .ff-post__time {
+        color: #888;
+        font-size: 12px;
+        margin-left: auto;
+      }
+      .ff-post__body {
+        margin: 0;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="ff-bar">
+      <h1 class="ff-app">ForumForge</h1>
+      <button id="ff-extract" type="button">Read this thread</button>
+    </header>
+    <p id="ff-status">Open a forum thread, then “Read this thread”.</p>
+    <div id="ff-output"></div>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

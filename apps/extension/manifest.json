@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "ForumForge",
+  "version": "0.0.0",
+  "description": "Modernize messy forum threads into a clean, readable view — local-first, from your own browser.",
+  "permissions": ["activeTab", "scripting", "sidePanel"],
+  "action": {
+    "default_title": "Open ForumForge"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  }
+}

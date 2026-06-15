@@ -5,17 +5,18 @@ A living, phase-by-phase checklist. The full product spec and rationale live in
 this file is the tracking view. Phases are ordered: foundation before features,
 features before the adapter ecosystem, AI last and always optional.
 
-> **Status:** Early planning / prototype. Nothing below is built yet — the repo is
-> documentation-first until Phase 0 begins.
+> **Status:** Phase 0 in progress. The pnpm/TypeScript workspace is set up, and the
+> first two foundation pieces — the core post model and the generic extractor —
+> are built and unit-tested. The remaining Phase 0 items are next.
 
 ## Phase 0 — Foundation
 
 - [ ] Extension shell
 - [ ] Content script
 - [ ] Side panel UI
-- [ ] Core post model
+- [x] Core post model — `packages/core` (`ForumForgePost` + helpers)
 - [ ] Local storage layer
-- [ ] Basic generic extractor
+- [x] Basic generic extractor — `packages/parser` (`extractThreadGeneric`)
 
 ## Phase 1 — First useful version
 

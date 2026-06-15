@@ -1,0 +1,17 @@
+{
+  "name": "@forumforge/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "ForumForge post model and core helpers — the shared data contract every layer agrees on.",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  }
+}

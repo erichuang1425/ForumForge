@@ -1,0 +1,23 @@
+{
+  "name": "forumforge",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Open-source, local-first browser extension and adapter framework for modernizing forum threads.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "linkedom": "^0.18.5",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}

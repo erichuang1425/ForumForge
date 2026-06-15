@@ -16,9 +16,11 @@ site.**
 > Your favorite forum does not need to modernize. ForumForge can modernize it
 > from your browser.
 
-> **Status:** Early planning / prototype. No application code exists yet — this
-> repository currently holds the product spec and project documentation. The
-> canonical product spec is **[Initial Plan.md](Initial%20Plan.md)**.
+> **Status:** Phase 0 (Foundation) in progress. The first foundation packages —
+> [`@forumforge/core`](packages/core) (the post model) and
+> [`@forumforge/parser`](packages/parser) (the generic extractor) — are built and
+> unit-tested. The canonical product spec is **[Initial Plan.md](Initial%20Plan.md)**;
+> the phase checklist is in **[ROADMAP.md](ROADMAP.md)**.
 
 ---
 
@@ -83,8 +85,10 @@ forumforge/
 └── docs/
 ```
 
-This is the **target** layout. Packages are intentionally **not** scaffolded with
-placeholder code yet — the project is documentation-first until Phase 0 begins.
+This is the **target** layout. Packages are built only when there is real work for
+them — no placeholder scaffolding. So far Phase 0 has landed `packages/core` and
+`packages/parser`; the remaining packages and apps arrive as their roadmap phase
+begins.
 
 ## Roadmap
 

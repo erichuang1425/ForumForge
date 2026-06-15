@@ -67,12 +67,18 @@ If your change touches any of the above, call it out explicitly in the PR.
 
 ## Development setup
 
-There is no build or test pipeline yet — code scaffolding begins with Phase 0 of
-the roadmap. When tooling lands, setup and commands will be documented here and in
-the README. Until then, documentation and adapter/fixture contributions don't
-require a local build.
+The project is a [pnpm](https://pnpm.io) + TypeScript monorepo (Node ≥ 20; see
+`.nvmrc`). Phase 0 packages live under `packages/`.
 
-Planned technical direction (see the plan): TypeScript, WebExtensions-style APIs,
+```bash
+pnpm install      # install workspace dependencies
+pnpm test         # run the test suite (Vitest)
+pnpm typecheck    # type-check every package
+```
+
+Documentation and adapter/fixture contributions don't require a local build.
+
+Technical direction (see the plan): TypeScript, WebExtensions-style APIs,
 local-first storage, minimal dependencies, lockfiles committed.
 
 ## Pull requests

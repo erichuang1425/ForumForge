@@ -70,7 +70,43 @@
       }
       .ff-post__body {
         margin: 0;
+        overflow-wrap: anywhere;
+      }
+      /* Plain-text fallback keeps the original line breaks. */
+      .ff-post__text {
+        margin: 0;
         white-space: pre-wrap;
+      }
+      .ff-post__body p {
+        margin: 0 0 8px;
+      }
+      .ff-post__body > :last-child {
+        margin-bottom: 0;
+      }
+      .ff-post__body a {
+        color: #2563eb;
+      }
+      .ff-post__body blockquote {
+        margin: 8px 0;
+        padding: 0 0 0 10px;
+        border-left: 3px solid #8884;
+        color: #555;
+      }
+      .ff-post__body pre {
+        margin: 8px 0;
+        padding: 8px;
+        background: #8881;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      .ff-post__body code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.92em;
+      }
+      .ff-post__body ul,
+      .ff-post__body ol {
+        margin: 8px 0;
+        padding-left: 22px;
       }
     </style>
   </head>

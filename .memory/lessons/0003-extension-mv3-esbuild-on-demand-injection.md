@@ -23,10 +23,11 @@ a future session should not have to re-derive:
   privacy-narrow path AGENTS.md wants — ForumForge only ever reads the page the
   user explicitly invoked it on. Injection is made idempotent with a
   `window.__forumforgeContentReady` guard so re-injection doesn't stack listeners.
-- **Rendering is `textContent`-only.** `render.ts` never uses `innerHTML`, so
-  untrusted post content (incl. `contentHtml`) cannot inject markup. Rich,
-  sanitized `contentHtml` rendering is Phase 1 clean reading mode, not Phase 0.
-  There is a unit test asserting malicious `contentHtml`/author text stays inert.
+- **Rendering never uses `innerHTML`.** Author/role/timestamp are written with
+  `textContent`. The post body is now rich (Phase 1 clean reading mode): it
+  renders sanitized `contentHtml` via `sanitize.ts`, falling back to plain text.
+  See lesson 0004 for the sanitizer. (Phase 0 was `textContent`-only; that
+  constraint is superseded by the sanitizer — not by raw `innerHTML`.)
 - **`extract.ts` is the adapter-selection seam.** The content script imports
   `extractThreadFromDocument`, not the parser directly; site-specific adapter
   selection lands here in Phase 2, with the generic parser as fallback.

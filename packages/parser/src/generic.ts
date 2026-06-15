@@ -4,6 +4,13 @@ import type { ForumForgePost, ForumRole } from "@forumforge/core";
 /** Result of extracting a thread: optional title plus the posts found. */
 export type ExtractedThread = {
   title?: string;
+  /**
+   * Absolute base URL of the page the thread came from, when known. Consumers
+   * use it to resolve any relative URLs still embedded in a post's
+   * `contentHtml` (which is captured as raw `innerHTML`, so its hrefs are not
+   * pre-resolved like `permalink`/`links`/`authorUrl` are).
+   */
+  baseUrl?: string;
   posts: ForumForgePost[];
 };
 
@@ -239,6 +246,9 @@ export function extractThreadGeneric(
     });
   });
 
+  const result: ExtractedThread = { posts };
   const title = extractTitle(root);
-  return title ? { title, posts } : { posts };
+  if (title) result.title = title;
+  if (baseUrl) result.baseUrl = baseUrl;
+  return result;
 }

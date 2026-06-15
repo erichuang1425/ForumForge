@@ -1,0 +1,3 @@
+# Keeps the empty lessons/ directory tracked by git.
+# Add lessons as NNNN-short-kebab-title.md files (see ../README.md). This file
+# can be removed once the directory has real lessons.

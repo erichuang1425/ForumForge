@@ -25,10 +25,14 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
   that injects the content script, requests extraction, and renders the result.
 - **`src/extract.ts`** — the seam that chooses how to read a page. Today it always
   uses the generic parser; a site-specific adapter is selected here later (Phase 2).
-- **`src/render.ts`** — builds the read-only view. It writes only `textContent`,
-  never `innerHTML`, so untrusted page content can't inject markup (see
-  [SECURITY.md](../../SECURITY.md)). Rich `contentHtml` rendering with
-  sanitization is Phase 1.
+- **`src/render.ts`** — builds the read-only view. Author, role and timestamp are
+  written with `textContent`; the body renders the post's rich `contentHtml`
+  through the sanitizer (clean reading mode), falling back to plain text.
+- **`src/sanitize.ts`** — the **clean reading mode** sanitizer. Untrusted post
+  HTML is parsed inertly and rebuilt from an allowlist of safe, semantic tags and
+  attributes, so no script, inline handler, style, embed or unsafe URL survives
+  (see [SECURITY.md](../../SECURITY.md)). Images are dropped by default to avoid
+  third-party requests.
 - **`src/messaging.ts`** — the typed message protocol, validated with type guards
   because messages cross the untrusted page boundary.
 
@@ -46,7 +50,8 @@ From the repo root:
 - `pnpm --filter @forumforge/extension build` — bundle into `apps/extension/dist/`
   (esbuild). `pnpm build` builds every package.
 - `pnpm --filter @forumforge/extension typecheck`
-- `pnpm test` — runs the unit tests (extraction wiring, rendering, messaging).
+- `pnpm test` — runs the unit tests (extraction wiring, rendering, sanitization,
+  messaging).
 
 ### Load it in a browser
 

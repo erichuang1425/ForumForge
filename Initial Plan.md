@@ -435,7 +435,7 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 
 ### Phase 1 — First useful version
 
-* [ ] Clean reading mode
+* [x] Clean reading mode
 * [ ] OP highlighting
 * [ ] New posts since last visit
 * [ ] Save comments

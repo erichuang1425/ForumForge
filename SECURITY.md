@@ -32,7 +32,11 @@ ForumForge is a **reader-side enhancement layer**. It is explicitly **not**:
 Key concerns we design against:
 
 - **Untrusted page content.** Forum HTML is untrusted input. Extracted content
-  must be sanitized before rendering; never inject unsanitized markup.
+  must be sanitized before rendering; never inject unsanitized markup. The side
+  panel's clean reading mode does this with an **allowlist sanitizer**
+  (`apps/extension/src/sanitize.ts`): untrusted post HTML is parsed inertly and
+  rebuilt from a fixed set of safe, semantic tags and attributes, so no script,
+  inline handler, style, embed, or unsafe URL scheme can survive.
 - **Community-authored adapters** running in a privileged context (see below).
 - **Over-broad extension permissions** widening the attack surface.
 

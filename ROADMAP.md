@@ -5,11 +5,11 @@ A living, phase-by-phase checklist. The full product spec and rationale live in
 this file is the tracking view. Phases are ordered: foundation before features,
 features before the adapter ecosystem, AI last and always optional.
 
-> **Status:** Phase 0 complete. The pnpm/TypeScript workspace is set up; the
-> foundation pieces — core post model, generic extractor, local storage layer —
-> and the `apps/extension` MV3 shell (background, on-demand content script, side
-> panel) are built and unit-tested, and the extension bundles via esbuild. Phase 1
-> (the first useful features) is next.
+> **Status:** Phase 0 complete; Phase 1 underway. The foundation — core post
+> model, generic extractor, local storage layer — and the `apps/extension` MV3
+> shell (background, on-demand content script, side panel) are built, unit-tested,
+> and bundled via esbuild. Phase 1 has begun with **clean reading mode**: the side
+> panel now renders each post's rich `contentHtml` through an allowlist sanitizer.
 
 ## Phase 0 — Foundation
 
@@ -22,7 +22,7 @@ features before the adapter ecosystem, AI last and always optional.
 
 ## Phase 1 — First useful version
 
-- [ ] Clean reading mode
+- [x] Clean reading mode — sanitized rich `contentHtml` rendering in the side panel (`apps/extension`)
 - [ ] OP highlighting
 - [ ] New posts since last visit
 - [ ] Save comments

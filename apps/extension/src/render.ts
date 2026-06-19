@@ -1,6 +1,17 @@
-import type { ForumForgePost } from "@forumforge/core";
+import type { ForumForgePost, ForumRole } from "@forumforge/core";
 import type { ExtractedThread } from "@forumforge/parser";
 import { sanitizeHtml } from "./sanitize";
+
+/**
+ * Human-readable badge text per role. The OP highlighting feature surfaces who
+ * is who in a thread; "user" is the unmarked default, so it gets no badge.
+ */
+const ROLE_LABELS: Record<ForumRole, string> = {
+  op: "OP",
+  mod: "Mod",
+  admin: "Admin",
+  user: "",
+};
 
 /**
  * Build a clean, read-only view of an extracted thread.
@@ -53,10 +64,11 @@ function renderPost(doc: Document, post: ForumForgePost, baseUrl?: string): HTML
   author.textContent = post.author;
   meta.append(author);
 
-  if (post.role) {
+  const roleLabel = post.role ? ROLE_LABELS[post.role] : "";
+  if (roleLabel) {
     const role = doc.createElement("span");
     role.className = "ff-post__role";
-    role.textContent = post.role;
+    role.textContent = roleLabel;
     meta.append(role);
   }
 

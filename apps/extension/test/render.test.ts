@@ -22,8 +22,23 @@ describe("renderThread", () => {
     expect(view.querySelector(".ff-thread__title")?.textContent).toBe("Monitor no signal");
     expect(view.querySelectorAll(".ff-post")).toHaveLength(2);
     expect(view.querySelector(".ff-post__author")?.textContent).toBe("ada");
-    expect(view.querySelector(".ff-post__role")?.textContent).toBe("op");
+    expect(view.querySelector(".ff-post__role")?.textContent).toBe("OP");
     expect(view.querySelector(".ff-post[data-role='op']")).not.toBeNull();
+  });
+
+  it("shows a readable badge for highlighted roles but none for plain users", () => {
+    const thread: ExtractedThread = {
+      posts: [
+        { id: "1", author: "ada", role: "mod", contentText: "Moved to the right forum." },
+        { id: "2", author: "grace", role: "user", contentText: "Thanks." },
+      ],
+    };
+    const view = renderThread(freshDocument(), thread);
+    const badges = view.querySelectorAll(".ff-post__role");
+
+    // The moderator post is the only one with a badge; "user" is the unmarked default.
+    expect(Array.from(badges).map((b) => b.textContent)).toEqual(["Mod"]);
+    expect(view.querySelector(".ff-post[data-role='mod']")).not.toBeNull();
   });
 
   it("shows an empty state when there are no posts", () => {

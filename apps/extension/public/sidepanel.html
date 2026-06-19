@@ -88,7 +88,9 @@
         color: #fff;
       }
       .ff-post[data-role="mod"] .ff-post__role {
-        background: #16a34a;
+        /* Darker green than the edge so white badge text clears WCAG AA
+           contrast (~5:1) — the badge text is the non-color role signal. */
+        background: #15803d;
         color: #fff;
       }
       .ff-post[data-role="admin"] .ff-post__role {

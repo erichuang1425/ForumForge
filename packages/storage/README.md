@@ -6,11 +6,13 @@ local notes and tags, per-site settings, installed adapters — stays on the
 user's own device by default (see [docs/PRIVACY.md](../../docs/PRIVACY.md)).
 
 This package defines the storage **contract** and a working in-memory backend.
-It deliberately does **not** include a `chrome.storage` / IndexedDB backend yet:
-those need a browser to verify meaningfully, and the whole point of the seam is
-that they slot in later without feature code changing. Built only when there is
-real, testable work for it — no placeholder scaffolding (see
-[AGENTS.md](../../AGENTS.md)).
+The browser backend lives where it can be exercised: the extension implements
+`StorageBackend` over `chrome.storage.local` in
+[`apps/extension/src/storage.ts`](../../apps/extension/src/storage.ts) (used by
+the "new posts since last visit" read history). The seam is the whole point —
+the persistent backend slots in there without any feature code or this package
+changing. Built only when there is real, testable work for it — no placeholder
+scaffolding (see [AGENTS.md](../../AGENTS.md)).
 
 ## Exports
 

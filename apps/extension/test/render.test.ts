@@ -41,6 +41,34 @@ describe("renderThread", () => {
     expect(view.querySelector(".ff-post[data-role='mod']")).not.toBeNull();
   });
 
+  it("flags posts new since last visit with a badge and data attribute", () => {
+    const thread: ExtractedThread = {
+      posts: [
+        { id: "1", author: "ada", contentText: "original question" },
+        { id: "2", author: "grace", contentText: "a fresh reply" },
+      ],
+    };
+    const view = renderThread(freshDocument(), thread, { newPostIds: new Set(["2"]) });
+
+    // Only the new post is marked, and the cue carries readable text, not color alone.
+    expect(view.querySelectorAll(".ff-post[data-new='true']")).toHaveLength(1);
+    expect(view.querySelector(".ff-post[data-new='true'] .ff-post__author")?.textContent).toBe(
+      "grace",
+    );
+    expect(Array.from(view.querySelectorAll(".ff-post__new")).map((b) => b.textContent)).toEqual([
+      "New",
+    ]);
+  });
+
+  it("marks no posts new when no ids are passed", () => {
+    const thread: ExtractedThread = {
+      posts: [{ id: "1", author: "ada", contentText: "hi" }],
+    };
+    const view = renderThread(freshDocument(), thread);
+    expect(view.querySelector(".ff-post[data-new='true']")).toBeNull();
+    expect(view.querySelector(".ff-post__new")).toBeNull();
+  });
+
   it("shows an empty state when there are no posts", () => {
     const view = renderThread(freshDocument(), { posts: [] });
     expect(view.querySelector(".ff-empty")?.textContent).toBe("No posts found on this page.");

@@ -20,11 +20,14 @@
   notes, read history, settings) from colliding. Use simple namespaces (no
   colons); ids may contain anything.
 
-**Why no `chrome.storage` backend yet:** it needs a browser to verify
-meaningfully, and writing it now would be a shallow stub — which AGENTS.md
-forbids. Same discipline as the parser PR. Build it when the extension app
-(which needs a bundler + browser) lands, alongside the per-feature stores
-(saved comments, notes) that are Phase 1, not Phase 0.
+**The `chrome.storage` backend now exists** — but in the extension, not this
+package. `apps/extension/src/storage.ts` implements `StorageBackend` over
+`chrome.storage.local`, landed with the first feature that needed persistence
+("new posts since last visit"). Keeping the browser backend in the extension
+keeps `@forumforge/storage` runtime-dependency-free and browser-agnostic; the
+backing `StorageArea` is injected, so it's unit-tested with a fake area (no real
+browser needed). The deferral was about not stubbing ahead of a consumer, not
+about where it ultimately lives.
 
 **Gotcha:** `Promise.all(ids.map(id => get(id)))` over an unconstrained generic
 `T` makes tsc widen to `Awaited<T> | undefined` and a `record is T` filter then

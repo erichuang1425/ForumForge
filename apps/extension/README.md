@@ -2,9 +2,9 @@
 
 The ForumForge **browser extension** — a Manifest V3 app that turns the thread on
 the current page into a clean, readable list in a side panel. It is the Phase 0
-shell that later features (notes, saved posts, new-post tracking) build on, and
-it already ships the first Phase 1 reading features — clean reading mode and OP
-highlighting.
+shell that later features (notes, saved posts) build on, and it already ships the
+first Phase 1 features — clean reading mode, OP highlighting, and **new posts
+since last visit**.
 
 It wires together the foundation packages: the active page's DOM →
 [`@forumforge/parser`](../../packages/parser) → the
@@ -42,13 +42,24 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
   to avoid third-party requests.
 - **`src/messaging.ts`** — the typed message protocol, validated with type guards
   because messages cross the untrusted page boundary.
+- **`src/readHistory.ts`** — the **new posts since last visit** feature. Keyed by
+  the thread's page URL (fragment dropped), it remembers which post ids the reader
+  has already seen and reports the ones that are new on the next visit; the first
+  visit marks nothing. Pure id-diffing logic plus a thin store over a
+  `StorageBackend`. `src/render.ts` gives new posts a "New" badge and an edge
+  accent (text as well as color).
+- **`src/storage.ts`** — `ChromeStorageBackend`, the
+  [`@forumforge/storage`](../../packages/storage) `StorageBackend` implemented over
+  `chrome.storage.local`. Read history (and later notes / saved posts) persist
+  on-device through it; nothing leaves the browser.
 
 ## Permissions
 
 Narrow by design (see [docs/PRIVACY.md](../../docs/PRIVACY.md)): `activeTab` and
 `scripting` so the content script runs **only** on the tab the user invokes
-ForumForge on, plus `sidePanel`. No host permissions, no standing access to pages
-the user hasn't asked about.
+ForumForge on, `sidePanel` for the panel UI, and `storage` to keep per-thread
+read history on-device. No host permissions, no standing access to pages the user
+hasn't asked about, and nothing synced off-device.
 
 ## Develop
 
@@ -58,7 +69,7 @@ From the repo root:
   (esbuild). `pnpm build` builds every package.
 - `pnpm --filter @forumforge/extension typecheck`
 - `pnpm test` — runs the unit tests (extraction wiring, rendering, sanitization,
-  messaging).
+  messaging, read history, and the chrome.storage backend).
 
 ### Load it in a browser
 

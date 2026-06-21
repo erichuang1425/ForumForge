@@ -13,6 +13,16 @@ const ROLE_LABELS: Record<ForumRole, string> = {
   user: "",
 };
 
+/** View options for {@link renderThread}. */
+export type RenderOptions = {
+  /**
+   * Ids of posts that are new since the reader's last visit (see
+   * {@link ../readHistory}). New posts get a "New" badge and an edge accent so
+   * the reader can pick up where they left off.
+   */
+  newPostIds?: ReadonlySet<string>;
+};
+
 /**
  * Build a clean, read-only view of an extracted thread.
  *
@@ -21,9 +31,13 @@ const ROLE_LABELS: Record<ForumRole, string> = {
  * renders the post's rich `contentHtml` when present — run through the
  * allowlist {@link sanitizeHtml}, so only safe, semantic markup reaches the
  * panel — and falls back to plain `contentText` otherwise. Pass the panel's own
- * `document`.
+ * `document`. `options.newPostIds` flags posts new since the last visit.
  */
-export function renderThread(doc: Document, thread: ExtractedThread): HTMLElement {
+export function renderThread(
+  doc: Document,
+  thread: ExtractedThread,
+  options: RenderOptions = {},
+): HTMLElement {
   const root = doc.createElement("section");
   root.className = "ff-thread";
 
@@ -42,19 +56,26 @@ export function renderThread(doc: Document, thread: ExtractedThread): HTMLElemen
     return root;
   }
 
+  const newPostIds = options.newPostIds;
   const list = doc.createElement("ol");
   list.className = "ff-posts";
   for (const post of thread.posts) {
-    list.append(renderPost(doc, post, thread.baseUrl));
+    list.append(renderPost(doc, post, thread.baseUrl, newPostIds?.has(post.id) ?? false));
   }
   root.append(list);
   return root;
 }
 
-function renderPost(doc: Document, post: ForumForgePost, baseUrl?: string): HTMLElement {
+function renderPost(
+  doc: Document,
+  post: ForumForgePost,
+  baseUrl: string | undefined,
+  isNew: boolean,
+): HTMLElement {
   const item = doc.createElement("li");
   item.className = "ff-post";
   if (post.role) item.setAttribute("data-role", post.role);
+  if (isNew) item.setAttribute("data-new", "true");
 
   const meta = doc.createElement("header");
   meta.className = "ff-post__meta";
@@ -70,6 +91,15 @@ function renderPost(doc: Document, post: ForumForgePost, baseUrl?: string): HTML
     role.className = "ff-post__role";
     role.textContent = roleLabel;
     meta.append(role);
+  }
+
+  // The "New" signal is text as well as color (like the role badge), so it
+  // doesn't rely on color alone.
+  if (isNew) {
+    const badge = doc.createElement("span");
+    badge.className = "ff-post__new";
+    badge.textContent = "New";
+    meta.append(badge);
   }
 
   if (post.timestamp) {

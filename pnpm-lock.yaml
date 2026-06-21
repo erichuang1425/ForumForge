@@ -32,6 +32,9 @@ importers:
       '@forumforge/parser':
         specifier: workspace:*
         version: link:../../packages/parser
+      '@forumforge/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
 
   packages/core: {}
 

@@ -46,6 +46,27 @@
         padding: 10px 0;
         border-top: 1px solid #8883;
       }
+      /* OP highlighting: posts by an important voice stand out for the whole
+         thread, with a colored edge and a faint tint (not color alone — the
+         badge text carries the same signal). */
+      .ff-post[data-role="op"],
+      .ff-post[data-role="mod"],
+      .ff-post[data-role="admin"] {
+        border-left: 3px solid #8884;
+        padding-left: 10px;
+      }
+      .ff-post[data-role="op"] {
+        border-left-color: #2563eb;
+        background: #2563eb14;
+      }
+      .ff-post[data-role="mod"] {
+        border-left-color: #16a34a;
+        background: #16a34a14;
+      }
+      .ff-post[data-role="admin"] {
+        border-left-color: #9333ea;
+        background: #9333ea14;
+      }
       .ff-post__meta {
         display: flex;
         gap: 8px;
@@ -57,11 +78,24 @@
       }
       .ff-post__role {
         font-size: 11px;
-        text-transform: uppercase;
         letter-spacing: 0.04em;
         padding: 1px 6px;
         border-radius: 999px;
         background: #8882;
+      }
+      .ff-post[data-role="op"] .ff-post__role {
+        background: #2563eb;
+        color: #fff;
+      }
+      .ff-post[data-role="mod"] .ff-post__role {
+        /* Darker green than the edge so white badge text clears WCAG AA
+           contrast (~5:1) — the badge text is the non-color role signal. */
+        background: #15803d;
+        color: #fff;
+      }
+      .ff-post[data-role="admin"] .ff-post__role {
+        background: #9333ea;
+        color: #fff;
       }
       .ff-post__time {
         color: #888;

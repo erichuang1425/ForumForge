@@ -2,8 +2,9 @@
 
 The ForumForge **browser extension** — a Manifest V3 app that turns the thread on
 the current page into a clean, readable list in a side panel. It is the Phase 0
-shell that later features (clean reading mode, OP highlighting, notes, saved
-posts) build on.
+shell that later features (notes, saved posts, new-post tracking) build on, and
+it already ships the first Phase 1 reading features — clean reading mode and OP
+highlighting.
 
 It wires together the foundation packages: the active page's DOM →
 [`@forumforge/parser`](../../packages/parser) → the
@@ -28,6 +29,10 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
 - **`src/render.ts`** — builds the read-only view. Author, role and timestamp are
   written with `textContent`; the body renders the post's rich `contentHtml`
   through the sanitizer (clean reading mode), falling back to plain text.
+  **OP highlighting:** OP / moderator / admin posts get a readable role badge and
+  a colored edge (driven by a `data-role` attribute and styled in
+  `public/sidepanel.html`); the role is set by the parser and follows the OP
+  through the whole thread. The plain "user" role is left unmarked.
 - **`src/sanitize.ts`** — the **clean reading mode** sanitizer. Untrusted post
   HTML is parsed inertly and rebuilt from an allowlist of safe, semantic tags and
   attributes, so no script, inline handler, style, embed or unsafe URL survives

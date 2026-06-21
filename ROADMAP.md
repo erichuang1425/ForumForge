@@ -8,8 +8,10 @@ features before the adapter ecosystem, AI last and always optional.
 > **Status:** Phase 0 complete; Phase 1 underway. The foundation — core post
 > model, generic extractor, local storage layer — and the `apps/extension` MV3
 > shell (background, on-demand content script, side panel) are built, unit-tested,
-> and bundled via esbuild. Phase 1 has begun with **clean reading mode**: the side
-> panel now renders each post's rich `contentHtml` through an allowlist sanitizer.
+> and bundled via esbuild. Phase 1 has begun with **clean reading mode** (the side
+> panel renders each post's rich `contentHtml` through an allowlist sanitizer) and
+> **OP highlighting** (OP / mod / admin posts get a readable badge and a colored
+> edge so the important voices stand out across the thread).
 
 ## Phase 0 — Foundation
 
@@ -23,7 +25,7 @@ features before the adapter ecosystem, AI last and always optional.
 ## Phase 1 — First useful version
 
 - [x] Clean reading mode — sanitized rich `contentHtml` rendering in the side panel (`apps/extension`)
-- [ ] OP highlighting
+- [x] OP highlighting — OP / mod / admin posts get a readable badge and a colored edge in the side panel (`apps/extension`)
 - [ ] New posts since last visit
 - [ ] Save comments
 - [ ] Local user notes

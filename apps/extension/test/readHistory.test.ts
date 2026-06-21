@@ -23,6 +23,17 @@ describe("threadKey", () => {
     );
   });
 
+  it("keeps a client-side route fragment so SPA threads stay distinct", () => {
+    // On forums whose thread route lives in the hash, dropping it would collapse
+    // every thread under one path into a single key.
+    expect(threadKey("https://site.example/#/thread/42")).toBe(
+      "https://site.example/#/thread/42",
+    );
+    expect(threadKey("https://site.example/#/thread/42")).not.toBe(
+      threadKey("https://site.example/#/thread/7"),
+    );
+  });
+
   it("returns the input unchanged when it isn't a valid URL", () => {
     expect(threadKey("not a url")).toBe("not a url");
   });

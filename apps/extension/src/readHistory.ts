@@ -33,10 +33,14 @@ export type VisitResult = {
 type HasId = { id: string };
 
 /**
- * A stable key for a thread, derived from its page URL. The fragment (`#post-12`)
- * is dropped because it changes as the reader jumps around a thread but still
- * points at the same page. The query string is kept: many forums put the thread
- * or page number there, so it is part of the page's identity.
+ * A stable key for a thread, derived from its page URL. A post-anchor fragment
+ * (`#post-12`, `#p9`) is dropped — it changes as the reader jumps around a
+ * thread but still points at the same page — while a client-side route fragment
+ * (`#/thread/42`, `#!/topic/5`, common on SPA forums) is KEPT, since on those
+ * sites the thread identity lives in the fragment and dropping it would collapse
+ * every thread under one path into a single key. Route fragments contain a `/`;
+ * plain anchors don't. The query string is always kept: many forums put the
+ * thread or page number there, so it is part of the page's identity.
  *
  * Generic-phase limitation: a paginated thread's pages are tracked separately
  * (each page is its own URL). A site adapter can refine this later.
@@ -44,7 +48,7 @@ type HasId = { id: string };
 export function threadKey(url: string): string {
   try {
     const parsed = new URL(url);
-    parsed.hash = "";
+    if (!parsed.hash.includes("/")) parsed.hash = "";
     return parsed.href;
   } catch {
     return url;

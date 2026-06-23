@@ -51,9 +51,14 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
 - **`src/savedPosts.ts`** — the **save comments** feature. The reader can save any
   post; ForumForge keeps a snapshot (content frozen at save time) plus where it
   came from, keyed per thread so the same post id in two threads can't collide.
-  Saved posts can be revisited and (later) exported to Markdown. `src/render.ts`
-  gives each post a "Save"/"Saved" toggle; `src/sidepanel.ts` wires the click and
-  persists the change, so the render stays a pure view.
+  Saved posts can be revisited and exported to Markdown (see `src/markdown.ts`).
+  `src/render.ts` gives each post a "Save"/"Saved" toggle; `src/sidepanel.ts`
+  wires the click and persists the change, so the render stays a pure view.
+- **`src/markdown.ts`** — the **Markdown export** feature. A pure function turns
+  saved-post snapshots into a clean Markdown note, grouped by source thread, with
+  each post's author/role/timestamp, a blockquoted body, and a permalink.
+  `src/sidepanel.ts`'s "Export saved" button gathers every saved post and
+  downloads the file on-device — no new permissions, nothing leaves the browser.
 - **`src/userNotes.ts`** — the **local user notes** feature. The reader can attach
   a private note to an author; the note is keyed per forum *origin* (not per
   thread), so it follows the author across every thread on that site but never
@@ -83,7 +88,8 @@ From the repo root:
   (esbuild). `pnpm build` builds every package.
 - `pnpm --filter @forumforge/extension typecheck`
 - `pnpm test` — runs the unit tests (extraction wiring, rendering, sanitization,
-  messaging, read history, saved posts, user notes, and the chrome.storage backend).
+  messaging, read history, saved posts, user notes, Markdown export, and the
+  chrome.storage backend).
 
 ### Load it in a browser
 
@@ -91,7 +97,8 @@ From the repo root:
 2. Open `chrome://extensions`, enable **Developer mode**, **Load unpacked**, and
    select `apps/extension/dist/`.
 3. Open a forum thread, click the ForumForge toolbar icon to open the panel, then
-   **Read this thread**.
+   **Read this thread**. Save useful posts, then **Export saved** to download them
+   as a Markdown file.
 
 > The unit tests and the bundle build are automated; loading the unpacked
 > extension and clicking through is a manual step (it needs a real browser).

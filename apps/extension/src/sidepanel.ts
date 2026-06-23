@@ -5,6 +5,7 @@ import { ChromeStorageBackend } from "./storage";
 import { ReadHistory } from "./readHistory";
 import { SavedPosts } from "./savedPosts";
 import { UserNotes } from "./userNotes";
+import { savedPostsToMarkdown } from "./markdown";
 
 /** The built content script, injected on demand into the active tab. */
 const CONTENT_SCRIPT = "content.js";
@@ -135,11 +136,77 @@ async function onSaveClick(button: HTMLElement): Promise<void> {
       threadTitle: currentThread.title,
     });
     setSaveButtonState(button, isSaved);
+    // The export action covers every saved post, so its availability tracks
+    // whether any save now exists — not just this thread's.
+    void refreshExportButton();
   } catch (error) {
     console.error("ForumForge: could not update saved post:", error);
   } finally {
     button.toggleAttribute("disabled", false);
   }
+}
+
+/**
+ * Enable "Export saved" only when there is at least one saved post anywhere, so
+ * the action never produces an empty note. Called on load and after every save.
+ */
+async function refreshExportButton(): Promise<void> {
+  const button = document.querySelector<HTMLButtonElement>("#ff-export");
+  if (!button) return;
+  try {
+    const saved = await savedPosts.all();
+    button.disabled = saved.length === 0;
+  } catch (error) {
+    console.error("ForumForge: could not check saved posts:", error);
+    button.disabled = true;
+  }
+}
+
+/**
+ * Export every saved post to a Markdown file the reader downloads. Local-first:
+ * it reads only on-device saves and builds the file in the panel — nothing
+ * leaves the browser, and the download uses the page's own anchor, so no new
+ * permission is needed.
+ */
+async function exportSavedPosts(): Promise<void> {
+  const status = requireElement("#ff-status");
+  let saved;
+  try {
+    saved = await savedPosts.all();
+  } catch (error) {
+    console.error("ForumForge: could not read saved posts for export:", error);
+    status.textContent = "Couldn't read saved posts to export.";
+    return;
+  }
+  if (saved.length === 0) {
+    status.textContent = "No saved posts to export yet.";
+    return;
+  }
+
+  const markdown = savedPostsToMarkdown(saved);
+  downloadText(markdown, exportFilename(new Date()), "text/markdown");
+  status.textContent = `Exported ${saved.length === 1 ? "1 saved post" : `${saved.length} saved posts`}.`;
+}
+
+/** A date-stamped, filesystem-safe export filename, e.g. forumforge-saved-2026-06-23.md. */
+function exportFilename(now: Date): string {
+  const date = now.toISOString().slice(0, 10);
+  return `forumforge-saved-${date}.md`;
+}
+
+/**
+ * Trigger a client-side download of `text` via a temporary object URL and
+ * anchor. Kept here (not in the pure markdown module) because it touches the DOM
+ * and `URL`. The object URL is revoked once the click is dispatched.
+ */
+function downloadText(text: string, filename: string, mimeType: string): void {
+  const blob = new Blob([text], { type: `${mimeType};charset=utf-8` });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 /** Expand or collapse the note editor a clicked "Note" toggle owns. */
@@ -192,6 +259,13 @@ document.addEventListener("DOMContentLoaded", () => {
   requireElement("#ff-extract").addEventListener("click", () => {
     void readActiveThread();
   });
+
+  requireElement("#ff-export").addEventListener("click", () => {
+    void exportSavedPosts();
+  });
+
+  // Reflect any saves from earlier sessions before the reader touches anything.
+  void refreshExportButton();
 
   // One delegated listener on the persistent output container survives each
   // re-render (the container stays; only its children are replaced).

@@ -16,7 +16,8 @@ features before the adapter ecosystem, AI last and always optional.
 > `chrome.storage.local`, flags the posts you haven't seen yet), **saved
 > comments** (a per-post Save toggle keeps an on-device snapshot of useful posts),
 > and **local user notes** (a private, per-author note that follows the author
-> across every thread on the forum).
+> across every thread on the forum), and **Markdown export** (saved posts export
+> to a clean Markdown file, grouped by source thread, downloaded on-device).
 
 ## Phase 0 — Foundation
 
@@ -34,7 +35,7 @@ features before the adapter ecosystem, AI last and always optional.
 - [x] New posts since last visit — per-thread read history (on-device via `chrome.storage.local`) flags posts unseen since the last visit (`apps/extension`)
 - [x] Save comments — a per-post Save toggle keeps an on-device snapshot of useful posts (`apps/extension`)
 - [x] Local user notes — a private, per-author note (scoped on-device per forum origin) shown on every post by that author (`apps/extension`)
-- [ ] Markdown export
+- [x] Markdown export — export saved posts to a clean Markdown file, grouped by source thread, downloaded on-device (`apps/extension`)
 - [ ] Discourse adapter
 - [ ] Hacker News adapter
 

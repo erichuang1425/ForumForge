@@ -29,6 +29,24 @@
         padding: 6px 10px;
         cursor: pointer;
       }
+      /* Export saved posts to a Markdown file. Disabled until there is
+         something to export, so the action never produces an empty note. */
+      #ff-export {
+        font: inherit;
+        padding: 6px 10px;
+        cursor: pointer;
+        background: transparent;
+        color: inherit;
+        border: 1px solid #8886;
+        border-radius: 4px;
+      }
+      #ff-export:hover:not([disabled]) {
+        border-color: #888a;
+      }
+      #ff-export[disabled] {
+        cursor: default;
+        opacity: 0.6;
+      }
       #ff-status {
         color: #777;
         margin: 8px 0 12px;
@@ -252,6 +270,7 @@
   <body>
     <header class="ff-bar">
       <h1 class="ff-app">ForumForge</h1>
+      <button id="ff-export" type="button" disabled>Export saved</button>
       <button id="ff-extract" type="button">Read this thread</button>
     </header>
     <p id="ff-status">Open a forum thread, then “Read this thread”.</p>

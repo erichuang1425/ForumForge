@@ -61,9 +61,11 @@ export function savedPostsToMarkdown(
   lines.push(`_${summary(saved.length, groups.length)} · exported ${when.toISOString()}._`, "");
 
   for (const group of groups) {
-    lines.push(`## ${group.title ?? group.url}`, "");
+    // The thread title is untrusted page text; the URL fallback is the reader's
+    // own tab location. Escape the former, show the latter as the URL it is.
+    lines.push(`## ${group.title ? escapeMarkdown(group.title) : group.url}`, "");
     // Link out to the source thread when there is a title to separate it from.
-    if (group.title) lines.push(`[Open thread](${group.url})`, "");
+    if (group.title) lines.push(mdLink("Open thread", group.url), "");
 
     for (const saved of group.posts) {
       lines.push(...renderPost(saved), "");
@@ -92,11 +94,12 @@ function groupByThread(saved: readonly SavedPost[]): ThreadGroup[] {
 function renderPost(record: SavedPost): string[] {
   const { post } = record;
   const role = post.role ? ROLE_LABELS[post.role] : "";
+  // author and timestamp are untrusted page text; role is one of our own labels.
   const meta = [post.author, role, post.timestamp].filter((part) => part).join(" · ");
 
-  const out: string[] = [`### ${meta}`, ""];
+  const out: string[] = [`### ${escapeMarkdown(meta)}`, ""];
   out.push(...blockquote(post.contentText), "");
-  if (post.permalink) out.push(`[Permalink](${post.permalink})`);
+  if (post.permalink) out.push(mdLink("Permalink", post.permalink));
   // Drop a trailing blank pushed by an empty body so spacing stays uniform.
   return out.filter((line, index) => !(line === "" && out[index + 1] === ""));
 }
@@ -104,12 +107,47 @@ function renderPost(record: SavedPost): string[] {
 /**
  * Render text as a Markdown blockquote: every line prefixed with `>`, so the
  * post body — whatever it contains — stays visibly contained and can't be
- * mistaken for document structure. An empty body becomes an em dash.
+ * mistaken for document structure. The body is untrusted page text, so each
+ * line is escaped ({@link escapeMarkdown}) before quoting. An empty body becomes
+ * an em dash.
  */
 function blockquote(text: string): string[] {
   const trimmed = text.trim();
   if (trimmed === "") return ["> —"];
-  return trimmed.split("\n").map((line) => (line === "" ? ">" : `> ${line}`));
+  return trimmed.split("\n").map((line) => (line === "" ? ">" : `> ${escapeMarkdown(line)}`));
+}
+
+/**
+ * Escape untrusted plain text so a Markdown renderer shows it literally instead
+ * of interpreting it. Post bodies, author names, titles and timestamps all come
+ * from the forum page (untrusted, see SECURITY.md). Without this, text such as
+ * `![x](https://tracker.example/pixel)` or a raw `<img>` tag would become active
+ * Markdown on export — including remote image loads that leak a signal the
+ * moment the reader opens the file. Backslash-escaping every ASCII-punctuation
+ * character that can begin a Markdown or HTML construct keeps the text inert.
+ */
+function escapeMarkdown(text: string): string {
+  // Backslash is escaped first (it leads the class) so the escapes we add below
+  // aren't themselves re-escaped.
+  return text.replace(/[\\`*_{}[\]<>()#+.!|~&-]/g, (ch) => `\\${ch}`);
+}
+
+/**
+ * A Markdown link with an escaped label and a contained destination. The label
+ * is untrusted; the URL is a captured `href`. Percent-encoding the characters
+ * that would otherwise close or break out of the `(...)` destination keeps the
+ * link valid and prevents it from injecting trailing Markdown.
+ */
+function mdLink(label: string, url: string): string {
+  return `[${escapeMarkdown(label)}](${escapeUrl(url)})`;
+}
+
+/** Percent-encode the characters that could break out of a link destination. */
+function escapeUrl(url: string): string {
+  return url.replace(
+    /[\s()<>\\]/g,
+    (ch) => `%${ch.charCodeAt(0).toString(16).padStart(2, "0").toUpperCase()}`,
+  );
 }
 
 /** "N posts from M threads", pluralized. */

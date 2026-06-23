@@ -115,4 +115,44 @@ describe("savedPostsToMarkdown", () => {
     );
     expect(md).toContain("_2 posts from 2 threads · exported 2026-06-23T12:00:00.000Z._");
   });
+
+  it("escapes Markdown/HTML in untrusted body text so it can't become active content", () => {
+    const md = savedPostsToMarkdown(
+      [
+        saved(
+          "https://f.example/t/5",
+          post("1", { contentText: "see ![x](https://tracker.example/pixel) and <img src=x>" }),
+        ),
+      ],
+      { now: when },
+    );
+    // Neither the image syntax nor the raw tag may survive as active Markdown/HTML.
+    expect(md).not.toContain("![x](https://tracker.example/pixel)");
+    expect(md).not.toContain("<img src=x>");
+    expect(md).toContain("\\!\\[x\\]");
+  });
+
+  it("escapes Markdown/HTML in untrusted author names and thread titles", () => {
+    const md = savedPostsToMarkdown(
+      [
+        saved("https://f.example/t/5", post("1", { author: "<img src=x onerror=1>" }), {
+          threadTitle: "**bold** title",
+        }),
+      ],
+      { now: when },
+    );
+    expect(md).not.toContain("<img src=x onerror=1>");
+    expect(md).not.toContain("**bold** title");
+    expect(md).toContain("## \\*\\*bold\\*\\* title");
+  });
+
+  it("contains link destinations so a URL with parentheses can't break out", () => {
+    const md = savedPostsToMarkdown(
+      [saved("https://f.example/t/5", post("1", { permalink: "https://f.example/p(1)" }), {
+        threadTitle: "T",
+      })],
+      { now: when },
+    );
+    expect(md).toContain("[Permalink](https://f.example/p%281%29)");
+  });
 });

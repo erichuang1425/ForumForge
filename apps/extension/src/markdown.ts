@@ -62,9 +62,9 @@ export function savedPostsToMarkdown(
   lines.push(`_${summary(saved.length, groups.length)} · exported ${when.toISOString()}._`, "");
 
   for (const group of groups) {
-    // The thread title is untrusted page text; the URL fallback is the reader's
-    // own tab location. Escape the former, show the latter as the URL it is.
-    lines.push(`## ${group.title ? escapeMarkdown(group.title) : group.url}`, "");
+    // Both the title (untrusted page text) and the URL fallback (a slug can
+    // carry Markdown too) are escaped so the heading can never become active.
+    lines.push(`## ${escapeMarkdown(group.title ?? group.url)}`, "");
     // Link out to the source thread when there is a title to separate it from
     // and the URL passes the shared scheme allowlist.
     const threadHref = group.title ? safeHref(group.url, group.url) : undefined;

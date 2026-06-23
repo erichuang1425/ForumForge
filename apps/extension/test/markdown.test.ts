@@ -65,8 +65,17 @@ describe("savedPostsToMarkdown", () => {
   it("falls back to the thread URL as heading and omits the link when there is no title", () => {
     const url = "https://f.example/t/9";
     const md = savedPostsToMarkdown([saved(url, post("1"))], { now: when });
-    expect(md).toContain(`## ${url}`);
+    // The URL is escaped like any other untrusted text (the dot becomes \.).
+    expect(md).toContain("## https://f\\.example/t/9");
     expect(md).not.toContain("[Open thread]");
+  });
+
+  it("escapes a Markdown-bearing URL used as a heading fallback", () => {
+    const md = savedPostsToMarkdown(
+      [saved("https://f.example/![x](https://tracker.example/pixel)", post("1"))],
+      { now: when },
+    );
+    expect(md).not.toContain("![x](https://tracker.example/pixel)");
   });
 
   it("includes author, role, timestamp and permalink in a post entry", () => {

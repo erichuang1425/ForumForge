@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { parseHTML } from "linkedom";
 import type { ExtractedThread } from "@forumforge/parser";
-import { renderThread } from "../src/render";
+import { renderThread, setSaveButtonState } from "../src/render";
 
 function freshDocument(): Document {
   const { document } = parseHTML("<!doctype html><html><body></body></html>");
@@ -67,6 +67,64 @@ describe("renderThread", () => {
     const view = renderThread(freshDocument(), thread);
     expect(view.querySelector(".ff-post[data-new='true']")).toBeNull();
     expect(view.querySelector(".ff-post__new")).toBeNull();
+  });
+
+  it("gives every post a Save toggle carrying its id, unpressed by default", () => {
+    const thread: ExtractedThread = {
+      posts: [
+        { id: "1", author: "ada", contentText: "first" },
+        { id: "2", author: "grace", contentText: "second" },
+      ],
+    };
+    const view = renderThread(freshDocument(), thread);
+    const buttons = view.querySelectorAll<HTMLButtonElement>(".ff-post__save");
+
+    expect(buttons).toHaveLength(2);
+    expect(Array.from(buttons).map((b) => b.getAttribute("data-post-id"))).toEqual(["1", "2"]);
+    expect(Array.from(buttons).map((b) => b.textContent)).toEqual(["Save", "Save"]);
+    expect(Array.from(buttons).every((b) => b.getAttribute("aria-pressed") === "false")).toBe(true);
+    expect(view.querySelector(".ff-post[data-post-id='1']")).not.toBeNull();
+  });
+
+  it("renders already-saved posts as pressed", () => {
+    const thread: ExtractedThread = {
+      posts: [
+        { id: "1", author: "ada", contentText: "first" },
+        { id: "2", author: "grace", contentText: "second" },
+      ],
+    };
+    const view = renderThread(freshDocument(), thread, { savedPostIds: new Set(["2"]) });
+
+    const saved = view.querySelector(".ff-post[data-saved='true']");
+    expect(saved?.getAttribute("data-post-id")).toBe("2");
+    expect(view.querySelector(".ff-post[data-post-id='2'] .ff-post__save")?.textContent).toBe(
+      "Saved",
+    );
+    expect(
+      view
+        .querySelector(".ff-post[data-post-id='2'] .ff-post__save")
+        ?.getAttribute("aria-pressed"),
+    ).toBe("true");
+    expect(view.querySelector(".ff-post[data-post-id='1']")?.hasAttribute("data-saved")).toBe(false);
+  });
+
+  it("setSaveButtonState flips a button's label, aria-pressed and the post flag", () => {
+    const view = renderThread(freshDocument(), {
+      posts: [{ id: "1", author: "ada", contentText: "first" }],
+    });
+    const button = view.querySelector<HTMLElement>(".ff-post__save");
+    const post = view.querySelector<HTMLElement>(".ff-post");
+    if (!button || !post) throw new Error("expected a post with a Save button");
+
+    setSaveButtonState(button, true);
+    expect(button.textContent).toBe("Saved");
+    expect(button.getAttribute("aria-pressed")).toBe("true");
+    expect(post.getAttribute("data-saved")).toBe("true");
+
+    setSaveButtonState(button, false);
+    expect(button.textContent).toBe("Save");
+    expect(button.getAttribute("aria-pressed")).toBe("false");
+    expect(post.hasAttribute("data-saved")).toBe(false);
   });
 
   it("shows an empty state when there are no posts", () => {

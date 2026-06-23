@@ -173,6 +173,11 @@
         gap: 6px;
         margin-top: 8px;
       }
+      /* A `display` rule beats the `hidden` attribute's default `display: none`,
+         so without this the editor would show even while collapsed. Restore it. */
+      .ff-post__note[hidden] {
+        display: none;
+      }
       .ff-post__note-input {
         font: inherit;
         width: 100%;

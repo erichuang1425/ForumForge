@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@forumforge/core": "workspace:*",
-    "@forumforge/parser": "workspace:*"
+    "@forumforge/parser": "workspace:*",
+    "@forumforge/storage": "workspace:*"
   }
 }

@@ -97,6 +97,24 @@
         background: #9333ea;
         color: #fff;
       }
+      /* New since last visit: an amber "New" badge (text + color, not color
+         alone) plus an edge accent. Posts that already carry a role edge keep
+         it — the badge alone signals "new" there — so the two cues don't fight. */
+      .ff-post__new {
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        padding: 1px 6px;
+        border-radius: 999px;
+        /* amber-700: white text clears WCAG AA contrast (~4.9:1). */
+        background: #b45309;
+        color: #fff;
+      }
+      .ff-post[data-new="true"]:not([data-role="op"]):not([data-role="mod"]):not(
+          [data-role="admin"]
+        ) {
+        border-left: 3px solid #b45309;
+        padding-left: 10px;
+      }
       .ff-post__time {
         color: #888;
         font-size: 12px;

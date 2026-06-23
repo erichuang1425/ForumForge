@@ -48,6 +48,19 @@ declare namespace chrome {
     }): Promise<unknown>;
   }
 
+  namespace storage {
+    /**
+     * A key/value area (the extension uses `local`). `get(null)` returns every
+     * stored item; `get(key)` returns an object holding just that key when present.
+     */
+    interface StorageArea {
+      get(keys?: string | string[] | null): Promise<Record<string, unknown>>;
+      set(items: Record<string, unknown>): Promise<void>;
+      remove(keys: string | string[]): Promise<void>;
+    }
+    const local: StorageArea;
+  }
+
   namespace sidePanel {
     function open(options: { tabId?: number; windowId?: number }): Promise<void>;
   }

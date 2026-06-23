@@ -3,7 +3,7 @@
   "name": "ForumForge",
   "version": "0.0.0",
   "description": "Modernize messy forum threads into a clean, readable view — local-first, from your own browser.",
-  "permissions": ["activeTab", "scripting", "sidePanel"],
+  "permissions": ["activeTab", "scripting", "sidePanel", "storage"],
   "action": {
     "default_title": "Open ForumForge"
   },

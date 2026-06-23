@@ -9,9 +9,11 @@ features before the adapter ecosystem, AI last and always optional.
 > model, generic extractor, local storage layer — and the `apps/extension` MV3
 > shell (background, on-demand content script, side panel) are built, unit-tested,
 > and bundled via esbuild. Phase 1 has begun with **clean reading mode** (the side
-> panel renders each post's rich `contentHtml` through an allowlist sanitizer) and
+> panel renders each post's rich `contentHtml` through an allowlist sanitizer),
 > **OP highlighting** (OP / mod / admin posts get a readable badge and a colored
-> edge so the important voices stand out across the thread).
+> edge so the important voices stand out across the thread), and **new posts
+> since last visit** (per-thread read history, persisted on-device via
+> `chrome.storage.local`, flags the posts you haven't seen yet).
 
 ## Phase 0 — Foundation
 
@@ -26,7 +28,7 @@ features before the adapter ecosystem, AI last and always optional.
 
 - [x] Clean reading mode — sanitized rich `contentHtml` rendering in the side panel (`apps/extension`)
 - [x] OP highlighting — OP / mod / admin posts get a readable badge and a colored edge in the side panel (`apps/extension`)
-- [ ] New posts since last visit
+- [x] New posts since last visit — per-thread read history (on-device via `chrome.storage.local`) flags posts unseen since the last visit (`apps/extension`)
 - [ ] Save comments
 - [ ] Local user notes
 - [ ] Markdown export

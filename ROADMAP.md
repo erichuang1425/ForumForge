@@ -13,8 +13,10 @@ features before the adapter ecosystem, AI last and always optional.
 > **OP highlighting** (OP / mod / admin posts get a readable badge and a colored
 > edge so the important voices stand out across the thread), and **new posts
 > since last visit** (per-thread read history, persisted on-device via
-> `chrome.storage.local`, flags the posts you haven't seen yet), and **saved
-> comments** (a per-post Save toggle keeps an on-device snapshot of useful posts).
+> `chrome.storage.local`, flags the posts you haven't seen yet), **saved
+> comments** (a per-post Save toggle keeps an on-device snapshot of useful posts),
+> and **local user notes** (a private, per-author note that follows the author
+> across every thread on the forum).
 
 ## Phase 0 — Foundation
 
@@ -31,7 +33,7 @@ features before the adapter ecosystem, AI last and always optional.
 - [x] OP highlighting — OP / mod / admin posts get a readable badge and a colored edge in the side panel (`apps/extension`)
 - [x] New posts since last visit — per-thread read history (on-device via `chrome.storage.local`) flags posts unseen since the last visit (`apps/extension`)
 - [x] Save comments — a per-post Save toggle keeps an on-device snapshot of useful posts (`apps/extension`)
-- [ ] Local user notes
+- [x] Local user notes — a private, per-author note (scoped on-device per forum origin) shown on every post by that author (`apps/extension`)
 - [ ] Markdown export
 - [ ] Discourse adapter
 - [ ] Hacker News adapter

@@ -27,6 +27,14 @@ export type RenderOptions = {
    * only reflects state — so this stays a pure view.
    */
   savedPostIds?: ReadonlySet<string>;
+  /**
+   * Private notes the reader has written about authors (see {@link ./userNotes}),
+   * keyed by author display name. Each post gets a collapsible note editor
+   * pre-filled with its author's note; posts whose author has one are flagged so
+   * the reader can spot annotated people. The panel wires saving — render only
+   * reflects state.
+   */
+  userNotes?: ReadonlyMap<string, string>;
 };
 
 /**
@@ -64,6 +72,7 @@ export function renderThread(
 
   const newPostIds = options.newPostIds;
   const savedPostIds = options.savedPostIds;
+  const userNotes = options.userNotes;
   const list = doc.createElement("ol");
   list.className = "ff-posts";
   for (const post of thread.posts) {
@@ -71,6 +80,7 @@ export function renderThread(
       renderPost(doc, post, thread.baseUrl, {
         isNew: newPostIds?.has(post.id) ?? false,
         isSaved: savedPostIds?.has(post.id) ?? false,
+        note: userNotes?.get(post.author) ?? "",
       }),
     );
   }
@@ -79,7 +89,7 @@ export function renderThread(
 }
 
 /** Per-post view flags resolved from {@link RenderOptions}. */
-type PostFlags = { isNew: boolean; isSaved: boolean };
+type PostFlags = { isNew: boolean; isSaved: boolean; note: string };
 
 function renderPost(
   doc: Document,
@@ -129,9 +139,64 @@ function renderPost(
   }
 
   meta.append(renderSaveButton(doc, post.id, flags.isSaved));
+  meta.append(renderNoteToggle(doc));
 
-  item.append(meta, renderBody(doc, post, baseUrl));
+  item.append(meta, renderBody(doc, post, baseUrl), renderNoteEditor(doc, post.author));
+  setNoteState(item, flags.note);
   return item;
+}
+
+/**
+ * The "Note" toggle for a post. It only shows/hides the post's note editor (the
+ * panel wires that), so it carries `aria-expanded`, starting collapsed.
+ */
+function renderNoteToggle(doc: Document): HTMLElement {
+  const button = doc.createElement("button");
+  button.type = "button";
+  button.className = "ff-post__note-toggle";
+  button.textContent = "Note";
+  button.setAttribute("aria-expanded", "false");
+  return button;
+}
+
+/**
+ * The collapsible note editor for a post's author: a textarea plus a Save
+ * button, hidden until the reader opens it. `data-author` rides on the region so
+ * the panel can find every post by the same author and keep their notes in sync.
+ * The author is written via `value`/attributes, never parsed as markup.
+ */
+function renderNoteEditor(doc: Document, author: string): HTMLElement {
+  const region = doc.createElement("div");
+  region.className = "ff-post__note";
+  region.setAttribute("data-author", author);
+  region.hidden = true;
+
+  const input = doc.createElement("textarea");
+  input.className = "ff-post__note-input";
+  input.setAttribute("rows", "3");
+  input.setAttribute("aria-label", `Private note about ${author}`);
+  input.placeholder = `Private note about ${author}…`;
+
+  const save = doc.createElement("button");
+  save.type = "button";
+  save.className = "ff-post__note-save";
+  save.textContent = "Save note";
+
+  region.append(input, save);
+  return region;
+}
+
+/**
+ * Reflect an author's note on a post: pre-fill the editor's textarea and flag
+ * the post with `data-has-note` when there is one (a non-color cue the author is
+ * annotated). Shared by initial render and the panel's post-save update so the
+ * two never drift, and applied across every post by the same author at once.
+ */
+export function setNoteState(post: HTMLElement, note: string): void {
+  const input = post.querySelector<HTMLTextAreaElement>(".ff-post__note-input");
+  if (input) input.value = note;
+  if (note.trim() !== "") post.setAttribute("data-has-note", "true");
+  else post.removeAttribute("data-has-note");
 }
 
 /**

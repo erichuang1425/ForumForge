@@ -145,6 +145,63 @@
         cursor: default;
         opacity: 0.6;
       }
+      /* Note toggle: same pill as Save. A post whose author already has a note
+         gets a small dot before the label — a non-color cue (the dot, not just a
+         tint) that the author is annotated. */
+      .ff-post__note-toggle {
+        font: inherit;
+        font-size: 12px;
+        padding: 1px 8px;
+        border: 1px solid #8886;
+        border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+      }
+      .ff-post__note-toggle:hover {
+        border-color: #888a;
+      }
+      .ff-post[data-has-note="true"] .ff-post__note-toggle::before {
+        content: "● ";
+        color: #b45309;
+      }
+      /* Note editor: collapsed until the reader opens it (the `hidden` attribute
+         handles that). A textarea plus a Save button stacked under the post. */
+      .ff-post__note {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .ff-post__note-input {
+        font: inherit;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 6px 8px;
+        border: 1px solid #8886;
+        border-radius: 4px;
+        background: transparent;
+        color: inherit;
+        resize: vertical;
+      }
+      .ff-post__note-save {
+        font: inherit;
+        font-size: 12px;
+        align-self: flex-start;
+        padding: 2px 10px;
+        border: 1px solid #8886;
+        border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+      }
+      .ff-post__note-save:hover {
+        border-color: #888a;
+      }
+      .ff-post__note-save[disabled] {
+        cursor: default;
+        opacity: 0.6;
+      }
       .ff-post__body {
         margin: 0;
         overflow-wrap: anywhere;

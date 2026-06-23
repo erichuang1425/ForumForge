@@ -2,9 +2,9 @@
 
 The ForumForge **browser extension** — a Manifest V3 app that turns the thread on
 the current page into a clean, readable list in a side panel. It is the Phase 0
-shell that later features (notes, saved posts) build on, and it already ships the
-first Phase 1 features — clean reading mode, OP highlighting, and **new posts
-since last visit**.
+shell that later features (notes) build on, and it already ships the first Phase 1
+features — clean reading mode, OP highlighting, **new posts since last visit**,
+and **saving useful posts**.
 
 It wires together the foundation packages: the active page's DOM →
 [`@forumforge/parser`](../../packages/parser) → the
@@ -48,9 +48,15 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
   visit marks nothing. Pure id-diffing logic plus a thin store over a
   `StorageBackend`. `src/render.ts` gives new posts a "New" badge and an edge
   accent (text as well as color).
+- **`src/savedPosts.ts`** — the **save comments** feature. The reader can save any
+  post; ForumForge keeps a snapshot (content frozen at save time) plus where it
+  came from, keyed per thread so the same post id in two threads can't collide.
+  Saved posts can be revisited and (later) exported to Markdown. `src/render.ts`
+  gives each post a "Save"/"Saved" toggle; `src/sidepanel.ts` wires the click and
+  persists the change, so the render stays a pure view.
 - **`src/storage.ts`** — `ChromeStorageBackend`, the
   [`@forumforge/storage`](../../packages/storage) `StorageBackend` implemented over
-  `chrome.storage.local`. Read history (and later notes / saved posts) persist
+  `chrome.storage.local`. Read history, saved posts (and later notes) persist
   on-device through it; nothing leaves the browser.
 
 ## Permissions
@@ -58,8 +64,8 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
 Narrow by design (see [docs/PRIVACY.md](../../docs/PRIVACY.md)): `activeTab` and
 `scripting` so the content script runs **only** on the tab the user invokes
 ForumForge on, `sidePanel` for the panel UI, and `storage` to keep per-thread
-read history on-device. No host permissions, no standing access to pages the user
-hasn't asked about, and nothing synced off-device.
+read history and saved posts on-device. No host permissions, no standing access to
+pages the user hasn't asked about, and nothing synced off-device.
 
 ## Develop
 
@@ -69,7 +75,7 @@ From the repo root:
   (esbuild). `pnpm build` builds every package.
 - `pnpm --filter @forumforge/extension typecheck`
 - `pnpm test` — runs the unit tests (extraction wiring, rendering, sanitization,
-  messaging, read history, and the chrome.storage backend).
+  messaging, read history, saved posts, and the chrome.storage backend).
 
 ### Load it in a browser
 

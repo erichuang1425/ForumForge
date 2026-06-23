@@ -13,7 +13,8 @@ features before the adapter ecosystem, AI last and always optional.
 > **OP highlighting** (OP / mod / admin posts get a readable badge and a colored
 > edge so the important voices stand out across the thread), and **new posts
 > since last visit** (per-thread read history, persisted on-device via
-> `chrome.storage.local`, flags the posts you haven't seen yet).
+> `chrome.storage.local`, flags the posts you haven't seen yet), and **saved
+> comments** (a per-post Save toggle keeps an on-device snapshot of useful posts).
 
 ## Phase 0 — Foundation
 
@@ -29,7 +30,7 @@ features before the adapter ecosystem, AI last and always optional.
 - [x] Clean reading mode — sanitized rich `contentHtml` rendering in the side panel (`apps/extension`)
 - [x] OP highlighting — OP / mod / admin posts get a readable badge and a colored edge in the side panel (`apps/extension`)
 - [x] New posts since last visit — per-thread read history (on-device via `chrome.storage.local`) flags posts unseen since the last visit (`apps/extension`)
-- [ ] Save comments
+- [x] Save comments — a per-post Save toggle keeps an on-device snapshot of useful posts (`apps/extension`)
 - [ ] Local user notes
 - [ ] Markdown export
 - [ ] Discourse adapter

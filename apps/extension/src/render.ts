@@ -21,6 +21,12 @@ export type RenderOptions = {
    * the reader can pick up where they left off.
    */
   newPostIds?: ReadonlySet<string>;
+  /**
+   * Ids of posts the reader has saved (see {@link ./savedPosts}). Each post gets
+   * a Save toggle; saved ones render pressed. The panel wires the click — render
+   * only reflects state — so this stays a pure view.
+   */
+  savedPostIds?: ReadonlySet<string>;
 };
 
 /**
@@ -57,25 +63,38 @@ export function renderThread(
   }
 
   const newPostIds = options.newPostIds;
+  const savedPostIds = options.savedPostIds;
   const list = doc.createElement("ol");
   list.className = "ff-posts";
   for (const post of thread.posts) {
-    list.append(renderPost(doc, post, thread.baseUrl, newPostIds?.has(post.id) ?? false));
+    list.append(
+      renderPost(doc, post, thread.baseUrl, {
+        isNew: newPostIds?.has(post.id) ?? false,
+        isSaved: savedPostIds?.has(post.id) ?? false,
+      }),
+    );
   }
   root.append(list);
   return root;
 }
 
+/** Per-post view flags resolved from {@link RenderOptions}. */
+type PostFlags = { isNew: boolean; isSaved: boolean };
+
 function renderPost(
   doc: Document,
   post: ForumForgePost,
   baseUrl: string | undefined,
-  isNew: boolean,
+  flags: PostFlags,
 ): HTMLElement {
   const item = doc.createElement("li");
   item.className = "ff-post";
+  // The post id rides on the element so the panel's delegated click handler can
+  // map a Save toggle back to the post it belongs to.
+  item.setAttribute("data-post-id", post.id);
   if (post.role) item.setAttribute("data-role", post.role);
-  if (isNew) item.setAttribute("data-new", "true");
+  if (flags.isNew) item.setAttribute("data-new", "true");
+  if (flags.isSaved) item.setAttribute("data-saved", "true");
 
   const meta = doc.createElement("header");
   meta.className = "ff-post__meta";
@@ -95,7 +114,7 @@ function renderPost(
 
   // The "New" signal is text as well as color (like the role badge), so it
   // doesn't rely on color alone.
-  if (isNew) {
+  if (flags.isNew) {
     const badge = doc.createElement("span");
     badge.className = "ff-post__new";
     badge.textContent = "New";
@@ -109,8 +128,39 @@ function renderPost(
     meta.append(time);
   }
 
+  meta.append(renderSaveButton(doc, post.id, flags.isSaved));
+
   item.append(meta, renderBody(doc, post, baseUrl));
   return item;
+}
+
+/**
+ * The Save toggle for a post. `aria-pressed` carries the saved state for screen
+ * readers, and the label ("Save" / "Saved") carries it visually — not color
+ * alone. The panel handles the click; this only reflects the current state.
+ */
+function renderSaveButton(doc: Document, postId: string, isSaved: boolean): HTMLElement {
+  const button = doc.createElement("button");
+  button.type = "button";
+  button.className = "ff-post__save";
+  button.setAttribute("data-post-id", postId);
+  setSaveButtonState(button, isSaved);
+  return button;
+}
+
+/**
+ * Reflect saved state on a Save button: label, `aria-pressed`, and the
+ * `data-saved` flag on the owning post. Shared by initial render and the panel's
+ * post-click update so the two never drift.
+ */
+export function setSaveButtonState(button: HTMLElement, isSaved: boolean): void {
+  button.textContent = isSaved ? "Saved" : "Save";
+  button.setAttribute("aria-pressed", String(isSaved));
+  const post = button.closest<HTMLElement>(".ff-post");
+  if (post) {
+    if (isSaved) post.setAttribute("data-saved", "true");
+    else post.removeAttribute("data-saved");
+  }
 }
 
 /**

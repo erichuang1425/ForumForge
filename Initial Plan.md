@@ -438,7 +438,7 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 * [x] Clean reading mode
 * [x] OP highlighting
 * [x] New posts since last visit
-* [ ] Save comments
+* [x] Save comments
 * [ ] Local user notes
 * [ ] Markdown export
 * [ ] Discourse adapter

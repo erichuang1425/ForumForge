@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { parseHTML } from "linkedom";
 import type { ExtractedThread } from "@forumforge/parser";
-import { renderThread, setSaveButtonState } from "../src/render";
+import { renderThread, setSaveButtonState, setNoteState } from "../src/render";
 
 function freshDocument(): Document {
   const { document } = parseHTML("<!doctype html><html><body></body></html>");
@@ -125,6 +125,67 @@ describe("renderThread", () => {
     expect(button.textContent).toBe("Save");
     expect(button.getAttribute("aria-pressed")).toBe("false");
     expect(post.hasAttribute("data-saved")).toBe(false);
+  });
+
+  it("gives every post a collapsed note editor for its author, unflagged by default", () => {
+    const thread: ExtractedThread = {
+      posts: [
+        { id: "1", author: "ada", contentText: "first" },
+        { id: "2", author: "grace", contentText: "second" },
+      ],
+    };
+    const view = renderThread(freshDocument(), thread);
+
+    const toggles = view.querySelectorAll(".ff-post__note-toggle");
+    expect(Array.from(toggles).map((t) => t.getAttribute("aria-expanded"))).toEqual([
+      "false",
+      "false",
+    ]);
+    const editors = view.querySelectorAll<HTMLElement>(".ff-post__note");
+    expect(Array.from(editors).map((e) => e.getAttribute("data-author"))).toEqual(["ada", "grace"]);
+    expect(Array.from(editors).every((e) => e.hasAttribute("hidden"))).toBe(true);
+    expect(view.querySelector(".ff-post[data-has-note]")).toBeNull();
+  });
+
+  it("pre-fills the editor and flags posts whose author has a note", () => {
+    const thread: ExtractedThread = {
+      posts: [
+        { id: "1", author: "ada", contentText: "first" },
+        { id: "2", author: "grace", contentText: "second" },
+        { id: "3", author: "ada", contentText: "ada again" },
+      ],
+    };
+    const view = renderThread(freshDocument(), thread, {
+      userNotes: new Map([["ada", "helpful with GPU issues"]]),
+    });
+
+    // Every post by the annotated author is flagged and carries the note text.
+    const flagged = view.querySelectorAll<HTMLElement>(".ff-post[data-has-note='true']");
+    expect(Array.from(flagged).map((p) => p.getAttribute("data-post-id"))).toEqual(["1", "3"]);
+    const inputs = view.querySelectorAll<HTMLTextAreaElement>(
+      ".ff-post[data-has-note='true'] .ff-post__note-input",
+    );
+    expect(Array.from(inputs).every((i) => i.value === "helpful with GPU issues")).toBe(true);
+    // The un-noted author's editor is empty and unflagged.
+    expect(view.querySelector(".ff-post[data-post-id='2']")?.hasAttribute("data-has-note")).toBe(
+      false,
+    );
+  });
+
+  it("setNoteState fills the textarea and toggles the post's note flag", () => {
+    const view = renderThread(freshDocument(), {
+      posts: [{ id: "1", author: "ada", contentText: "first" }],
+    });
+    const post = view.querySelector<HTMLElement>(".ff-post");
+    const input = view.querySelector<HTMLTextAreaElement>(".ff-post__note-input");
+    if (!post || !input) throw new Error("expected a post with a note editor");
+
+    setNoteState(post, "check their sources");
+    expect(input.value).toBe("check their sources");
+    expect(post.getAttribute("data-has-note")).toBe("true");
+
+    setNoteState(post, "   ");
+    expect(post.hasAttribute("data-has-note")).toBe(false);
   });
 
   it("shows an empty state when there are no posts", () => {

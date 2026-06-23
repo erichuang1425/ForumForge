@@ -439,7 +439,7 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 * [x] OP highlighting
 * [x] New posts since last visit
 * [x] Save comments
-* [ ] Local user notes
+* [x] Local user notes
 * [ ] Markdown export
 * [ ] Discourse adapter
 * [ ] Hacker News adapter

@@ -1,9 +1,10 @@
 import type { ForumForgePost } from "@forumforge/core";
 import { EXTRACT_REQUEST, isExtractResponse } from "./messaging";
-import { renderThread, setSaveButtonState } from "./render";
+import { renderThread, setSaveButtonState, setNoteState } from "./render";
 import { ChromeStorageBackend } from "./storage";
 import { ReadHistory } from "./readHistory";
 import { SavedPosts } from "./savedPosts";
+import { UserNotes } from "./userNotes";
 
 /** The built content script, injected on demand into the active tab. */
 const CONTENT_SCRIPT = "content.js";
@@ -16,6 +17,9 @@ const readHistory = new ReadHistory(backend);
 
 /** Locally saved posts, persisted on-device via chrome.storage.local. */
 const savedPosts = new SavedPosts(backend);
+
+/** Private per-author notes, persisted on-device via chrome.storage.local. */
+const userNotes = new UserNotes(backend);
 
 /**
  * The thread currently shown in the panel, kept so a Save click can map a post
@@ -64,10 +68,12 @@ async function readActiveThread(): Promise<void> {
     const posts = response.thread.posts;
     const count = posts.length;
 
-    // Mark posts new since the reader's last visit, and flag ones already saved.
-    // Both are convenience layers — if persistence fails, still show the thread.
+    // Mark posts new since the reader's last visit, flag ones already saved, and
+    // attach any notes about their authors. All three are convenience layers —
+    // if persistence fails, still show the thread.
     let newPostIds = new Set<string>();
     let savedPostIds = new Set<string>();
+    let notes = new Map<string, string>();
     if (tab.url) {
       currentThread = {
         url: tab.url,
@@ -84,13 +90,20 @@ async function readActiveThread(): Promise<void> {
       } catch (error) {
         console.error("ForumForge: saved posts unavailable:", error);
       }
+      try {
+        notes = await userNotes.notesFor(tab.url);
+      } catch (error) {
+        console.error("ForumForge: user notes unavailable:", error);
+      }
     } else {
       // No URL means no provenance to save against; render read-only.
       currentThread = null;
     }
 
     status.textContent = describeCounts(count, newPostIds.size);
-    output.append(renderThread(document, response.thread, { newPostIds, savedPostIds }));
+    output.append(
+      renderThread(document, response.thread, { newPostIds, savedPostIds, userNotes: notes }),
+    );
   } catch (error) {
     // executeScript rejects on pages extensions may not touch (chrome://, the
     // Web Store, PDF viewer). Surface that plainly rather than failing silently.
@@ -129,6 +142,46 @@ async function onSaveClick(button: HTMLElement): Promise<void> {
   }
 }
 
+/** Expand or collapse the note editor a clicked "Note" toggle owns. */
+function onNoteToggle(button: HTMLElement): void {
+  const post = button.closest<HTMLElement>(".ff-post");
+  const editor = post?.querySelector<HTMLElement>(".ff-post__note");
+  if (!editor) return;
+  const open = editor.hidden;
+  editor.hidden = !open;
+  button.setAttribute("aria-expanded", String(open));
+  if (open) editor.querySelector<HTMLTextAreaElement>(".ff-post__note-input")?.focus();
+}
+
+/**
+ * Persist the note typed for a post's author, then reflect it on EVERY post by
+ * that author so their editors and annotated flags stay in sync. Like Save, the
+ * UI follows what storage actually reached, so a failed write stays honest.
+ */
+async function onNoteSave(button: HTMLElement): Promise<void> {
+  if (!currentThread) return;
+  const editor = button.closest<HTMLElement>(".ff-post__note");
+  const author = editor?.getAttribute("data-author");
+  const input = editor?.querySelector<HTMLTextAreaElement>(".ff-post__note-input");
+  if (author === null || author === undefined || !input) return;
+
+  const note = input.value;
+  button.toggleAttribute("disabled", true);
+  try {
+    await userNotes.set(currentThread.url, author, note);
+    const trimmed = note.trim();
+    for (const region of document.querySelectorAll<HTMLElement>(".ff-post__note")) {
+      if (region.getAttribute("data-author") !== author) continue;
+      const post = region.closest<HTMLElement>(".ff-post");
+      if (post) setNoteState(post, trimmed);
+    }
+  } catch (error) {
+    console.error("ForumForge: could not save note:", error);
+  } finally {
+    button.toggleAttribute("disabled", false);
+  }
+}
+
 function requireElement(selector: string): HTMLElement {
   const element = document.querySelector<HTMLElement>(selector);
   if (!element) throw new Error(`ForumForge: missing element ${selector}`);
@@ -145,7 +198,18 @@ document.addEventListener("DOMContentLoaded", () => {
   requireElement("#ff-output").addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
-    const button = target.closest<HTMLElement>(".ff-post__save");
-    if (button) void onSaveClick(button);
+
+    const saveButton = target.closest<HTMLElement>(".ff-post__save");
+    if (saveButton) {
+      void onSaveClick(saveButton);
+      return;
+    }
+    const noteToggle = target.closest<HTMLElement>(".ff-post__note-toggle");
+    if (noteToggle) {
+      onNoteToggle(noteToggle);
+      return;
+    }
+    const noteSave = target.closest<HTMLElement>(".ff-post__note-save");
+    if (noteSave) void onNoteSave(noteSave);
   });
 });

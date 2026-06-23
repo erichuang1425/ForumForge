@@ -155,4 +155,21 @@ describe("savedPostsToMarkdown", () => {
     );
     expect(md).toContain("[Permalink](https://f.example/p%281%29)");
   });
+
+  it("omits a permalink whose URL scheme is not allowlisted", () => {
+    const md = savedPostsToMarkdown(
+      [saved("https://f.example/t/5", post("1", { permalink: "javascript:alert(1)" }))],
+      { now: when },
+    );
+    expect(md).not.toContain("javascript:");
+    expect(md).not.toContain("[Permalink]");
+  });
+
+  it("resolves a relative permalink against the thread URL", () => {
+    const md = savedPostsToMarkdown(
+      [saved("https://f.example/t/5", post("1", { permalink: "#post-9" }))],
+      { now: when },
+    );
+    expect(md).toContain("[Permalink](https://f.example/t/5#post-9)");
+  });
 });

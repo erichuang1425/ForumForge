@@ -1,5 +1,6 @@
 import type { ForumRole } from "@forumforge/core";
 import type { SavedPost } from "./savedPosts";
+import { safeHref } from "./sanitize";
 
 /**
  * "Markdown export" — turn the reader's saved posts into a clean Markdown note.
@@ -64,8 +65,10 @@ export function savedPostsToMarkdown(
     // The thread title is untrusted page text; the URL fallback is the reader's
     // own tab location. Escape the former, show the latter as the URL it is.
     lines.push(`## ${group.title ? escapeMarkdown(group.title) : group.url}`, "");
-    // Link out to the source thread when there is a title to separate it from.
-    if (group.title) lines.push(mdLink("Open thread", group.url), "");
+    // Link out to the source thread when there is a title to separate it from
+    // and the URL passes the shared scheme allowlist.
+    const threadHref = group.title ? safeHref(group.url, group.url) : undefined;
+    if (threadHref) lines.push(mdLink("Open thread", threadHref), "");
 
     for (const saved of group.posts) {
       lines.push(...renderPost(saved), "");
@@ -99,7 +102,11 @@ function renderPost(record: SavedPost): string[] {
 
   const out: string[] = [`### ${escapeMarkdown(meta)}`, ""];
   out.push(...blockquote(post.contentText), "");
-  if (post.permalink) out.push(mdLink("Permalink", post.permalink));
+  // permalink is an untrusted page href: resolve it against the thread URL and
+  // apply the shared scheme allowlist, so a `javascript:`/`data:` link is never
+  // exported as an active link. Unsafe or unparseable links are simply omitted.
+  const href = safeHref(post.permalink ?? null, record.threadUrl);
+  if (href) out.push(mdLink("Permalink", href));
   // Drop a trailing blank pushed by an empty body so spacing stays uniform.
   return out.filter((line, index) => !(line === "" && out[index + 1] === ""));
 }
@@ -134,9 +141,10 @@ function escapeMarkdown(text: string): string {
 
 /**
  * A Markdown link with an escaped label and a contained destination. The label
- * is untrusted; the URL is a captured `href`. Percent-encoding the characters
- * that would otherwise close or break out of the `(...)` destination keeps the
- * link valid and prevents it from injecting trailing Markdown.
+ * is untrusted; the URL must already have passed {@link safeHref} (so its scheme
+ * is allowlisted). Percent-encoding the characters that would otherwise close or
+ * break out of the `(...)` destination keeps the link valid and prevents it from
+ * injecting trailing Markdown.
  */
 function mdLink(label: string, url: string): string {
   return `[${escapeMarkdown(label)}](${escapeUrl(url)})`;

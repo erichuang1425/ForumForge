@@ -70,8 +70,11 @@ function hasControlChar(value: string): boolean {
  * against `baseUrl` — the page the post came from — so clean reading mode keeps
  * those links working; the scheme allowlist is always applied to the *resolved*
  * URL, so resolution never widens what is considered safe.
+ *
+ * Exported so other consumers of untrusted hrefs (e.g. the Markdown export) can
+ * share this single scheme allowlist instead of re-deriving one.
  */
-function safeHref(raw: string | null, baseUrl: string | undefined): string | undefined {
+export function safeHref(raw: string | null, baseUrl: string | undefined): string | undefined {
   if (!raw) return undefined;
   const value = raw.trim();
   if (!value) return undefined;

@@ -1,10 +1,13 @@
 <!doctype html>
 <!--
   Synthetic, hand-authored Discourse topic-page fixture (not captured from a
-  live site). Mirrors Discourse's own public DOM structure (the same software
-  runs on every Discourse forum, so these class names are consistent): the
-  `generator` meta tag, `article.topic-post`, `.cooked` post bodies, and the
-  `topic-owner` / staff-badge role markers. See docs/FIXTURES.md.
+  live site). Mirrors Discourse's own public DOM structure, confirmed against
+  Discourse's open-source frontend source (`app/components/post.gjs` and
+  `app/lib/formatter.js`): each post is an outer `.topic-post` wrapper div
+  (carrying `data-post-number` and the `topic-owner` class) around an inner
+  `article.boxed.onscreen-post`, with `.cooked` post bodies, staff-badge role
+  markers, and `.relative-date` timestamps (`data-time` epoch ms + `title`,
+  not `<time datetime>`). See docs/FIXTURES.md.
 -->
 <html lang="en">
   <head>
@@ -15,60 +18,68 @@
     <div id="main-outlet">
       <h1><a href="/t/how-to-fix-monitor-no-signal/123">How to fix monitor no signal after sleep</a></h1>
       <div class="topic-body">
-        <article id="post_1" class="topic-post topic-owner" data-post-number="1">
-          <div class="topic-body">
-            <div class="names">
-              <a class="username" href="/u/ada"><span>ada</span></a>
+        <div class="topic-post post--topic-owner topic-owner" data-post-number="1">
+          <article id="post_1" class="boxed onscreen-post" data-post-id="1" data-topic-id="123" data-user-id="1">
+            <div class="post__body topic-body">
+              <div class="names">
+                <a class="username" href="/u/ada"><span>ada</span></a>
+              </div>
+              <div class="post-info post-date">
+                <a href="/t/how-to-fix-monitor-no-signal/123/1"><span class="relative-date" data-time="1767348000000" title="January 2, 2026 10:00 am">3 hours ago</span></a>
+              </div>
+              <div class="cooked">
+                <p>My monitor shows "no signal" after sleep. Tried <a href="https://example.com/guide">this guide</a> already.</p>
+              </div>
             </div>
-            <div class="post-info post-date">
-              <a href="/t/how-to-fix-monitor-no-signal/123/1"><time datetime="2026-01-02T10:00:00Z"></time></a>
+          </article>
+        </div>
+        <div class="topic-post" data-post-number="2">
+          <article id="post_2" class="boxed onscreen-post" data-post-id="2" data-topic-id="123" data-user-id="2">
+            <div class="post__body topic-body">
+              <div class="names">
+                <a class="username" href="/u/grace"><span>grace</span></a>
+                <span class="user-title staff-moderator">Moderator</span>
+              </div>
+              <div class="post-info post-date">
+                <a href="/t/how-to-fix-monitor-no-signal/123/2"><span class="relative-date" data-time="1767351600000" title="January 2, 2026 11:00 am">2 hours ago</span></a>
+              </div>
+              <div class="cooked">
+                <p>Try updating your GPU driver — see the <a href="https://example.com/driver">downloads page</a>.</p>
+              </div>
             </div>
-            <div class="cooked">
-              <p>My monitor shows "no signal" after sleep. Tried <a href="https://example.com/guide">this guide</a> already.</p>
+          </article>
+        </div>
+        <div class="topic-post post--topic-owner topic-owner" data-post-number="3">
+          <article id="post_3" class="boxed onscreen-post" data-post-id="3" data-topic-id="123" data-user-id="1">
+            <div class="post__body topic-body">
+              <div class="names">
+                <a class="username" href="/u/ada"><span>ada</span></a>
+              </div>
+              <div class="post-info post-date">
+                <a href="/t/how-to-fix-monitor-no-signal/123/3"><span class="relative-date" data-time="1767355200000" title="January 2, 2026 12:00 pm">1 hour ago</span></a>
+              </div>
+              <div class="cooked">
+                <p>That fixed it, thanks!</p>
+              </div>
             </div>
-          </div>
-        </article>
-        <article id="post_2" class="topic-post" data-post-number="2">
-          <div class="topic-body">
-            <div class="names">
-              <a class="username" href="/u/grace"><span>grace</span></a>
-              <span class="user-title staff-moderator">Moderator</span>
+          </article>
+        </div>
+        <div class="topic-post" data-post-number="4">
+          <article id="post_4" class="boxed onscreen-post" data-post-id="4" data-topic-id="123" data-user-id="3">
+            <div class="post__body topic-body">
+              <div class="names">
+                <a class="username" href="/u/henry"><span>henry</span></a>
+                <span class="user-title staff-admin" title="Admin"></span>
+              </div>
+              <div class="post-info post-date">
+                <a href="/t/how-to-fix-monitor-no-signal/123/4"><span class="relative-date" data-time="1767358800000" title="January 2, 2026 1:00 pm">just now</span></a>
+              </div>
+              <div class="cooked">
+                <p>Closing this thread, issue resolved.</p>
+              </div>
             </div>
-            <div class="post-info post-date">
-              <a href="/t/how-to-fix-monitor-no-signal/123/2"><time datetime="2026-01-02T11:00:00Z"></time></a>
-            </div>
-            <div class="cooked">
-              <p>Try updating your GPU driver — see the <a href="https://example.com/driver">downloads page</a>.</p>
-            </div>
-          </div>
-        </article>
-        <article id="post_3" class="topic-post topic-owner" data-post-number="3">
-          <div class="topic-body">
-            <div class="names">
-              <a class="username" href="/u/ada"><span>ada</span></a>
-            </div>
-            <div class="post-info post-date">
-              <a href="/t/how-to-fix-monitor-no-signal/123/3"><time datetime="2026-01-02T12:00:00Z"></time></a>
-            </div>
-            <div class="cooked">
-              <p>That fixed it, thanks!</p>
-            </div>
-          </div>
-        </article>
-        <article id="post_4" class="topic-post" data-post-number="4">
-          <div class="topic-body">
-            <div class="names">
-              <a class="username" href="/u/henry"><span>henry</span></a>
-              <span class="user-title staff-admin" title="Admin"></span>
-            </div>
-            <div class="post-info post-date">
-              <a href="/t/how-to-fix-monitor-no-signal/123/4"><time datetime="2026-01-02T13:00:00Z"></time></a>
-            </div>
-            <div class="cooked">
-              <p>Closing this thread, issue resolved.</p>
-            </div>
-          </div>
-        </article>
+          </article>
+        </div>
       </div>
     </div>
   </body>

@@ -39,7 +39,7 @@ describe("extractThreadDiscourse", () => {
     const [first] = extract().posts;
     expect(first?.id).toBe("1");
     expect(first?.author).toBe("ada");
-    expect(first?.timestamp).toBe("2026-01-02T10:00:00Z");
+    expect(first?.timestamp).toBe("2026-01-02T10:00:00.000Z");
   });
 
   it("resolves relative author links and permalinks against the base URL", () => {

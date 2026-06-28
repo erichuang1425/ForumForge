@@ -34,12 +34,20 @@ function extractAuthor(post: Element, baseUrl?: string): { author?: string; auth
   return { author: text, authorUrl: href ? resolveUrl(href, baseUrl) : undefined };
 }
 
+/**
+ * Discourse renders timestamps as `<span class="relative-date" data-time="<epoch-ms>"
+ * title="<long date>">` (see `autoUpdatingRelativeAge` in Discourse's own
+ * `lib/formatter.js`) — there's no `<time datetime>` element to read.
+ */
 function extractTimestamp(post: Element): string | undefined {
-  const el = post.querySelector(".post-date time, time[datetime]");
+  const el = post.querySelector(".post-date .relative-date");
   if (!el) return undefined;
-  const datetime = el.getAttribute("datetime");
+  const dataTime = el.getAttribute("data-time");
+  const ms = dataTime ? Number.parseInt(dataTime, 10) : NaN;
+  if (Number.isFinite(ms)) return new Date(ms).toISOString();
+  const title = el.getAttribute("title");
   const text = el.textContent ? normalizeWhitespace(el.textContent) : "";
-  return (datetime && datetime.trim()) || text || undefined;
+  return (title && title.trim()) || text || undefined;
 }
 
 function extractPermalink(post: Element, baseUrl?: string): string | undefined {
@@ -93,7 +101,10 @@ export function extractThreadDiscourse(
   options: DiscourseExtractOptions = {},
 ): ExtractedThread {
   const baseUrl = options.baseUrl ?? documentBaseUrl(root);
-  const posts = Array.from(root.querySelectorAll("article.topic-post")).map((el) => {
+  // `.topic-post` is the outer wrapper div Discourse renders around each post;
+  // the nested `<article>` only carries `boxed onscreen-post`, never `topic-post`
+  // itself, so selecting `article.topic-post` matches nothing on a real forum.
+  const posts = Array.from(root.querySelectorAll(".topic-post")).map((el) => {
     const { author, authorUrl } = extractAuthor(el, baseUrl);
     const { text, html } = extractContent(el);
     return createPost({

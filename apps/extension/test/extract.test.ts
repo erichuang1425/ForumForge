@@ -49,7 +49,7 @@ describe("extractThreadFromDocument", () => {
 
   it("picks the Hacker News adapter when the page has #hnmain", () => {
     const html = `<!doctype html>
-      <html><body><table id="hnmain"><tr><td>
+      <html op="item"><body><table id="hnmain"><tr><td>
         <table class="comment-tree">
           <tr class="athing comtr" id="1">
             <td><table border="0"><tr>

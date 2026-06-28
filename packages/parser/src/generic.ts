@@ -1,27 +1,10 @@
 import { createPost, normalizeWhitespace, cleanText } from "@forumforge/core";
-import type { ForumForgePost, ForumRole } from "@forumforge/core";
+import type { ForumRole } from "@forumforge/core";
+import type { ExtractedThread, ExtractOptions } from "./types";
+import { resolveUrl, documentBaseUrl } from "./url";
 
-/** Result of extracting a thread: optional title plus the posts found. */
-export type ExtractedThread = {
-  title?: string;
-  /**
-   * Absolute base URL of the page the thread came from, when known. Consumers
-   * use it to resolve any relative URLs still embedded in a post's
-   * `contentHtml` (which is captured as raw `innerHTML`, so its hrefs are not
-   * pre-resolved like `permalink`/`links`/`authorUrl` are).
-   */
-  baseUrl?: string;
-  posts: ForumForgePost[];
-};
-
-export type GenericExtractOptions = {
-  /**
-   * Base URL used to resolve relative permalinks and links. In a real browser
-   * the DOM resolves these already; pass it when parsing detached HTML (tests,
-   * fixtures, off-DOM processing).
-   */
-  baseUrl?: string;
-};
+export type { ExtractedThread };
+export type GenericExtractOptions = ExtractOptions;
 
 // Heuristic selector lists, most specific first. The generic parser is allowed
 // to be imperfect — its job is best-effort extraction until a real adapter exists.
@@ -73,29 +56,6 @@ const ROLE_KEYWORDS: { pattern: RegExp; role: ForumRole }[] = [
   { pattern: /\b(moderator|mod|staff)\b/i, role: "mod" },
   { pattern: /\b(original poster|op|topic starter|thread starter)\b/i, role: "op" },
 ];
-
-function resolveUrl(href: string, baseUrl?: string): string {
-  const trimmed = href.trim();
-  if (!baseUrl) return trimmed;
-  try {
-    return new URL(trimmed, baseUrl).href;
-  } catch {
-    return trimmed;
-  }
-}
-
-/**
- * The base URL to resolve relative links against when the caller passes none.
- * On a live page `getAttribute("href")` returns the raw, possibly-relative
- * attribute (only properties like `HTMLAnchorElement.href` are auto-resolved),
- * so we fall back to the document's own base URI. Detached documents report
- * "about:blank"; treat that as "no base" rather than resolving against it.
- */
-function documentBaseUrl(root: ParentNode): string | undefined {
-  const base = (root as { baseURI?: unknown }).baseURI;
-  if (typeof base !== "string" || !base || base === "about:blank") return undefined;
-  return base;
-}
 
 /** Pick the container selector that yields the most elements; ties favor earlier (more specific). */
 function chooseContainers(root: ParentNode): Element[] {

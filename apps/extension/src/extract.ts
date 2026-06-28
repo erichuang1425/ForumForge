@@ -1,16 +1,26 @@
-import { extractThreadGeneric, type ExtractedThread } from "@forumforge/parser";
+import {
+  extractThreadGeneric,
+  extractThreadDiscourse,
+  extractThreadHackerNews,
+  isDiscoursePage,
+  isHackerNewsPage,
+  type ExtractedThread,
+} from "@forumforge/parser";
 
 /**
  * Extract the thread from a page's document.
  *
- * Today this always uses the generic fallback parser. This function is the seam
- * where a site-specific adapter will be selected first (Phase 2), with the
- * generic extractor as the fallback. Keeping it here means the content script
- * never imports the parser directly, and the selection logic has one home.
+ * Picks a site-specific adapter when the page's own markup signals one — a
+ * Discourse `generator` meta tag, or Hacker News's `#hnmain` wrapper — and
+ * falls back to the generic best-effort parser otherwise. This is the one seam
+ * where adapter selection happens, so the content script never imports the
+ * parser directly.
  *
  * The content script calls this against the live `document`; tests call it
  * against a parsed fixture document.
  */
 export function extractThreadFromDocument(doc: Document): ExtractedThread {
+  if (isHackerNewsPage(doc)) return extractThreadHackerNews(doc);
+  if (isDiscoursePage(doc)) return extractThreadDiscourse(doc);
   return extractThreadGeneric(doc);
 }

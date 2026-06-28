@@ -9,10 +9,14 @@ This guide is the how-to. For the security model behind adapters, see
 **[../SECURITY.md](../SECURITY.md)**. For the product context, see
 **[../Initial Plan.md](../Initial%20Plan.md)**.
 
-> **Status:** The adapter formats below are the planned design. The runtime that
-> loads and validates adapters is not built yet (see
-> **[../ROADMAP.md](../ROADMAP.md)**, Phase 2). Formats may evolve before the first
-> release.
+> **Status:** The JSON/TypeScript adapter *formats* below are the planned design.
+> The runtime that loads and validates them is not built yet (see
+> **[../ROADMAP.md](../ROADMAP.md)**, Phase 2), and formats may evolve before the
+> first release. **Discourse and Hacker News are supported today**, but as
+> hand-written extractors in [`packages/parser`](../packages/parser)
+> (`extractThreadDiscourse` / `extractThreadHackerNews`), not yet expressed as
+> JSON or `ForumForgeAdapter` adapters — that migration happens once the Phase 2
+> adapter runtime exists.
 
 ## Choose the safest tier that works
 

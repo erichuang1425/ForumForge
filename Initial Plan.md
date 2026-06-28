@@ -441,8 +441,8 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 * [x] Save comments
 * [x] Local user notes
 * [x] Markdown export
-* [ ] Discourse adapter
-* [ ] Hacker News adapter
+* [x] Discourse adapter
+* [x] Hacker News adapter
 
 ### Phase 2 — Adapter ecosystem
 
@@ -521,18 +521,18 @@ ForumForge is a reader-side enhancement layer for forums the user can already ac
 
 ## Development status
 
-ForumForge is currently in early planning and prototype stage.
-
-The first goal is to build a working browser extension MVP with:
+ForumForge has a working browser extension MVP (Phase 0 + Phase 1, see
+[ROADMAP.md](ROADMAP.md)) with:
 
 * local storage
-* generic thread extraction
-* Discourse support
-* Hacker News support
+* generic thread extraction, plus Discourse and Hacker News adapters
 * saved comments
 * local user notes
 * new-comment tracking
 * Markdown export
+
+Phase 2 (the adapter ecosystem — JSON adapter format, more built-in adapters,
+community contribution) is next.
 
 ---
 

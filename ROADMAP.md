@@ -5,7 +5,7 @@ A living, phase-by-phase checklist. The full product spec and rationale live in
 this file is the tracking view. Phases are ordered: foundation before features,
 features before the adapter ecosystem, AI last and always optional.
 
-> **Status:** Phase 0 complete; Phase 1 underway. The foundation — core post
+> **Status:** Phase 0 and Phase 1 complete. The foundation — core post
 > model, generic extractor, local storage layer — and the `apps/extension` MV3
 > shell (background, on-demand content script, side panel) are built, unit-tested,
 > and bundled via esbuild. Phase 1 has begun with **clean reading mode** (the side
@@ -16,8 +16,13 @@ features before the adapter ecosystem, AI last and always optional.
 > `chrome.storage.local`, flags the posts you haven't seen yet), **saved
 > comments** (a per-post Save toggle keeps an on-device snapshot of useful posts),
 > and **local user notes** (a private, per-author note that follows the author
-> across every thread on the forum), and **Markdown export** (saved posts export
-> to a clean Markdown file, grouped by source thread, downloaded on-device).
+> across every thread on the forum), **Markdown export** (saved posts export
+> to a clean Markdown file, grouped by source thread, downloaded on-device), and
+> **Discourse + Hacker News adapters** (`packages/parser` now extracts both
+> sites' own DOM structure directly — Discourse's `.cooked` posts and
+> `topic-owner`/staff badges, HN's flat `tr.athing.comtr` comment rows with
+> `indent`-derived nesting — with the generic parser still the fallback for
+> everything else).
 
 ## Phase 0 — Foundation
 
@@ -36,8 +41,8 @@ features before the adapter ecosystem, AI last and always optional.
 - [x] Save comments — a per-post Save toggle keeps an on-device snapshot of useful posts (`apps/extension`)
 - [x] Local user notes — a private, per-author note (scoped on-device per forum origin) shown on every post by that author (`apps/extension`)
 - [x] Markdown export — export saved posts to a clean Markdown file, grouped by source thread, downloaded on-device (`apps/extension`)
-- [ ] Discourse adapter
-- [ ] Hacker News adapter
+- [x] Discourse adapter — extracts `article.topic-post` / `.cooked` directly, with `topic-owner` and staff-badge role detection (`packages/parser`)
+- [x] Hacker News adapter — extracts `tr.athing.comtr` comment rows, reconstructing nesting from the `indent` attribute (`packages/parser`)
 
 ## Phase 2 — Adapter ecosystem
 

@@ -1,0 +1,117 @@
+<!doctype html>
+<!--
+  Synthetic, hand-authored Hacker News item-page fixture (not captured from a
+  live site). Mirrors HN's well-known public DOM structure: a flat list of
+  `tr.athing.comtr` rows whose `indent` attribute encodes reply depth. See
+  docs/FIXTURES.md.
+-->
+<html lang="en">
+  <head>
+    <title>Tell HN: Something interesting | Hacker News</title>
+  </head>
+  <body>
+    <table id="hnmain">
+      <tr>
+        <td>
+          <table>
+            <tr class="athing" id="1000">
+              <td class="title"><span class="titleline"><a href="https://example.com/article">Tell HN: Something interesting</a></span></td>
+            </tr>
+            <tr>
+              <td class="subtext">
+                <span class="subline">
+                  <span class="score" id="score_1000">123 points</span> by
+                  <a href="user?id=alice" class="hnuser">alice</a>
+                  <span class="age" title="2026-03-01T09:00:00"><a href="item?id=1000">1 hour ago</a></span>
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table class="comment-tree">
+                  <tr class="athing comtr" id="1001">
+                    <td>
+                      <table border="0">
+                        <tr>
+                          <td class="ind" indent="0"><img src="s.gif" height="1" width="0" /></td>
+                          <td class="default">
+                            <div>
+                              <span class="comhead">
+                                <a href="user?id=bob" class="hnuser">bob</a>
+                                <span class="age" title="2026-03-01T10:00:00"><a href="item?id=1001">2 hours ago</a></span>
+                              </span>
+                            </div>
+                            <div class="comment">
+                              <span class="commtext c00">First reply, see <a href="https://example.com/ref">this reference</a>.</span>
+                              <div class="reply"><a href="reply?id=1001">reply</a></div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr class="athing comtr" id="1002">
+                    <td>
+                      <table border="0">
+                        <tr>
+                          <td class="ind" indent="1"><img src="s.gif" height="1" width="40" /></td>
+                          <td class="default">
+                            <div>
+                              <span class="comhead">
+                                <a href="user?id=alice" class="hnuser">alice</a>
+                                <span class="age" title="2026-03-01T10:30:00"><a href="item?id=1002">90 minutes ago</a></span>
+                              </span>
+                            </div>
+                            <div class="comment">
+                              <span class="commtext c00">Replying as the OP, thanks for the pointer.</span>
+                              <div class="reply"><a href="reply?id=1002">reply</a></div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr class="athing comtr" id="1003">
+                    <td>
+                      <table border="0">
+                        <tr>
+                          <td class="ind" indent="2"><img src="s.gif" height="1" width="80" /></td>
+                          <td class="default">
+                            <div>
+                              <span class="comhead">
+                                <a href="user?id=carol" class="hnuser">carol</a>
+                                <span class="age" title="2026-03-01T11:00:00"><a href="item?id=1003">1 hour ago</a></span>
+                              </span>
+                            </div>
+                            <div class="comment">
+                              <span class="commtext c00">Nested reply to the OP's comment.</span>
+                              <div class="reply"><a href="reply?id=1003">reply</a></div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr class="athing comtr" id="1004">
+                    <td>
+                      <table border="0">
+                        <tr>
+                          <td class="ind" indent="0"><img src="s.gif" height="1" width="0" /></td>
+                          <td class="default">
+                            <div>
+                              <span class="comhead">[deleted]</span>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

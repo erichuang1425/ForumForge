@@ -24,8 +24,11 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
   is idempotent.
 - **`src/sidepanel.ts`** + **`public/sidepanel.html`** — the panel UI: a button
   that injects the content script, requests extraction, and renders the result.
-- **`src/extract.ts`** — the seam that chooses how to read a page. Today it always
-  uses the generic parser; a site-specific adapter is selected here later (Phase 2).
+- **`src/extract.ts`** — the seam that chooses how to read a page: the Discourse
+  or Hacker News adapter when the page's own markup signals one
+  (`isDiscoursePage` / `isHackerNewsPage` from `@forumforge/parser`), otherwise
+  the generic fallback parser. More site-specific adapters land here as they're
+  built (Phase 2 adds the JSON adapter format for community-contributed ones).
 - **`src/render.ts`** — builds the read-only view. Author, role and timestamp are
   written with `textContent`; the body renders the post's rich `contentHtml`
   through the sanitizer (clean reading mode), falling back to plain text.

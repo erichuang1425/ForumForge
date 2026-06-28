@@ -1,5 +1,12 @@
+export { extractThreadGeneric, type GenericExtractOptions } from "./generic";
 export {
-  extractThreadGeneric,
-  type ExtractedThread,
-  type GenericExtractOptions,
-} from "./generic";
+  extractThreadDiscourse,
+  isDiscoursePage,
+  type DiscourseExtractOptions,
+} from "./discourse";
+export {
+  extractThreadHackerNews,
+  isHackerNewsPage,
+  type HackerNewsExtractOptions,
+} from "./hackernews";
+export type { ExtractedThread, ExtractOptions } from "./types";

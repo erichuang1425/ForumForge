@@ -16,15 +16,18 @@ site.**
 > Your favorite forum does not need to modernize. ForumForge can modernize it
 > from your browser.
 
-> **Status:** Phase 0 (Foundation) is in place. The foundation packages —
-> [`@forumforge/core`](packages/core) (the post model),
-> [`@forumforge/parser`](packages/parser) (the generic extractor), and
-> [`@forumforge/storage`](packages/storage) (the local-first storage layer) — plus
-> the [`@forumforge/extension`](apps/extension) MV3 shell, on-demand content
-> script, and side panel are built, unit-tested, and the extension bundles. Phase
-> 1 (the first useful features) is next. The canonical product spec is
-> **[Initial Plan.md](Initial%20Plan.md)**; the phase checklist is in
-> **[ROADMAP.md](ROADMAP.md)**.
+> **Status:** Phase 0 (Foundation) and Phase 1 (first useful version) are
+> complete. The foundation packages — [`@forumforge/core`](packages/core) (the
+> post model), [`@forumforge/parser`](packages/parser) (the generic extractor
+> plus Discourse and Hacker News adapters), and
+> [`@forumforge/storage`](packages/storage) (the local-first storage layer) —
+> plus the [`@forumforge/extension`](apps/extension) MV3 shell, on-demand
+> content script, and side panel are built, unit-tested, and the extension
+> bundles. The side panel now offers clean reading mode, OP highlighting,
+> new-since-last-visit tracking, saved comments, local user notes, and
+> Markdown export. Phase 2 (the adapter ecosystem) is next. The canonical
+> product spec is **[Initial Plan.md](Initial%20Plan.md)**; the phase
+> checklist is in **[ROADMAP.md](ROADMAP.md)**.
 
 ---
 
@@ -63,8 +66,10 @@ There are three adapter tiers, safest first:
 2. **Visual Adapter Studio** *(later)* — click elements on a page to generate an adapter, no coding required.
 3. **TypeScript adapters** — for complex sites. Powerful, clearly marked, and reviewed before entering any public registry.
 
-Planned built-in adapters: Discourse, Hacker News, phpBB, XenForo, vBulletin-style,
-plus a best-effort generic fallback parser.
+Built-in adapters so far: **Discourse** and **Hacker News** (both in
+[`packages/parser`](packages/parser), alongside the best-effort generic fallback
+parser used for everything else). Planned: phpBB, XenForo, vBulletin-style — these,
+plus a JSON adapter format contributors can add new forums with, land in Phase 2.
 
 See **[docs/ADAPTERS.md](docs/ADAPTERS.md)** for the adapter authoring guide, and
 **[Initial Plan.md](Initial%20Plan.md)** for the full product spec.
@@ -91,7 +96,9 @@ forumforge/
 
 This is the **target** layout. Packages are built only when there is real work for
 them — no placeholder scaffolding. Phase 0 has landed `packages/core`,
-`packages/parser`, `packages/storage`, and the `apps/extension` shell (content
+`packages/parser` (generic extractor, plus the Discourse and Hacker News
+adapters — the dedicated top-level `adapters/` directory and adapter-sdk runtime
+are still Phase 2), `packages/storage`, and the `apps/extension` shell (content
 script + side panel); the remaining packages and apps arrive as their roadmap
 phase begins.
 

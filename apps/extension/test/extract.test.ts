@@ -32,4 +32,39 @@ describe("extractThreadFromDocument", () => {
   it("marks the thread starter as OP", () => {
     expect(extract().posts[0]?.role).toBe("op");
   });
+
+  it("picks the Discourse adapter when the generator meta tag says so", () => {
+    const html = `<!doctype html>
+      <html><head><meta name="generator" content="Discourse 3.2.0" /></head>
+      <body><article class="topic-post topic-owner" data-post-number="1">
+        <div class="names"><a class="username" href="/u/ada"><span>ada</span></a></div>
+        <div class="cooked"><p>Hello from Discourse.</p></div>
+      </article></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]?.author).toBe("ada");
+    expect(thread.posts[0]?.role).toBe("op");
+  });
+
+  it("picks the Hacker News adapter when the page has #hnmain", () => {
+    const html = `<!doctype html>
+      <html><body><table id="hnmain"><tr><td>
+        <table class="comment-tree">
+          <tr class="athing comtr" id="1">
+            <td><table border="0"><tr>
+              <td class="ind" indent="0"><img src="s.gif" width="0" /></td>
+              <td class="default">
+                <span class="comhead"><a href="user?id=bob" class="hnuser">bob</a></span>
+                <div class="comment"><span class="commtext">Hello from HN.</span></div>
+              </td>
+            </tr></table></td>
+          </tr>
+        </table>
+      </td></tr></table></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]?.author).toBe("bob");
+  });
 });

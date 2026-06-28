@@ -72,6 +72,40 @@ function extractDepth(row: Element): number {
 }
 
 /**
+ * A text submission (Ask HN, Show HN, or any self-post) renders its body as
+ * `.toptext` above the comment rows, outside any `tr.athing.comtr` — so it's
+ * never picked up by the comment-row loop. Link-only stories have no `.toptext`
+ * at all, in which case there's no story post to add.
+ */
+function extractStoryPost(root: ParentNode, submitter: string | undefined, baseUrl?: string) {
+  const toptext = root.querySelector(".toptext");
+  if (!toptext) return undefined;
+
+  const storyId = root.querySelector("tr.athing:not(.comtr)")?.getAttribute("id") ?? undefined;
+  const authorHref = root.querySelector(".subtext .hnuser")?.getAttribute("href");
+  const ageEl = root.querySelector(".subtext .age");
+  const ageTitle = ageEl?.getAttribute("title");
+  const ageText = ageEl?.textContent ? normalizeWhitespace(ageEl.textContent) : "";
+  const permalinkHref = root.querySelector(".subtext .age a")?.getAttribute("href");
+
+  return createPost({
+    id: storyId,
+    author: submitter,
+    authorUrl: authorHref ? resolveUrl(authorHref, baseUrl) : undefined,
+    role: submitter ? "op" : undefined,
+    timestamp: (ageTitle && ageTitle.trim()) || ageText || undefined,
+    contentText: toptext.textContent ? cleanText(toptext.textContent) : "",
+    contentHtml: toptext.innerHTML,
+    permalink: permalinkHref && permalinkHref.trim() ? resolveUrl(permalinkHref, baseUrl) : undefined,
+    depth: 0,
+    links: Array.from(toptext.querySelectorAll("a[href]"))
+      .map((a) => a.getAttribute("href"))
+      .filter((href): href is string => Boolean(href && href.trim()))
+      .map((href) => resolveUrl(href, baseUrl)),
+  });
+}
+
+/**
  * Best-effort extraction of a Hacker News item page (`news.ycombinator.com/item?id=...`).
  *
  * HN's comments are a flat list of `tr.athing.comtr` rows, not a nested tree, so
@@ -88,7 +122,8 @@ export function extractThreadHackerNews(
   const submitter = extractSubmitter(root);
   const lastIdAtDepth: string[] = [];
 
-  const posts = Array.from(root.querySelectorAll("tr.athing.comtr")).map((row) => {
+  const storyPost = extractStoryPost(root, submitter, baseUrl);
+  const commentPosts = Array.from(root.querySelectorAll("tr.athing.comtr")).map((row) => {
     const id = row.getAttribute("id") ?? undefined;
     const depth = extractDepth(row);
     const parentId = depth > 0 ? lastIdAtDepth[depth - 1] : undefined;
@@ -112,6 +147,7 @@ export function extractThreadHackerNews(
     });
   });
 
+  const posts = storyPost ? [storyPost, ...commentPosts] : commentPosts;
   const result: ExtractedThread = { posts };
   const title = extractTitle(root);
   if (title) result.title = title;

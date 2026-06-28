@@ -6,9 +6,16 @@ export type HackerNewsExtractOptions = ExtractOptions;
 
 const TITLE_SUFFIX = / \| Hacker News$/;
 
-/** True when the page is a Hacker News item page (`#hnmain` is HN's own page wrapper). */
+/**
+ * True when the page is a Hacker News *item* (thread) page. `#hnmain` is HN's
+ * own page wrapper, but it's also present on listing pages (front page, /new,
+ * /ask, ...), which this extractor can't read (it only knows `tr.athing.comtr`
+ * and `.toptext`). HN tags the page type on `<html op="...">`; only item pages
+ * get `op="item"`, so that's the signal that distinguishes a real thread.
+ */
 export function isHackerNewsPage(root: ParentNode): boolean {
-  return root.querySelector("#hnmain") !== null;
+  if (root.querySelector("#hnmain") === null) return false;
+  return root.querySelector("html")?.getAttribute("op") === "item";
 }
 
 function extractTitle(root: ParentNode): string | undefined {

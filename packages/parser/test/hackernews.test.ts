@@ -15,13 +15,19 @@ function extract() {
 }
 
 describe("isHackerNewsPage", () => {
-  it("detects the #hnmain wrapper", () => {
+  it("detects an item (thread) page via #hnmain plus op=\"item\"", () => {
     const { document } = parseHTML(html);
     expect(isHackerNewsPage(document as unknown as ParentNode)).toBe(true);
   });
 
   it("does not flag an unrelated page", () => {
     const { document } = parseHTML("<html><body><p>just some prose</p></body></html>");
+    expect(isHackerNewsPage(document as unknown as ParentNode)).toBe(false);
+  });
+
+  it("does not flag a listing page (front page, /new, /ask), which shares #hnmain but isn't a thread", () => {
+    const listingHtml = html.replace('<html lang="en" op="item">', '<html lang="en" op="news">');
+    const { document } = parseHTML(listingHtml);
     expect(isHackerNewsPage(document as unknown as ParentNode)).toBe(false);
   });
 });

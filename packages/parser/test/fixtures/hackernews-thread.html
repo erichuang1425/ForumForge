@@ -2,10 +2,12 @@
 <!--
   Synthetic, hand-authored Hacker News item-page fixture (not captured from a
   live site). Mirrors HN's well-known public DOM structure: a flat list of
-  `tr.athing.comtr` rows whose `indent` attribute encodes reply depth. See
-  docs/FIXTURES.md.
+  `tr.athing.comtr` rows whose `indent` attribute encodes reply depth, and the
+  `<html op="item">` attribute HN uses to tag item (thread) pages specifically
+  (confirmed via a live fetch of news.ycombinator.com/item?id=1 — listing
+  pages like the front page render `op="news"` instead). See docs/FIXTURES.md.
 -->
-<html lang="en">
+<html lang="en" op="item">
   <head>
     <title>Tell HN: Something interesting | Hacker News</title>
   </head>

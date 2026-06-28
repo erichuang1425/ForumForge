@@ -32,7 +32,7 @@ describe("extractThreadDiscourse", () => {
   });
 
   it("extracts every topic-post article", () => {
-    expect(extract().posts).toHaveLength(3);
+    expect(extract().posts).toHaveLength(4);
   });
 
   it("captures ids from data-post-number, authors, and timestamps", () => {
@@ -64,6 +64,12 @@ describe("extractThreadDiscourse", () => {
     const second = extract().posts[1];
     expect(second?.author).toBe("grace");
     expect(second?.role).toBe("mod");
+  });
+
+  it("detects an admin from a class-only badge with no visible text", () => {
+    const fourth = extract().posts[3];
+    expect(fourth?.author).toBe("henry");
+    expect(fourth?.role).toBe("admin");
   });
 
   it("captures cleaned plain-text content", () => {

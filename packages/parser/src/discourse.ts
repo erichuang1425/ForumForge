@@ -71,9 +71,12 @@ function pickId(post: Element): string | undefined {
 
 /** `topic-owner` is Discourse's own class for the original poster; staff badges win over it. */
 function resolveRole(post: Element): ForumRole | undefined {
-  const badge = post.querySelector(".names .user-title, .names [class*='staff'], .names [class*='badge']")?.textContent ?? "";
+  const badge = post.querySelector(".names .user-title, .names [class*='staff'], .names [class*='badge']");
+  // Some themes signal staff/admin purely via class (icon-only badges), so check
+  // the class name too, not just the badge's visible text.
+  const haystack = `${badge?.textContent ?? ""} ${badge?.className ?? ""}`;
   for (const { pattern, role } of ROLE_KEYWORDS) {
-    if (pattern.test(badge)) return role;
+    if (pattern.test(haystack)) return role;
   }
   if (post.classList.contains("topic-owner")) return "op";
   return undefined;

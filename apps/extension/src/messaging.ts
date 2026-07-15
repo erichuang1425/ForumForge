@@ -1,3 +1,4 @@
+import type { ForumForgePost } from "@forumforge/core";
 import type { ExtractedThread } from "@forumforge/parser";
 
 /**
@@ -36,13 +37,19 @@ export function isExtractResponse(value: unknown): value is ExtractResponse {
 function isExtractedThread(value: unknown): value is ExtractedThread {
   if (!isRecord(value) || !Array.isArray(value.posts)) return false;
   if (!isOptionalString(value.title) || !isOptionalString(value.baseUrl)) return false;
-  return value.posts.every(isForumForgePost);
+  const postIds = new Set<string>();
+  for (const post of value.posts) {
+    if (!isForumForgePost(post) || postIds.has(post.id)) return false;
+    postIds.add(post.id);
+  }
+  return true;
 }
 
-function isForumForgePost(value: unknown): boolean {
+function isForumForgePost(value: unknown): value is ForumForgePost {
   if (!isRecord(value)) return false;
   if (
     typeof value.id !== "string" ||
+    value.id.trim().length === 0 ||
     typeof value.author !== "string" ||
     typeof value.contentText !== "string"
   ) {

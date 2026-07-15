@@ -2,6 +2,7 @@ import { createPost, normalizeWhitespace, cleanText } from "@forumforge/core";
 import type { ForumRole } from "@forumforge/core";
 import type { ExtractedThread, ExtractOptions } from "./types";
 import { resolveUrl, documentBaseUrl } from "./url";
+import { ensureUniquePostIds } from "./ids";
 
 export type { ExtractedThread };
 export type GenericExtractOptions = ExtractOptions;
@@ -189,22 +190,24 @@ export function extractThreadGeneric(
   // browser DOM also yields absolute URLs (see documentBaseUrl).
   const baseUrl = options.baseUrl ?? documentBaseUrl(root);
   let opAuthor: string | undefined;
-  const posts = chooseContainers(root).map((el, index) => {
-    const { author, authorUrl } = extractAuthor(el, baseUrl);
-    if (index === 0) opAuthor = author;
-    const { text, html, scope } = extractContent(el);
-    return createPost({
-      id: pickId(el),
-      author,
-      authorUrl,
-      role: resolveRole(el, { isFirst: index === 0, author, opAuthor }),
-      timestamp: extractTimestamp(el),
-      contentText: text,
-      contentHtml: html,
-      permalink: extractPermalink(el, baseUrl),
-      links: extractLinks(scope, baseUrl),
-    });
-  });
+  const posts = ensureUniquePostIds(
+    chooseContainers(root).map((el, index) => {
+      const { author, authorUrl } = extractAuthor(el, baseUrl);
+      if (index === 0) opAuthor = author;
+      const { text, html, scope } = extractContent(el);
+      return createPost({
+        id: pickId(el),
+        author,
+        authorUrl,
+        role: resolveRole(el, { isFirst: index === 0, author, opAuthor }),
+        timestamp: extractTimestamp(el),
+        contentText: text,
+        contentHtml: html,
+        permalink: extractPermalink(el, baseUrl),
+        links: extractLinks(scope, baseUrl),
+      });
+    }),
+  );
 
   const result: ExtractedThread = { posts };
   const title = extractTitle(root);

@@ -2,6 +2,7 @@ import { createPost, normalizeWhitespace, cleanText } from "@forumforge/core";
 import type { ForumRole } from "@forumforge/core";
 import type { ExtractedThread, ExtractOptions } from "./types";
 import { resolveUrl, documentBaseUrl } from "./url";
+import { ensureUniquePostIds } from "./ids";
 
 export type DiscourseExtractOptions = ExtractOptions;
 
@@ -104,21 +105,23 @@ export function extractThreadDiscourse(
   // `.topic-post` is the outer wrapper div Discourse renders around each post;
   // the nested `<article>` only carries `boxed onscreen-post`, never `topic-post`
   // itself, so selecting `article.topic-post` matches nothing on a real forum.
-  const posts = Array.from(root.querySelectorAll(".topic-post")).map((el) => {
-    const { author, authorUrl } = extractAuthor(el, baseUrl);
-    const { text, html } = extractContent(el);
-    return createPost({
-      id: pickId(el),
-      author,
-      authorUrl,
-      role: resolveRole(el),
-      timestamp: extractTimestamp(el),
-      contentText: text,
-      contentHtml: html,
-      permalink: extractPermalink(el, baseUrl),
-      links: extractLinks(el, baseUrl),
-    });
-  });
+  const posts = ensureUniquePostIds(
+    Array.from(root.querySelectorAll(".topic-post")).map((el) => {
+      const { author, authorUrl } = extractAuthor(el, baseUrl);
+      const { text, html } = extractContent(el);
+      return createPost({
+        id: pickId(el),
+        author,
+        authorUrl,
+        role: resolveRole(el),
+        timestamp: extractTimestamp(el),
+        contentText: text,
+        contentHtml: html,
+        permalink: extractPermalink(el, baseUrl),
+        links: extractLinks(el, baseUrl),
+      });
+    }),
+  );
 
   const result: ExtractedThread = { posts };
   const title = extractTitle(root);

@@ -97,4 +97,26 @@ describe("extractThreadGeneric", () => {
     const result = extractThreadGeneric(document as unknown as ParentNode);
     expect(result.posts).toEqual([]);
   });
+
+  it("makes duplicate and derived fallback ids unique and stable", () => {
+    const duplicateHtml = `<!doctype html><html><body>
+      <article data-post-id="same"><span class="author">Ada</span><div class="post-body">First</div></article>
+      <article data-post-id="same"><span class="author">Grace</span><div class="post-body">Second</div></article>
+      <article data-post-id="same~2"><span class="author">Linus</span><div class="post-body">Third</div></article>
+      <article><span class="author">Sam</span><div class="post-body">Same fallback</div></article>
+      <article><span class="author">Sam</span><div class="post-body">Same fallback</div></article>
+    </body></html>`;
+    const readIds = () => {
+      const { document } = parseHTML(duplicateHtml);
+      return extractThreadGeneric(document as unknown as ParentNode).posts.map((post) => post.id);
+    };
+
+    const ids = readIds();
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids[0]).toBe("same");
+    expect(ids[1]).not.toBe("same~2");
+    expect(ids[2]).toBe("same~2");
+    expect(ids[4]).toBe(`${ids[3]}~2`);
+    expect(readIds()).toEqual(ids);
+  });
 });

@@ -35,6 +35,10 @@ describe("messaging guards", () => {
       },
       {
         type: "forumforge/thread",
+        thread: { posts: [{ id: " ", author: "Ada", contentText: "Hello" }] },
+      },
+      {
+        type: "forumforge/thread",
         thread: {
           posts: [{ id: "1", author: "Ada", contentText: "Hello", role: "owner" }],
         },
@@ -43,6 +47,15 @@ describe("messaging guards", () => {
         type: "forumforge/thread",
         thread: {
           posts: [{ id: "1", author: "Ada", contentText: "Hello", role: ["op"] }],
+        },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [
+            { id: "duplicate", author: "Ada", contentText: "First" },
+            { id: "duplicate", author: "Grace", contentText: "Second" },
+          ],
         },
       },
     ]) {

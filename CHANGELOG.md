@@ -40,5 +40,7 @@ All notable user-visible changes are recorded here. The project follows
   fails, without deleting user data, until a confirmed retry succeeds.
 - Bind extraction messages to the injected document and discard results if the
   active tab or URL changes before local state is read or written.
+- Assign deterministic collision-safe ids when pages repeat post ids, and
+  reject any duplicate-id extraction payload that crosses the message boundary.
 
 [Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main

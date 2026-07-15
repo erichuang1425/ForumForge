@@ -1,6 +1,7 @@
 import { createPost, normalizeWhitespace, cleanText } from "@forumforge/core";
 import type { ExtractedThread, ExtractOptions } from "./types";
 import { resolveUrl, documentBaseUrl } from "./url";
+import { ensureUniquePostIds } from "./ids";
 
 export type HackerNewsExtractOptions = ExtractOptions;
 
@@ -154,7 +155,7 @@ export function extractThreadHackerNews(
     });
   });
 
-  const posts = storyPost ? [storyPost, ...commentPosts] : commentPosts;
+  const posts = ensureUniquePostIds(storyPost ? [storyPost, ...commentPosts] : commentPosts);
   const result: ExtractedThread = { posts };
   const title = extractTitle(root);
   if (title) result.title = title;

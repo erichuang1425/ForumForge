@@ -329,13 +329,20 @@ export class StorageCoordinator {
       await this.backend.set(STORAGE_GENERATION_KEY, epoch.stable);
       await this.backend.remove(STORAGE_CLEAR_STATE_KEY);
     } catch (error) {
-      if (publishedState) {
-        const failed: StorageClearState = { generation: epoch.clearing, status: "failed" };
-        try {
-          await this.backend.set(STORAGE_CLEAR_STATE_KEY, failed);
-        } catch {
-          // Preserve the original failure; a missing/clearing state is still
-          // paired with the advanced generation and blocks older queued work.
+      const failed: StorageClearState = { generation: epoch.clearing, status: "failed" };
+      try {
+        await this.backend.set(STORAGE_CLEAR_STATE_KEY, failed);
+      } catch {
+        if (!publishedState) {
+          // If neither clear-state write succeeds, publish the odd epoch as a
+          // second fail-closed signal. Other panels reject it until an explicit
+          // clear retry advances storage to a new stable even generation.
+          try {
+            await this.backend.set(STORAGE_GENERATION_KEY, epoch.clearing);
+          } catch {
+            // Preserve the original failure. A backend rejecting every
+            // operational write will also reject feature writes at that time.
+          }
         }
       }
       throw error;

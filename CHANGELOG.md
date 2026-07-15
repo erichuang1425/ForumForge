@@ -36,5 +36,7 @@ All notable user-visible changes are recorded here. The project follows
 
 - Restore keyboard focus after a clear in another panel disables or hides the
   active local-data control.
+- Keep every panel's writes blocked when the initial clear-state guard write
+  fails, without deleting user data, until a confirmed retry succeeds.
 
 [Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main

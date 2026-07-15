@@ -76,6 +76,19 @@ class FailOnceBackend extends BackendProxy {
   }
 }
 
+class FailTwiceClearStateBackend extends BackendProxy {
+  private failuresRemaining = 2;
+
+  override set<T>(key: string, value: T): Promise<void> {
+    if (key === STORAGE_CLEAR_STATE_KEY && this.failuresRemaining > 0) {
+      this.failuresRemaining -= 1;
+      this.setKeys.push(key);
+      return Promise.reject(new Error("injected clear-state failure"));
+    }
+    return super.set(key, value);
+  }
+}
+
 class TestExclusiveLock implements StorageExclusiveLock {
   private tail: Promise<void> = Promise.resolve();
   private requestCount = 0;
@@ -506,21 +519,70 @@ describe("StorageCoordinator", () => {
     expect(await backend.get(STORAGE_SCHEMA_KEY)).toBe(CURRENT_STORAGE_SCHEMA_VERSION);
   });
 
-  it("does not begin deletion when the initial clear-state guard cannot be stored", async () => {
+  it("blocks every coordinator when the initial clear-state guard write fails, then retries", async () => {
     const inner = new MemoryStorageBackend();
     await inner.set(STORAGE_SCHEMA_KEY, CURRENT_STORAGE_SCHEMA_VERSION);
     await inner.set("saved:post", { value: true });
+    await inner.set("other:sentinel", { keep: true });
     const backend = new FailOnceBackend(inner, "set", STORAGE_CLEAR_STATE_KEY);
-    const coordinator = new StorageCoordinator(backend, new TestExclusiveLock());
+    const sharedLock = new TestExclusiveLock();
+    const panelA = new StorageCoordinator(backend, sharedLock);
+    const panelB = new StorageCoordinator(backend, sharedLock);
 
-    await expect(coordinator.clear()).rejects.toThrow("injected set failure");
+    await expect(panelA.clear()).rejects.toThrow("injected set failure");
 
     expect(await inner.get("saved:post")).toEqual({ value: true });
+    expect(await inner.get("other:sentinel")).toEqual({ keep: true });
     expect(await inner.get(STORAGE_GENERATION_KEY)).toBeUndefined();
-    expect(await inner.get(STORAGE_CLEAR_STATE_KEY)).toBeUndefined();
-    await expect(coordinator.run(() => Promise.resolve("storage remains usable"))).resolves.toBe(
-      "storage remains usable",
+    expect(await inner.get(STORAGE_CLEAR_STATE_KEY)).toEqual({
+      generation: 1,
+      status: "failed",
+    });
+    await expect(panelA.run(() => backend.set("saved:blocked-a", true))).rejects.toBeInstanceOf(
+      StorageClearInProgressError,
     );
+    await expect(panelB.run(() => backend.set("saved:blocked-b", true))).rejects.toBeInstanceOf(
+      StorageClearInProgressError,
+    );
+
+    await panelA.clear();
+    await panelB.run(() => backend.set("saved:after-retry", { value: true }));
+    expect(await inner.get("saved:post")).toBeUndefined();
+    expect(await inner.get("other:sentinel")).toEqual({ keep: true });
+    expect(await inner.get(STORAGE_SCHEMA_KEY)).toBe(CURRENT_STORAGE_SCHEMA_VERSION);
+    expect(await inner.get(STORAGE_GENERATION_KEY)).toBe(2);
+    expect(await inner.get(STORAGE_CLEAR_STATE_KEY)).toBeUndefined();
+    expect(await inner.get("saved:after-retry")).toEqual({ value: true });
+  });
+
+  it("uses an odd generation when both initial clear-state writes fail", async () => {
+    const inner = new MemoryStorageBackend();
+    await inner.set(STORAGE_SCHEMA_KEY, CURRENT_STORAGE_SCHEMA_VERSION);
+    await inner.set("saved:post", { value: true });
+    await inner.set("other:sentinel", { keep: true });
+    const backend = new FailTwiceClearStateBackend(inner);
+    const sharedLock = new TestExclusiveLock();
+    const panelA = new StorageCoordinator(backend, sharedLock);
+    const panelB = new StorageCoordinator(backend, sharedLock);
+
+    await expect(panelA.clear()).rejects.toThrow("injected clear-state failure");
+
+    expect(await inner.get("saved:post")).toEqual({ value: true });
+    expect(await inner.get("other:sentinel")).toEqual({ keep: true });
+    expect(await inner.get(STORAGE_CLEAR_STATE_KEY)).toBeUndefined();
+    expect(await inner.get(STORAGE_GENERATION_KEY)).toBe(1);
+    await expect(panelB.run(() => backend.set("saved:blocked", true))).rejects.toBeInstanceOf(
+      StorageClearInProgressError,
+    );
+
+    await panelA.clear();
+    await panelB.run(() => backend.set("saved:after-retry", { value: true }));
+    expect(await inner.get("saved:post")).toBeUndefined();
+    expect(await inner.get("other:sentinel")).toEqual({ keep: true });
+    expect(await inner.get(STORAGE_SCHEMA_KEY)).toBe(CURRENT_STORAGE_SCHEMA_VERSION);
+    expect(await inner.get(STORAGE_GENERATION_KEY)).toBe(4);
+    expect(await inner.get(STORAGE_CLEAR_STATE_KEY)).toBeUndefined();
+    expect(await inner.get("saved:after-retry")).toEqual({ value: true });
   });
 
   it("keeps writes blocked when schema reset fails, then recovers on retry", async () => {

@@ -5,6 +5,11 @@ All notable user-visible changes are recorded here. The project follows
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-16
+
+This version is assembled as an untagged release candidate. Chrome acceptance,
+same-extension-ID upgrade evidence, tagging, and publication remain pending.
+
 ### Added
 
 - Manifest V3 extension shell with an on-demand content script and side panel.
@@ -47,4 +52,5 @@ All notable user-visible changes are recorded here. The project follows
 - Build release ZIPs without source maps or source-map references and verify
   every manifest icon is present in the deterministic package.
 
-[Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main
+[Unreleased]: https://github.com/erichuang1425/ForumForge/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/erichuang1425/ForumForge/releases/tag/v0.1.0

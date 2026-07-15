@@ -1,6 +1,6 @@
 {
   "name": "forumforge",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Open-source, local-first browser extension and adapter framework for modernizing forum threads.",
   "type": "module",

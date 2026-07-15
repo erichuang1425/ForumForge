@@ -25,10 +25,12 @@ packages remain implementation workspaces and are not published independently.
 
 ## Release candidate
 
-1. Confirm the target milestone has no unresolved release blocker. In
-   particular, [issue #14](https://github.com/erichuang1425/ForumForge/issues/14)
-   requires green migration/clear tests, a named pre-schema baseline, and dated
-   same-extension-ID Chrome upgrade and clear-data evidence.
+1. Confirm the implementation prerequisites are ready for browser acceptance.
+   In particular, [issue #14](https://github.com/erichuang1425/ForumForge/issues/14)
+   requires green migration/clear tests, a retained pre-schema baseline, and
+   reviewed migration/clear behavior. Its same-extension-ID Chrome evidence is
+   collected against the exact candidate in step 5 and blocks merging, tagging,
+   and publishing that candidate rather than creating it.
 2. Pull current protected `main` and start a normal `work/*` release branch.
 3. Set the version and move relevant `CHANGELOG.md` entries from Unreleased to
    a dated release heading.

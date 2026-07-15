@@ -32,4 +32,9 @@ All notable user-visible changes are recorded here. The project follows
 - Fail closed on invalid or newer local-storage versions and restrict bulk
   deletion to centrally registered ForumForge keys.
 
+### Changed
+
+- Restore keyboard focus after a clear in another panel disables or hides the
+  active local-data control.
+
 [Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main

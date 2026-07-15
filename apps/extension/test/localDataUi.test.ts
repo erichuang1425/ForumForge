@@ -6,6 +6,7 @@ import {
   CLEAR_LOCAL_DATA_FAILURE,
   CLEAR_LOCAL_DATA_PROGRESS,
   CLEAR_LOCAL_DATA_SUCCESS,
+  LocalDataFocusRecovery,
   confirmClearLocalData,
   resetRenderedLocalData,
   runClearLocalData,
@@ -47,6 +48,52 @@ describe("clear-local-data confirmation", () => {
     expect(status?.getAttribute("role")).toBe("status");
     expect(status?.getAttribute("aria-live")).toBe("polite");
     expect(status?.getAttribute("aria-atomic")).toBe("true");
+  });
+});
+
+describe("LocalDataFocusRecovery", () => {
+  it.each([
+    "#ff-extract",
+    "#ff-export",
+    "#ff-clear-data",
+    ".ff-post__save",
+    ".ff-post__note-toggle",
+    ".ff-post__note-save",
+    ".ff-post__note-input",
+  ])("restores focus after lifecycle control %s is disabled or hidden", (selector) => {
+    const { document } = parseHTML(`<!doctype html><html><body>
+      <button id="ff-extract"></button>
+      <button id="ff-export"></button>
+      <button id="ff-clear-data"></button>
+      <button class="ff-post__save"></button>
+      <button class="ff-post__note-toggle"></button>
+      <button class="ff-post__note-save"></button>
+      <textarea class="ff-post__note-input"></textarea>
+    </body></html>`);
+    const recovery = new LocalDataFocusRecovery();
+    const focus = vi.fn();
+
+    recovery.capture(document.querySelector(selector));
+    recovery.capture(document.body);
+
+    expect(recovery.restore({ focus })).toBe(true);
+    expect(focus).toHaveBeenCalledOnce();
+    expect(recovery.restore({ focus })).toBe(false);
+  });
+
+  it("does not move focus when the active element remains usable", () => {
+    const { document } = parseHTML(`<!doctype html><html><body>
+      <button class="ff-post__save"></button>
+      <a href="#">Help</a>
+    </body></html>`);
+    const recovery = new LocalDataFocusRecovery();
+    const focus = vi.fn();
+
+    recovery.capture(document.querySelector(".ff-post__save"));
+    recovery.capture(document.querySelector("a"));
+
+    expect(recovery.restore({ focus })).toBe(false);
+    expect(focus).not.toHaveBeenCalled();
   });
 });
 

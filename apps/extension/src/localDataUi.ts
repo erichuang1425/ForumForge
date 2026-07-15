@@ -24,6 +24,39 @@ export type ClearLocalDataActions = {
   onFinish(outcome: Exclude<ClearLocalDataOutcome, "cancelled">): void;
 };
 
+const LOCAL_DATA_LIFECYCLE_CONTROL_SELECTOR = [
+  "#ff-extract",
+  "#ff-export",
+  "#ff-clear-data",
+  ".ff-post__save",
+  ".ff-post__note-toggle",
+  ".ff-post__note-save",
+  ".ff-post__note-input",
+].join(", ");
+
+/**
+ * Remember when a cross-panel lifecycle event disables or hides the focused
+ * control, then move focus to the clear/retry action once that event settles.
+ */
+export class LocalDataFocusRecovery {
+  private restoreRequired = false;
+
+  capture(activeElement: Element | null): void {
+    // Browsers normally move focus to body when a control is disabled or
+    // hidden. Preserve the pending recovery for that automatic fallback, but
+    // cancel it if the user deliberately moves to another usable element.
+    if (!activeElement || activeElement.matches("body")) return;
+    this.restoreRequired = activeElement.matches(LOCAL_DATA_LIFECYCLE_CONTROL_SELECTOR);
+  }
+
+  restore(target: Pick<HTMLElement, "focus">): boolean {
+    if (!this.restoreRequired) return false;
+    this.restoreRequired = false;
+    target.focus();
+    return true;
+  }
+}
+
 /** Testable orchestration for confirmation and asynchronous clear UI states. */
 export async function runClearLocalData(
   actions: ClearLocalDataActions,

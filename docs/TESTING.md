@@ -125,7 +125,8 @@ exists, actual Chrome upgrade preservation is **unverified**.
       operational marker contains user data.
 - [ ] The visible thread remains readable; New badges, Saved state, note text,
       expanded note editors, and export availability reset. Focus returns to the
-      clear button.
+      clear button. In another open panel, focus also moves to its clear button
+      if the lifecycle disabled or hid the control that had focus.
 - [ ] With ForumForge panels open in two Chrome windows, a write already running
       in one finishes before the other clears it. A write started or queued
       across that clear is rejected rather than recreating deleted data. Both

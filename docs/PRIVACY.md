@@ -8,10 +8,11 @@ ForumForge account, analytics service, or remote backend.
 
 ## Data processed on a forum page
 
-When the user clicks the toolbar action, ForumForge temporarily reads the active
-tab's thread structure and visible post data, including titles, authors,
-timestamps, post bodies, permalinks, and reply relationships. Processing occurs
-inside the browser to create the side-panel view.
+The toolbar action opens ForumForge's side panel. When the user then selects
+**Read this thread**, ForumForge temporarily reads the active tab's thread
+structure and visible post data, including titles, authors, timestamps, post
+bodies, permalinks, and reply relationships. Processing occurs inside the
+browser to create the side-panel view.
 
 The current code does not transmit that page content to the maintainer or any
 third-party service.
@@ -33,6 +34,10 @@ their Save toggle, and a note can be cleared by saving it empty. The panel's
 deleting read history, saved posts, and private author notes. It reports success
 or a possible partial failure; cancelling the confirmation changes nothing.
 Removing the extension also deletes its local storage.
+
+A downloaded Markdown export is an ordinary file outside extension storage.
+ForumForge cannot delete that file through **Clear local user data** or when the
+extension is removed.
 
 User records remain until the user deletes them through one of those actions.
 After a successful bulk clear, ForumForge retains numeric schema-version and

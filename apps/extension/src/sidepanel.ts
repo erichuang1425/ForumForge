@@ -10,6 +10,7 @@ import {
   CLEAR_LOCAL_DATA_FAILURE,
   CLEAR_LOCAL_DATA_PROGRESS,
   CLEAR_LOCAL_DATA_SUCCESS,
+  LocalDataFocusRecovery,
   resetRenderedLocalData,
   runClearLocalData,
   setRenderedPersistenceControlsDisabled,
@@ -64,6 +65,9 @@ let isPersistenceBlocked = false;
 
 /** Last clear state observed in this panel; `failed` also covers invalid metadata. */
 let observedClearStatus: "clearing" | "failed" | undefined;
+
+/** Restores focus only when another panel disabled or hid the active control. */
+const observedClearFocus = new LocalDataFocusRecovery();
 
 function persistenceIsBlocked(): boolean {
   return isClearingLocalData || isPersistenceBlocked;
@@ -435,9 +439,11 @@ function onStorageChanged(
   storageLifecycleRevision += 1;
   const exportButton = document.querySelector<HTMLButtonElement>("#ff-export");
   const status = requireElement("#ff-status");
+  const clearButton = requireElement("#ff-clear-data");
   const nextState = change.newValue;
 
   if (nextState !== undefined) {
+    if (!isClearingLocalData) observedClearFocus.capture(document.activeElement);
     const isClearing =
       typeof nextState === "object" &&
       nextState !== null &&
@@ -457,10 +463,12 @@ function onStorageChanged(
     if (exportButton) exportButton.disabled = true;
     status.textContent =
       "A local-data clear did not finish. Some data may remain; retry Clear local user data.";
+    observedClearFocus.restore(clearButton);
     return;
   }
 
   if (change.oldValue === undefined) return;
+  if (!isClearingLocalData) observedClearFocus.capture(document.activeElement);
   isPersistenceBlocked = false;
   observedClearStatus = undefined;
   if (isClearingLocalData) return;
@@ -468,6 +476,7 @@ function onStorageChanged(
   setLocalDataControlsDisabled(false);
   if (exportButton) exportButton.disabled = true;
   status.textContent = "Cleared read history, saved posts, and private author notes.";
+  observedClearFocus.restore(clearButton);
 }
 
 function describeStoragePreparationError(error: unknown): string {

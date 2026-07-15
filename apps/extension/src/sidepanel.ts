@@ -86,6 +86,7 @@ async function readActiveThread(): Promise<void> {
   const status = requireElement("#ff-status");
   const output = requireElement("#ff-output");
   output.replaceChildren();
+  currentThread = null;
   status.textContent = "Reading this thread…";
 
   try {
@@ -96,12 +97,27 @@ async function readActiveThread(): Promise<void> {
       return;
     }
 
-    await chrome.scripting.executeScript({
+    const injectionResults = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: [CONTENT_SCRIPT],
     });
     if (revision !== readRevision) return;
-    const response = await chrome.tabs.sendMessage(tab.id, EXTRACT_REQUEST);
+    const documentId = injectionResults.find((result) => result.frameId === 0)?.documentId;
+    if (!documentId) {
+      status.textContent = "Could not confirm which page to read. Return to the thread and try again.";
+      return;
+    }
+
+    let response: unknown;
+    try {
+      response = await chrome.tabs.sendMessage(tab.id, EXTRACT_REQUEST, { documentId });
+    } catch (error) {
+      if (revision !== readRevision) return;
+      status.textContent =
+        "The page changed or stopped responding while ForumForge was reading it. Return to the thread and try again.";
+      console.error("ForumForge: injected page became unavailable:", error);
+      return;
+    }
     if (revision !== readRevision) return;
 
     if (!isExtractResponse(response)) {
@@ -110,6 +126,17 @@ async function readActiveThread(): Promise<void> {
     }
     if (response.type === "forumforge/error") {
       status.textContent = `Could not read this thread: ${response.message}`;
+      return;
+    }
+
+    // The activeTab grant can survive same-origin navigation. Confirm the user
+    // is still looking at the exact tab and URL before assigning provenance or
+    // touching read history, saves, or notes.
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (revision !== readRevision) return;
+    if (activeTab?.id !== tab.id || activeTab.url !== tab.url) {
+      status.textContent =
+        "The active page changed while ForumForge was reading it. Return to the thread and try again.";
       return;
     }
 

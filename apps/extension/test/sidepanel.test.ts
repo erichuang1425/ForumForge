@@ -15,10 +15,16 @@ type StorageChangeListener = (
 
 async function setupSidepanel(): Promise<{
   clearButton: HTMLButtonElement;
+  executeScript: ReturnType<typeof vi.fn>;
+  extractButton: HTMLButtonElement;
   focusClearButton: ReturnType<typeof vi.fn>;
   input: HTMLTextAreaElement;
   listener: StorageChangeListener;
   moveFocusTo(element: Element): void;
+  output: HTMLElement;
+  queryTabs: ReturnType<typeof vi.fn>;
+  records: Map<string, unknown>;
+  sendMessage: ReturnType<typeof vi.fn>;
   status: HTMLElement;
   threadLink: HTMLAnchorElement;
 }> {
@@ -47,8 +53,11 @@ async function setupSidepanel(): Promise<{
     },
   };
 
+  const executeScript = vi.fn(async () => []);
+  const queryTabs = vi.fn(async () => []);
+  const sendMessage = vi.fn(async () => undefined);
   const chromeApi = {
-    scripting: { executeScript: vi.fn(async () => undefined) },
+    scripting: { executeScript },
     storage: {
       local: area,
       onChanged: {
@@ -58,8 +67,8 @@ async function setupSidepanel(): Promise<{
       },
     },
     tabs: {
-      query: vi.fn(async () => []),
-      sendMessage: vi.fn(async () => undefined),
+      query: queryTabs,
+      sendMessage,
     },
   } as unknown as typeof chrome;
 
@@ -70,8 +79,12 @@ async function setupSidepanel(): Promise<{
   threadLink.textContent = "Post link";
   document.querySelector("#ff-output")?.append(input, threadLink);
   const clearButton = document.querySelector<HTMLButtonElement>("#ff-clear-data");
+  const extractButton = document.querySelector<HTMLButtonElement>("#ff-extract");
+  const output = document.querySelector<HTMLElement>("#ff-output");
   const status = document.querySelector<HTMLElement>("#ff-status");
-  if (!clearButton || !status) throw new Error("side-panel fixture is incomplete");
+  if (!clearButton || !extractButton || !output || !status) {
+    throw new Error("side-panel fixture is incomplete");
+  }
 
   // LinkeDOM does not move focus when a control becomes disabled. Model the
   // browser transition so capture must happen before the clearing handler
@@ -104,12 +117,18 @@ async function setupSidepanel(): Promise<{
 
   return {
     clearButton,
+    executeScript,
+    extractButton,
     focusClearButton,
     input,
     listener: listener!,
     moveFocusTo(element) {
       movedFocus = element;
     },
+    output,
+    queryTabs,
+    records,
+    sendMessage,
     status,
     threadLink,
   };
@@ -118,6 +137,47 @@ async function setupSidepanel(): Promise<{
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
+});
+
+describe("active-tab extraction provenance", () => {
+  it.each([
+    ["navigation", { id: 7, url: "https://forum.example/thread-b" }],
+    ["tab switch", { id: 8, url: "https://forum.example/thread-c" }],
+  ])("rejects a %s before persistence and targets the injected document", async (_scenario, activeTab) => {
+    const {
+      executeScript,
+      extractButton,
+      output,
+      queryTabs,
+      records,
+      sendMessage,
+      status,
+    } = await setupSidepanel();
+    queryTabs
+      .mockResolvedValueOnce([{ id: 7, url: "https://forum.example/thread-a" }])
+      .mockResolvedValueOnce([activeTab]);
+    executeScript.mockResolvedValueOnce([{ documentId: "document-a", frameId: 0 }]);
+    sendMessage.mockResolvedValueOnce({
+      type: "forumforge/thread",
+      thread: {
+        title: "Thread A",
+        posts: [{ id: "1", author: "Ada", contentText: "From thread A" }],
+      },
+    });
+
+    extractButton.click();
+
+    await vi.waitFor(() => {
+      expect(status.textContent).toContain("page changed");
+    });
+    expect(sendMessage).toHaveBeenCalledWith(
+      7,
+      { type: "forumforge/extract" },
+      { documentId: "document-a" },
+    );
+    expect([...records.keys()].filter((key) => key.startsWith("readHistory:"))).toEqual([]);
+    expect(output.querySelector(".ff-thread")).toBeNull();
+  });
 });
 
 describe("cross-panel storage lifecycle focus", () => {

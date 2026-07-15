@@ -38,14 +38,24 @@ declare namespace chrome {
       active?: boolean;
       currentWindow?: boolean;
     }): Promise<Tab[]>;
-    function sendMessage(tabId: number, message: unknown): Promise<unknown>;
+    function sendMessage(
+      tabId: number,
+      message: unknown,
+      options?: { documentId?: string; frameId?: number },
+    ): Promise<unknown>;
   }
 
   namespace scripting {
+    interface InjectionResult {
+      documentId: string;
+      frameId: number;
+      result?: unknown;
+    }
+
     function executeScript(injection: {
       target: { tabId: number };
       files: string[];
-    }): Promise<unknown>;
+    }): Promise<InjectionResult[]>;
   }
 
   namespace storage {

@@ -38,5 +38,7 @@ All notable user-visible changes are recorded here. The project follows
   active local-data control.
 - Keep every panel's writes blocked when the initial clear-state guard write
   fails, without deleting user data, until a confirmed retry succeeds.
+- Bind extraction messages to the injected document and discard results if the
+  active tab or URL changes before local state is read or written.
 
 [Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main

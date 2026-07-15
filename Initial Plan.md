@@ -38,7 +38,10 @@ The core idea is simple:
 
 > Every forum is different, so ForumForge should be easy to adapt.
 
-Instead of hardcoding support for a few websites, ForumForge uses adapters. Users and communities can create adapters for their own forum sites using CSS selectors, JSON recipes, or advanced TypeScript adapters.
+The current source build includes dedicated extractors plus a generic fallback.
+Phase 2 plans a declarative JSON adapter tier so users and communities can add
+site support without changing extension internals. Advanced code adapters remain
+a future, explicitly reviewed trust tier.
 
 ---
 
@@ -235,9 +238,9 @@ Adapters define things like:
 
 ## Adapter types
 
-### 1. JSON selector adapters
+### 1. Planned JSON selector adapters
 
-The safest and simplest adapter type.
+The planned safest and simplest adapter type.
 
 Example:
 
@@ -287,9 +290,10 @@ This allows power users to support custom forum sites without writing extension 
 
 ---
 
-### 3. TypeScript adapters
+### 3. Future reviewed TypeScript adapters
 
-For complex sites, developers can write advanced adapters.
+For complex sites, a future trusted tier may allow developers to write advanced
+adapters after an explicit security and distribution design review.
 
 ```ts
 import type { ForumAdapter } from "@forumforge/adapter-sdk";

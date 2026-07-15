@@ -10,10 +10,10 @@ stores personal reading state on the device.
 > Your favorite forum does not need to modernize. ForumForge can modernize it
 > from your browser.
 
-> **Development status — 2026-07-15:** Phase 0 and Phase 1 implementation is
+> **Development status — 2026-07-16:** Phase 0 and Phase 1 implementation is
 > complete on the active development line. There is no tagged public release
-> yet. Real-browser acceptance testing, release assets, and the v0.1 release
-> checklist remain open; see [ROADMAP.md](ROADMAP.md).
+> yet. Release-candidate assembly, exact-artifact browser acceptance, and the
+> v0.1 release checklist remain open; see [ROADMAP.md](ROADMAP.md).
 
 ## Available in the current source build
 
@@ -22,7 +22,8 @@ stores personal reading state on the device.
 - New-since-last-visit tracking stored in `chrome.storage.local`.
 - Locally saved posts and private per-author notes.
 - Markdown export of saved posts.
-- Versioned, migration-safe local storage and confirmed user-data deletion.
+- Versioned local storage with deterministic migration tests and a
+  confirmation-gated user-data clear control.
 - Dedicated Discourse and Hacker News extractors.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3

@@ -25,7 +25,7 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract
 - [x] Add marker-last migration/error tests and a scoped, confirmed clear control
-- [ ] Merge the Phase 1 development pull request into current `main`
+- [x] Merge the Phase 1 implementation into current `main`
 - [ ] Complete and record Chrome 116+ manual testing on the final package
 - [ ] Record same-extension-ID schema upgrade and clear-data browser evidence
 - [ ] Add extension icons and store listing assets

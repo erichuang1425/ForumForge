@@ -22,6 +22,7 @@ stores personal reading state on the device.
 - New-since-last-visit tracking stored in `chrome.storage.local`.
 - Locally saved posts and private per-author notes.
 - Markdown export of saved posts.
+- Versioned, migration-safe local storage and confirmed user-data deletion.
 - Dedicated Discourse and Hacker News extractors.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3

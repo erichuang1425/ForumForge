@@ -13,6 +13,11 @@ All notable user-visible changes are recorded here. The project follows
   and Markdown export.
 - Generic, Discourse, and Hacker News extractors with deterministic fixtures.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
+- Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
+  read history, saved posts, and private notes, plus cross-panel clear generation
+  guards.
+- A confirmed **Clear local user data** control with scoped deletion, partial
+  failure messaging, and reset of rendered local state.
 - Canonical `pnpm verify` gate, manifest/privacy guardrails, deterministic
   extension packaging, checksum generation, and release automation.
 - Maintainer, compatibility, testing, privacy, governance, and project-health
@@ -24,5 +29,7 @@ All notable user-visible changes are recorded here. The project follows
   content-script messages.
 - Enforce the reviewed manifest permission set and absence of host permissions
   and always-on content scripts.
+- Fail closed on invalid or newer local-storage versions and restrict bulk
+  deletion to centrally registered ForumForge keys.
 
 [Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main

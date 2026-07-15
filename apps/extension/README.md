@@ -73,6 +73,18 @@ side panel "Read this thread" ─▶ inject content.js (activeTab) ─▶ extrac
   [`@forumforge/storage`](../../packages/storage) `StorageBackend` implemented over
   `chrome.storage.local`. Read history, saved posts, and user notes persist
   on-device through it; nothing leaves the browser.
+- **`src/storageSchema.ts`** — the schema-1 migration and lifecycle coordinator.
+  It adopts pre-schema records without rewriting them, blocks invalid/newer
+  versions, serializes feature operations and clearing across panel documents
+  with an extension-origin Web Lock, and deletes only the central ForumForge key
+  allowlist. A persisted clear generation/state rejects queued writes, blocks
+  writes after partial failure, and lets a storage-change listener disable or
+  reset stale local-state cues in every open panel.
+- **`src/localDataUi.ts`** — confirmation and rendered-state reset helpers for the
+  panel's **Clear local user data…** control. The native confirmation names the
+  irreversible categories; progress and success/failure text is written to the
+  panel's polite live status region. Browser assistive-technology testing remains
+  a release gate.
 
 ## Permissions
 
@@ -105,7 +117,8 @@ From the repo root:
    select `apps/extension/dist/`.
 3. Open a forum thread, click the ForumForge toolbar icon to open the panel, then
    **Read this thread**. Save useful posts, then **Export saved** to download them
-   as a Markdown file.
+   as a Markdown file. Use **Clear local user data…** to exercise the confirmed,
+   device-only deletion flow.
 
 > Automated checks do not prove browser behavior. Follow
 > [docs/TESTING.md](../../docs/TESTING.md) and record the exact unpacked or

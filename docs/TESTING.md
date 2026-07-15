@@ -16,6 +16,23 @@ pnpm verify
 bundling, repository-boundary checks, version synchronization, local Markdown
 link checks, and build-output verification.
 
+The storage lifecycle suite deterministically covers:
+
+- the unversioned schema-0 baseline migrating to schema 1 with every legacy key
+  and value preserved;
+- a current-version no-op, invalid metadata, and a newer unsupported version;
+- an interrupted version-marker write followed by a successful retry;
+- allowlisted clearing, lookalike/unrelated-key preservation, idempotency,
+  partial remove/finalization failure, failed-state blocking, and retry;
+- serialization between two coordinators sharing an in-flight feature write and
+  clear, rejection of work started or queued across odd/even clear epochs, and
+  explicit recovery from newer/invalid schema or generation metadata;
+- confirmation cancel/success/failure orchestration, semantic status/control
+  markup, persistence-control disabling, and rendered new/saved/note reset.
+
+These tests use injected storage and DOM implementations. They do not prove
+Chrome update, persistence, focus, or assistive-technology behavior.
+
 Before release, also create the exact user artifact:
 
 ```bash
@@ -62,7 +79,66 @@ a clean profile for install testing and an existing profile for upgrade testing.
       cleared.
 - [ ] Markdown export handles Unicode, escaping, safe permalinks, empty content,
       and multiple threads.
-- [ ] Existing local data survives an update from the previous supported build.
+- [ ] The schema-0 to schema-1 procedure below preserves existing local data.
+
+### Schema-0 to schema-1 upgrade
+
+Use pre-schema commit `91fc205` as the first v0.1 baseline. The target is the
+exact final release-candidate ZIP and checksum. Keep the same unpacked extension
+directory throughout: loading a second directory can produce a different
+extension ID and would not test an update of the same local store.
+
+1. Build `91fc205` in a separate worktree, place its unpacked extension files in
+   a fixed baseline directory, load that directory, and record the extension ID,
+   Chrome/OS version, commit, path, and starting key inventory.
+2. Seed read history on at least two threads, save posts whose IDs overlap across
+   threads, and create notes for authors on at least two origins. Restart Chrome
+   and confirm the baseline data is still present.
+3. Extract the target ZIP elsewhere, replace the files inside the same loaded
+   baseline directory, use Chrome's **Reload** action, and do not remove/re-add
+   the extension.
+4. Before creating new data, verify every legacy key/value is unchanged and
+   `forumforge:storageSchemaVersion` equals `1`. Before the first clear,
+   `forumforge:storageGeneration` may be absent (generation 0); there must be no
+   `forumforge:storageClearState`. Confirm unchanged and appended thread
+   behavior, saved state/export, notes, and origin/thread isolation.
+5. Create a new save and note, restart Chrome, and verify both migrated and new
+   data remain correct.
+
+Attach the before/after key inventory and results to
+[#14](https://github.com/erichuang1425/ForumForge/issues/14). Until that record
+exists, actual Chrome upgrade preservation is **unverified**.
+
+### Clear local user data
+
+- [ ] Seed read history, saves, and notes across multiple threads and origins.
+- [ ] Add a non-ForumForge sentinel key in the extension's storage through
+      DevTools and record the starting inventory.
+- [ ] Reach **Clear local user data…** by keyboard; Cancel preserves every key and
+      rendered state.
+- [ ] Confirm names the irreversible categories. During deletion, controls are
+      disabled and the live status reports progress.
+- [ ] Success removes every owned user-data key, preserves the unrelated
+      sentinel, retains schema marker `1`, advances the numeric
+      `forumforge:storageGeneration` to a new even epoch, removes
+      `forumforge:storageClearState`, and updates the live status. Neither
+      operational marker contains user data.
+- [ ] The visible thread remains readable; New badges, Saved state, note text,
+      expanded note editors, and export availability reset. Focus returns to the
+      clear button.
+- [ ] With ForumForge panels open in two Chrome windows, a write already running
+      in one finishes before the other clears it. A write started or queued
+      across that clear is rejected rather than recreating deleted data. Both
+      panels disable persistence during deletion and reset stale New/Saved/note
+      cues after success.
+- [ ] Reading the unchanged page again behaves as a first visit; new saves/notes
+      work, and a browser restart does not restore deleted data.
+- [ ] A storage-removal failure never reports success. If a safe real-browser
+      failure cannot be induced, record that scenario as unverified and cite the
+      deterministic injected-failure test instead. After failure,
+      `forumforge:storageClearState` reports `failed`, save/note writes remain
+      blocked in every panel, and a successful retry removes the state before
+      writes resume.
 
 ### Security and privacy
 
@@ -72,8 +148,8 @@ a clean profile for install testing and an existing profile for upgrade testing.
       and open with `noopener noreferrer`.
 - [ ] DevTools Network shows no ForumForge-initiated request during read, save,
       note, revisit, and export flows.
-- [ ] `chrome.storage.local` contains only the record types documented in
-      [PRIVACY.md](PRIVACY.md).
+- [ ] `chrome.storage.local` contains only the record types documented in the
+      [`@forumforge/storage` format](../packages/storage/README.md).
 
 ### Accessibility and layout
 
@@ -86,6 +162,6 @@ a clean profile for install testing and an existing profile for upgrade testing.
 
 Copy this table into the release issue or pull request:
 
-| Date | Build/commit | Browser + OS | Scenario | Result | Evidence/notes |
-| --- | --- | --- | --- | --- | --- |
-| YYYY-MM-DD | v0.1.0 / SHA | Chrome 000 / OS | Discourse smoke | Pass/Fail | Link or concise notes |
+| Date | Baseline -> target | Artifact / extension ID | Browser + OS | Scenario | Result | Evidence/notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| YYYY-MM-DD | `91fc205` -> target SHA | ZIP SHA-256 / ID | Chrome 000 / OS | Schema 0 -> 1 upgrade | Pass/Fail | Before/after keys + link |

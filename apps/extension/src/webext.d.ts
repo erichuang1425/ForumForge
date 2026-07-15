@@ -49,6 +49,11 @@ declare namespace chrome {
   }
 
   namespace storage {
+    interface StorageChange {
+      oldValue?: unknown;
+      newValue?: unknown;
+    }
+
     /**
      * A key/value area (the extension uses `local`). `get(null)` returns every
      * stored item; `get(key)` returns an object holding just that key when present.
@@ -59,6 +64,11 @@ declare namespace chrome {
       remove(keys: string | string[]): Promise<void>;
     }
     const local: StorageArea;
+    const onChanged: {
+      addListener(
+        callback: (changes: Record<string, StorageChange>, areaName: string) => void,
+      ): void;
+    };
   }
 
   namespace sidePanel {

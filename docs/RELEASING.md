@@ -18,13 +18,17 @@ pnpm version:check
 pnpm version:set 0.1.0
 ```
 
-Do not move from `0.0.0` to `0.1.0` until the release candidate has completed
-the browser matrix. The private library packages remain implementation
-workspaces and are not published independently.
+Normal development stays at `0.0.0`. Set `0.1.0` on the untagged release-candidate
+branch before producing the exact ZIP used for browser acceptance; do not merge,
+tag, or publish that version until the matrix passes. The private library
+packages remain implementation workspaces and are not published independently.
 
 ## Release candidate
 
-1. Confirm the target milestone has no unresolved release blocker.
+1. Confirm the target milestone has no unresolved release blocker. In
+   particular, [issue #14](https://github.com/erichuang1425/ForumForge/issues/14)
+   requires green migration/clear tests, a named pre-schema baseline, and dated
+   same-extension-ID Chrome upgrade and clear-data evidence.
 2. Pull current protected `main` and start a normal `work/*` release branch.
 3. Set the version and move relevant `CHANGELOG.md` entries from Unreleased to
    a dated release heading.
@@ -43,6 +47,10 @@ workspaces and are not published independently.
    three JavaScript bundles. Source maps and source files must not ship.
 7. Compare the printed SHA-256 with `artifacts/*.sha256`.
 8. Review the final diff against [CODE_REVIEW.md](CODE_REVIEW.md).
+9. For a storage-changing release, attach before/after key inventories and state
+   schema compatibility, downgrade behavior, and recovery steps in the release
+   notes. Do not tag while the applicable upgrade or deletion rows remain
+   unchecked.
 
 ## Tag and GitHub release
 
@@ -78,4 +86,6 @@ release candidate; do not silently replace an existing GitHub artifact.
 For a harmful release, stop store rollout where possible, mark the GitHub release
 clearly, open a security or regression issue, and ship a higher patch version.
 Do not rewrite tags or reuse versions. If local data is at risk, prioritize
-preservation/migration and explain recovery steps in the release notes.
+preservation/migration and explain recovery steps in the release notes. Never
+roll back to code that can write through a newer unknown schema; use a higher
+patch release with an explicit forward migration or a user-confirmed reset.

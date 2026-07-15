@@ -84,6 +84,30 @@ async function checkFixtures() {
   }
 }
 
+async function checkStorageBoundary() {
+  const sourceRoot = join(root, "apps", "extension", "src");
+  const forbidden = [
+    {
+      name: "chrome.storage.local.clear()",
+      pattern: /\bchrome\.storage\.local\.clear\s*\(/,
+      reason: "bulk deletion must use the reviewed ForumForge key allowlist",
+    },
+    {
+      name: "chrome.storage.sync",
+      pattern: /\bchrome\.storage\.sync\b/,
+      reason: "local data must remain on-device unless an explicit product review approves sync",
+    },
+  ];
+  for (const path of await filesUnder(sourceRoot, (file) => extname(file) === ".ts")) {
+    const source = await readFile(path, "utf8");
+    for (const rule of forbidden) {
+      if (rule.pattern.test(source)) {
+        fail(`${relative(root, path)} uses ${rule.name}; ${rule.reason}`);
+      }
+    }
+  }
+}
+
 async function checkMarkdownLinks() {
   const markdownFiles = await filesUnder(root, (file) => extname(file) === ".md");
   const linkPattern = /!?\[[^\]]*\]\(([^)]+)\)/g;
@@ -124,6 +148,7 @@ async function checkMarkdownLinks() {
 
 await checkManifestBoundary();
 await checkNetworkBoundary();
+await checkStorageBoundary();
 await checkFixtures();
 await checkMarkdownLinks();
 

@@ -28,10 +28,33 @@ This data stays in the browser profile. ForumForge has no server copy and cannot
 recover it.
 
 Saved posts can be exported to Markdown. Individual saves can be removed with
-their Save toggle, and a note can be cleared by saving it empty. A bulk clear
-control is not implemented yet. Until it is, users can remove the extension (or
-clear its extension storage through browser developer tools) to delete all local
-ForumForge data.
+their Save toggle, and a note can be cleared by saving it empty. The panel's
+**Clear local user data…** control asks for confirmation before permanently
+deleting read history, saved posts, and private author notes. It reports success
+or a possible partial failure; cancelling the confirmation changes nothing.
+Removing the extension also deletes its local storage.
+
+User records remain until the user deletes them through one of those actions.
+After a successful bulk clear, ForumForge retains numeric schema-version and
+clear-generation metadata so open panels cannot resume against an ambiguous
+storage lifecycle. Stable generation values are even; a clear publishes an odd
+generation plus a `clearing` status before deletion, then a new even generation
+after finalization. If the browser cannot store that initial guard, deletion
+does not start. Once the guard exists, a later failure leaves it blocking until
+a successful retry; it is normally marked `failed` and may remain `clearing` if
+the browser also rejects that status update. These operational records contain
+no page content, saved post, read history, or note.
+
+Deletion is restricted to the documented ForumForge user-data prefixes and does
+not call the browser's global storage-clear operation. The exact user and
+operational key/record contracts are documented in
+[`@forumforge/storage`](../packages/storage/README.md).
+
+Schema preparation and migration happen locally in the browser. The schema 1
+migration adopts existing unversioned read history, saves, and notes without
+transmitting or rewriting them. Automated preservation tests pass, while the
+same-profile Chrome upgrade check for the release artifact remains pending in
+[TESTING.md](TESTING.md).
 
 ## Permissions
 

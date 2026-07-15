@@ -42,6 +42,12 @@ will be shared with the reporter.
   runtime guards before the side panel consumes them.
 - **Local-first storage:** read history, saved post snapshots, and notes use
   `chrome.storage.local`.
+- **Non-destructive upgrades:** storage migrations are idempotent, commit their
+  version marker last, and fail closed on invalid or newer schemas.
+- **Scoped deletion:** the confirmed clear-data action removes only centrally
+  registered ForumForge user-data keys and never calls
+  `chrome.storage.local.clear()`. A generation and clear-state record block
+  stale or queued writes during deletion and until a failed clear is retried.
 - **No hidden network path:** the current extension has no telemetry, analytics,
   background fetch, WebSocket, or remote-processing code.
 - **Deterministic fixtures:** repository fixtures contain no active embedded

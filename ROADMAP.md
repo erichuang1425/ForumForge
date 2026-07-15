@@ -23,10 +23,12 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] Discourse and Hacker News extractors with fixtures
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
+- [x] Document the unversioned storage baseline and schema 1 contract
+- [x] Add marker-last migration/error tests and a scoped, confirmed clear control
 - [ ] Merge the Phase 1 development pull request into current `main`
 - [ ] Complete and record Chrome 116+ manual testing on the final package
+- [ ] Record same-extension-ID schema upgrade and clear-data browser evidence
 - [ ] Add extension icons and store listing assets
-- [ ] Add an in-product bulk clear-local-data control
 - [ ] Set version 0.1.0, finalize the changelog, tag, and publish a GitHub release
 - [ ] Run a small public pilot and triage the resulting issues
 

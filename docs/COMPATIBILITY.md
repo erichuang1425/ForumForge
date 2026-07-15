@@ -27,6 +27,17 @@ additional pages, expand every lazy-loaded post, or bypass a login/access
 boundary. Read-history behavior can therefore be page-specific on paginated
 threads.
 
+## Local-data upgrades
+
+| Upgrade | Automated evidence | Browser evidence |
+| --- | --- | --- |
+| Unversioned schema 0 -> schema 1 | Legacy keys/values preserved; interrupted marker write retries; invalid/newer versions fail closed | Pending same-extension-ID Chrome test against the final ZIP |
+| Clear local user data | Scoped/idempotent deletion, cross-panel generation/state blocking, partial failure/retry, and rendered-state reset | Pending keyboard, persistence, two-window, and actual `chrome.storage.local` test |
+
+Until the pending rows are recorded through
+[TESTING.md](TESTING.md), ForumForge does not claim that a packaged Chrome update
+or deletion flow has been manually verified.
+
 ## Updating this document
 
 Every compatibility claim should include:

@@ -18,6 +18,7 @@ out/
 .parcel-cache/
 
 # Browser extension build artifacts
+artifacts/
 web-ext-artifacts/
 *.crx
 *.xpi

@@ -1,0 +1,70 @@
+name: Forum support request
+description: Request or help add extraction support for a public forum
+title: "[Forum] "
+labels:
+  - adapter-request
+body:
+  - type: input
+    id: forum
+    attributes:
+      label: Forum name
+    validations:
+      required: true
+  - type: input
+    id: public_url
+    attributes:
+      label: Public sample thread
+      description: The page must be viewable without login, payment, or bypassing access controls.
+      placeholder: https://forum.example/thread/123
+    validations:
+      required: true
+  - type: input
+    id: software
+    attributes:
+      label: Forum software and version, if known
+      placeholder: phpBB 3.3, XenForo 2, custom
+  - type: textarea
+    id: current_result
+    attributes:
+      label: Current ForumForge result
+      description: What does the generic parser miss or extract incorrectly?
+    validations:
+      required: true
+  - type: dropdown
+    id: nesting
+    attributes:
+      label: Reply layout
+      options:
+        - Flat posts
+        - Nested/threaded replies
+        - Not sure
+  - type: dropdown
+    id: pagination
+    attributes:
+      label: Pagination
+      options:
+        - Multiple numbered pages
+        - Infinite/lazy loading
+        - Single page
+        - Not sure
+  - type: textarea
+    id: roles
+    attributes:
+      label: Roles and notable markup
+      description: Mention OP, moderator/admin badges, quotes, code, deleted posts, and other useful cases.
+  - type: checkboxes
+    id: fixture
+    attributes:
+      label: Fixture
+      options:
+        - label: I can provide a small anonymized, offline-safe HTML fixture following docs/FIXTURES.md.
+        - label: I need help creating a sanitized fixture.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Content safety
+      options:
+        - label: The sample is public and does not require login, payment, or access-control bypass.
+          required: true
+        - label: I will not attach authentic private content, credentials, tokens, or personal data.
+          required: true

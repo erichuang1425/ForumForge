@@ -1,0 +1,48 @@
+name: Feature request
+description: Propose a focused improvement tied to a user problem
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Describe who is blocked and what they cannot do today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: Describe observable behavior, not only an implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: fit
+    attributes:
+      label: Fit with ForumForge
+      description: Explain how this stays local-first, privacy-respecting, adapter-driven, and useful without AI.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Suggested acceptance criteria
+      placeholder: |
+        - [ ] A user can...
+        - [ ] Failure state...
+        - [ ] Tests/evidence...
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Product boundaries
+      options:
+        - label: This does not require bypassing access controls or large-scale scraping.
+          required: true
+        - label: Any permission, remote processing, storage, or AI impact is stated above.
+          required: true

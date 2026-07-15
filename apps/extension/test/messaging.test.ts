@@ -17,7 +17,35 @@ describe("messaging guards", () => {
   });
 
   it("rejects foreign or malformed messages", () => {
-    for (const bad of [null, undefined, 42, "extract", {}, { type: 7 }, { type: "other/thing" }]) {
+    for (const bad of [
+      null,
+      undefined,
+      42,
+      "extract",
+      {},
+      { type: 7 },
+      { type: "other/thing" },
+      { type: "forumforge/error" },
+      { type: "forumforge/error", message: 7 },
+      { type: "forumforge/thread" },
+      { type: "forumforge/thread", thread: { posts: "not-an-array" } },
+      {
+        type: "forumforge/thread",
+        thread: { posts: [{ id: "1", author: "Ada" }] },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [{ id: "1", author: "Ada", contentText: "Hello", role: "owner" }],
+        },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [{ id: "1", author: "Ada", contentText: "Hello", role: ["op"] }],
+        },
+      },
+    ]) {
       expect(isExtractRequest(bad)).toBe(false);
       expect(isExtractResponse(bad)).toBe(false);
     }

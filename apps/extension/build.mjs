@@ -26,7 +26,7 @@ await build({
   // as a classic script, so keep every entry consistent.
   format: "iife",
   platform: "browser",
-  target: ["chrome114"],
+  target: ["chrome116"],
   sourcemap: true,
   logLevel: "info",
 });

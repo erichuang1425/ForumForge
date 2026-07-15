@@ -1,62 +1,77 @@
-# Privacy
+# ForumForge privacy notice
 
-ForumForge is **local-first** and **privacy-respecting** by design. It is a
-reader-side enhancement layer for forums you already have access to — not a
-tracking, scraping, or data-collection product.
+Last updated: 2026-07-15
 
-> **Status:** Early planning / prototype — there is no released extension yet. This
-> document states the privacy commitments the project is built around. It is not a
-> legal privacy policy for a shipped product; a formal policy will accompany the
-> first release.
+This notice describes the current pre-release source build. ForumForge is
+local-first: it processes the page the user chooses and does not operate a
+ForumForge account, analytics service, or remote backend.
 
-## What ForumForge stores, and where
+## Data processed on a forum page
 
-By default, the following stay **on your device**:
+When the user clicks the toolbar action, ForumForge temporarily reads the active
+tab's thread structure and visible post data, including titles, authors,
+timestamps, post bodies, permalinks, and reply relationships. Processing occurs
+inside the browser to create the side-panel view.
 
-- read history (what you've already seen, for "new since last visit")
-- saved posts / comments
-- local user notes and tags
-- per-site settings
-- installed adapters
+The current code does not transmit that page content to the maintainer or any
+third-party service.
 
-There is **no account** required for core features, and your data is not sent to
-any ForumForge server — there is no ForumForge server in the default design.
+## Data stored on the device
 
-## What ForumForge does not do
+ForumForge uses `chrome.storage.local` for:
 
-- No tracking or analytics by default.
-- No hidden third-party network requests.
-- No remote summaries by default.
-- No selling or sharing of user data.
-- Local notes stay local.
+- per-thread read-history identifiers and visit state;
+- saved-post snapshots, including the source URL, author, and saved content;
+- private notes keyed by author and forum origin.
 
-## AI features are opt-in
+This data stays in the browser profile. ForumForge has no server copy and cannot
+recover it.
 
-Any AI-assisted feature (for example, optional summaries) is **off by default** and
-must be explicitly enabled. Where practical, you can point AI features at **your own
-provider or a local model**, so your content isn't sent anywhere you didn't choose.
-
-## Optional sync (future)
-
-Cross-device sync is a *possible future feature*, not part of the default
-experience. If added, it will be **optional**, clearly disclosed, and designed to
-keep your data under your control (e.g. end-to-end encrypted). It will never be
-turned on without your action.
-
-## Adapters and your data
-
-Adapters read the forum page you're viewing to extract its posts. They must not
-collect unrelated data, bypass access controls, or make unnecessary network
-requests. Safe (JSON) adapters can't run code or make network requests at all;
-advanced (TypeScript) adapters are reviewed before inclusion in any public
-registry. See **[../SECURITY.md](../SECURITY.md)**.
+Saved posts can be exported to Markdown. Individual saves can be removed with
+their Save toggle, and a note can be cleared by saving it empty. A bulk clear
+control is not implemented yet. Until it is, users can remove the extension (or
+clear its extension storage through browser developer tools) to delete all local
+ForumForge data.
 
 ## Permissions
 
-The extension requests **narrow, justified** permissions only — each tied to a
-concrete feature. Broad "just in case" permissions are not requested.
+| Permission | Why it is needed |
+| --- | --- |
+| `activeTab` | Read only the tab on which the user invokes ForumForge |
+| `scripting` | Inject the extractor on demand after that user action |
+| `sidePanel` | Display the reading interface beside the current tab |
+| `storage` | Keep read history, saves, and notes on the device |
 
----
+The manifest declares no host permissions and no always-on content scripts.
+Chrome 116 is the current minimum because the toolbar action calls
+`sidePanel.open()`.
 
-For the broader product stance, see **[../README.md](../README.md)** and
-**[../Initial Plan.md](../Initial%20Plan.md)**.
+## Network activity and telemetry
+
+The current extension initiates no background network requests and contains no
+telemetry, advertising, analytics, tracking pixels, remote fonts, or remote AI
+calls. It can display safe links from a post; a network request happens only if
+the user chooses to open such a link.
+
+ForumForge does not sell personal information and has no data to sell.
+
+## Fixtures and contributions
+
+Test fixtures must contain only public, anonymized, synthetic thread content and
+must be stripped of scripts, frames, remote resources, credentials, and personal
+data. See [FIXTURES.md](FIXTURES.md).
+
+## Future optional features
+
+Any future sync, remote adapter registry, telemetry, or AI integration must be
+separately disclosed, disabled by default where applicable, and reviewed before
+release. This notice will be updated before such behavior ships.
+
+## Security and contact
+
+Extracted HTML is treated as untrusted and sanitized before rendering. Security
+reports follow [../SECURITY.md](../SECURITY.md). Privacy questions may be sent to
+**erichuang1425@gmail.com**.
+
+Material changes to this notice will be documented in
+[../CHANGELOG.md](../CHANGELOG.md) and dated above.

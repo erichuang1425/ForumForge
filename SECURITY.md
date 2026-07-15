@@ -1,77 +1,81 @@
-# Security Policy
+# Security policy
 
-ForumForge runs in the user's browser and reads forum pages the user already has
-access to. Because it executes in a privileged extension context and can load
-community-authored adapters, we take security and privacy seriously.
+ForumForge reads untrusted forum markup inside a browser-extension workflow and
+stores user-created data locally. Security and privacy boundaries are part of
+the product contract, not optional polish.
 
-> **Status:** Early planning / prototype. There is no released extension yet. This
-> policy describes the security model the project is being built around.
+## Supported versions
 
-## Reporting a vulnerability
+| Version | Support |
+| --- | --- |
+| Current `main` / pre-release development line | Best-effort security fixes |
+| Tagged releases | None published yet |
 
-Please report suspected vulnerabilities **privately** — do not open a public issue
-for security problems.
+Once v0.1 is released, this table will identify supported release lines.
 
-- Use GitHub's **private vulnerability reporting** ("Report a vulnerability" under
-  the repository's Security tab) once enabled, or
-- email the maintainer at **erichuang1425@gmail.com** with details and steps to
-  reproduce.
+## Report a vulnerability privately
 
-We'll acknowledge your report, investigate, and coordinate a fix and disclosure.
-Please give us a reasonable window to address the issue before any public
-disclosure.
+Do not open a public issue for a suspected vulnerability.
 
-## Threat model
+Email **erichuang1425@gmail.com** with:
 
-ForumForge is a **reader-side enhancement layer**. It is explicitly **not**:
+- the affected commit/version and browser;
+- impact and realistic attack conditions;
+- minimal reproduction steps or proof of concept;
+- whether the report may be credited after disclosure.
 
-- a way to bypass private communities, access controls, or paywalls;
-- a scraping product or large-scale automation tool;
-- a way to copy paid or restricted content.
+If GitHub private vulnerability reporting is enabled for the repository, that
+channel is also appropriate. Never attach private forum content, cookies,
+tokens, or personal notes unless they are essential and safely redacted.
 
-Key concerns we design against:
+The maintainer targets acknowledgement within 72 hours and an initial severity
+assessment within seven days. Complex fixes may take longer; material updates
+will be shared with the reporter.
 
-- **Untrusted page content.** Forum HTML is untrusted input. Extracted content
-  must be sanitized before rendering; never inject unsanitized markup. The side
-  panel's clean reading mode does this with an **allowlist sanitizer**
-  (`apps/extension/src/sanitize.ts`): untrusted post HTML is parsed inertly and
-  rebuilt from a fixed set of safe, semantic tags and attributes, so no script,
-  inline handler, style, embed, or unsafe URL scheme can survive.
-- **Community-authored adapters** running in a privileged context (see below).
-- **Over-broad extension permissions** widening the attack surface.
+## Security invariants
 
-## Adapter security model
+- **User-selected access:** `activeTab` and on-demand injection are used instead
+  of broad host permissions or always-on content scripts.
+- **Untrusted content:** extracted HTML is rebuilt through the allowlist
+  sanitizer in `apps/extension/src/sanitize.ts` before rendering.
+- **Validated boundaries:** messages crossing extension contexts are checked by
+  runtime guards before the side panel consumes them.
+- **Local-first storage:** read history, saved post snapshots, and notes use
+  `chrome.storage.local`.
+- **No hidden network path:** the current extension has no telemetry, analytics,
+  background fetch, WebSocket, or remote-processing code.
+- **Deterministic fixtures:** repository fixtures contain no active embedded
+  content or remote-loading resources.
+- **Declarative adapters first:** the planned JSON adapter tier cannot execute
+  arbitrary code. Any future code adapter requires explicit trust and review.
 
-Adapters teach ForumForge how to read a forum. They come in tiers, safest first:
+Automated tests and `pnpm repo:check` enforce several of these invariants.
+Changing an enforced boundary requires a documented product and threat-model
+decision, matching tests, and maintainer approval.
 
-- **JSON selector adapters (safe).** Declarative only — CSS selectors, attribute
-  extraction, text-cleanup rules, and URL match patterns. They **cannot** run
-  arbitrary JavaScript, call `eval`, make hidden network requests, perform
-  cross-site tracking, or execute unreviewed code. This is the preferred tier.
-- **TypeScript / JavaScript adapters (advanced).** These are code that runs in the
-  user's browser. They are **clearly marked as code**, and are **reviewed before
-  inclusion** in any public adapter registry. Treat installing a third-party code
-  adapter with the same caution as installing any browser extension.
+## In scope
 
-All adapters — regardless of tier — must not collect unrelated user data, bypass
-access controls, or make unnecessary network requests.
+Examples include:
 
-## Permissions
+- cross-site scripting or unsafe URL handling in the side panel;
+- malformed message payloads that cause unsafe behavior;
+- unauthorized page access or unexpectedly broad extension permissions;
+- leakage, corruption, or unintended cross-origin mixing of local user data;
+- malicious fixture or adapter content that executes or loads remotely;
+- supply-chain compromise affecting the shipped extension.
 
-Extension permissions stay **narrow and justified**. Every host permission or
-capability must map to a concrete feature; we don't request broad permissions
-"just in case." Permission changes are reviewed as security-relevant.
+## Usually out of scope
 
-## Privacy commitments
+- flaws in a forum site itself;
+- reports that require a user to intentionally modify the source or disable
+  browser security controls;
+- social engineering without a ForumForge vulnerability;
+- automated scanner output without a reproducible impact;
+- denial of service requiring unrealistic local resource use.
 
-ForumForge is local-first by default:
+## Disclosure
 
-- no account required for core features;
-- no tracking or analytics by default;
-- no hidden third-party network requests;
-- local notes, tags, read history, and saved posts stay on-device by default;
-- AI features are opt-in only, and can use the user's own provider or a local
-  model where practical.
-
-See **[README.md](README.md)** and **[Initial Plan.md](Initial%20Plan.md)** for the
-broader privacy and product stance.
+Please allow a reasonable remediation window before public disclosure. The
+maintainer will coordinate a fix, release notes, credit (if desired), and a
+GitHub security advisory when appropriate. Good-faith research that respects
+privacy and avoids data destruction is welcome.

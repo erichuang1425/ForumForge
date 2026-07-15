@@ -8,9 +8,9 @@ Submitting a fixture is one of the most useful contributions you can make — ev
 you never write an adapter yourself. See **[../CONTRIBUTING.md](../CONTRIBUTING.md)**
 and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 
-> **Status:** The fixture-based test harness lands in Phase 5 (see
-> **[../ROADMAP.md](../ROADMAP.md)**). This guide describes how to capture and submit
-> fixtures now so adapters can be built against them.
+> **Status:** Fixture-backed parser tests exist today for the generic, Discourse,
+> and Hacker News extractors. Phase 2 extends the same pattern to contributor-made
+> declarative adapters; Phase 5 adds registry-wide quality reporting.
 
 ## What makes a good fixture
 
@@ -70,13 +70,13 @@ The simplest reliable method:
        └── example-thread.html
    ```
 
-5. Add a short note (in the PR or a sibling `.md`) with:
+5. Add a short note in the PR with:
    - the **forum software** (if known): Discourse, phpBB, XenForo, vBulletin, custom…
    - the **original URL** (so the source is traceable),
    - anything notable: nested replies, role labels, unusual pagination.
 
-> The `fixtures/` directory is a convention for now; the exact layout and any test
-> runner will be finalized when the adapter test harness is built (Phase 5).
+Keep extractor fixtures under the owning package's `test/fixtures/` directory
+and add assertions in the adjacent test suite.
 
 ## Submitting
 

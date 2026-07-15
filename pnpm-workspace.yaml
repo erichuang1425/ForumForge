@@ -3,3 +3,10 @@ packages:
   - "apps/*"
   - "adapters/*"
   - "examples/*"
+
+# esbuild's platform binary installer is required by the extension build.
+# Keep this allowlist explicit; do not approve dependency scripts broadly.
+onlyBuiltDependencies:
+  - esbuild
+allowBuilds:
+  esbuild: true

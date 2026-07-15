@@ -1,35 +1,49 @@
-<!--
-Thanks for contributing to ForumForge! Please keep PRs focused — one logical
-change per PR. See CONTRIBUTING.md and AGENTS.md.
--->
+<!-- Keep this pull request focused on one tracked outcome. -->
 
-## What does this PR do?
+## Linked issue
 
-<!-- A short description of the change and the motivation. -->
+Closes #
 
-## Type of change
+## User-visible outcome
 
-- [ ] Documentation
-- [ ] New or updated adapter
+<!-- What changes for a user or contributor? Include important failure states. -->
+
+## Change type
+
 - [ ] Bug fix
 - [ ] Feature
-- [ ] Tooling / build
-- [ ] Other:
+- [ ] Adapter/parser
+- [ ] Documentation
+- [ ] Tooling/build/release
+- [ ] Security/privacy
 
-## Checklist
+## Automated verification
 
-- [ ] The change is focused (no unrelated features, broad refactors, or premature abstractions).
-- [ ] Relevant documentation is updated in this PR.
-- [ ] No new tracking, analytics, or hidden third-party network requests.
-- [ ] No user data is sent off-device by default; any AI feature stays opt-in.
-- [ ] Extension permissions are unchanged, or any change is narrow and justified below.
-- [ ] If this adds/updates an adapter: it fails gracefully on missing fields and is tested against an HTML fixture (not a live site).
-- [ ] I verified my change, and I describe how below (or note that no build/test pipeline exists yet).
+<!-- Paste exact final commands and concise results. Do not claim checks you did not run. -->
 
-## How was this verified?
+- [ ] `pnpm verify`
 
-<!-- Commands run, fixtures used, manual steps, or "no build/test pipeline yet." -->
+## Manual verification
 
-## Notes for reviewers
+<!-- Browser/OS, unpacked vs final ZIP, page type, scenario, and result. Use N/A only with a reason. -->
 
-<!-- Permission changes, security/privacy considerations, open questions. -->
+## Risk review
+
+- [ ] No new telemetry, tracking, hidden network request, or off-device processing.
+- [ ] Manifest permissions are unchanged, or the reviewed change is explained below.
+- [ ] Storage records/migrations preserve existing user data, or the migration is explained below.
+- [ ] Untrusted DOM, HTML, URLs, fixtures, and messages remain validated/sanitized.
+- [ ] Adapter tests use anonymized offline fixtures, not live requests.
+- [ ] New dependencies are necessary and explained below.
+- [ ] No secret, personal data, private forum content, generated artifact, or unrelated edit is included.
+
+## Documentation and release
+
+- [ ] Relevant docs and compatibility notes are updated.
+- [ ] `CHANGELOG.md` is updated for user-visible behavior, or this has no release-note impact.
+- [ ] Screenshots/evidence are attached for a visible UI change, or N/A is explained.
+- [ ] Breaking behavior and rollback considerations are explained below.
+
+## Reviewer notes
+
+<!-- Permissions, privacy/security, storage, dependency, manual-test gaps, or follow-up work. -->

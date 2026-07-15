@@ -2,7 +2,7 @@
 
 The ForumForge **browser extension** — a Manifest V3 app that turns the thread on
 the current page into a clean, readable list in a side panel. It is the Phase 0
-shell that later features build on, and it already ships the first Phase 1
+shell that later features build on, and the current source includes the Phase 1
 features — clean reading mode, OP highlighting, **new posts since last visit**,
 **saving useful posts**, and **local user notes**.
 
@@ -81,14 +81,18 @@ Narrow by design (see [docs/PRIVACY.md](../../docs/PRIVACY.md)): `activeTab` and
 ForumForge on, `sidePanel` for the panel UI, and `storage` to keep per-thread
 read history, saved posts, and user notes on-device. No host permissions, no
 standing access to pages the user hasn't asked about, and nothing synced
-off-device.
+off-device. The manifest declares Chrome 116 as the minimum because the toolbar
+action calls `sidePanel.open()`.
 
 ## Develop
 
 From the repo root:
 
+- `pnpm verify` runs the canonical typecheck, test, build, boundary,
+  documentation, and build-output gate.
+
 - `pnpm --filter @forumforge/extension build` — bundle into `apps/extension/dist/`
-  (esbuild). `pnpm build` builds every package.
+  (esbuild). `pnpm build` runs `build` in each workspace that defines it.
 - `pnpm --filter @forumforge/extension typecheck`
 - `pnpm test` — runs the unit tests (extraction wiring, rendering, sanitization,
   messaging, read history, saved posts, user notes, Markdown export, and the
@@ -103,5 +107,6 @@ From the repo root:
    **Read this thread**. Save useful posts, then **Export saved** to download them
    as a Markdown file.
 
-> The unit tests and the bundle build are automated; loading the unpacked
-> extension and clicking through is a manual step (it needs a real browser).
+> Automated checks do not prove browser behavior. Follow
+> [docs/TESTING.md](../../docs/TESTING.md) and record the exact unpacked or
+> packaged build used for manual testing.

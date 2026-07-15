@@ -1,0 +1,29 @@
+name: Setup or contributor question
+description: Ask a focused public question about using or contributing
+title: "[Question] "
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+      description: Include commands and sanitized output when relevant.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Commit, Node version, browser, and OS
+  - type: checkboxes
+    id: public
+    attributes:
+      label: Safety check
+      options:
+        - label: This question contains no vulnerability details, secrets, private content, or personal data.
+          required: true

@@ -1,0 +1,10 @@
+* @erichuang1425
+
+# Security- and release-critical surfaces stay visible to the maintainer.
+/apps/extension/manifest.json @erichuang1425
+/apps/extension/src/sanitize.ts @erichuang1425
+/apps/extension/src/messaging.ts @erichuang1425
+/.github/workflows/ @erichuang1425
+/scripts/ @erichuang1425
+/SECURITY.md @erichuang1425
+/docs/PRIVACY.md @erichuang1425

@@ -6,14 +6,20 @@
   "type": "module",
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": "^22.0.0"
   },
   "packageManager": "pnpm@10.33.0",
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "pnpm -r typecheck",
-    "build": "pnpm -r build"
+    "build": "pnpm -r build",
+    "repo:check": "node scripts/check-repository.mjs && node scripts/version.mjs check",
+    "build:check": "node scripts/verify-build.mjs",
+    "verify": "pnpm typecheck && pnpm test && pnpm build && pnpm repo:check && pnpm build:check",
+    "package:extension": "pnpm build && node scripts/package-extension.mjs",
+    "version:check": "node scripts/version.mjs check",
+    "version:set": "node scripts/version.mjs set"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

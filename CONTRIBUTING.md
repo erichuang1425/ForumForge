@@ -1,95 +1,113 @@
 # Contributing to ForumForge
 
-Thanks for your interest in ForumForge — open-source tools to modernize any forum
-from your browser. Contributions are very welcome.
+ForumForge welcomes focused fixes, browser-test evidence, sanitized fixtures,
+adapter improvements, documentation, and product work aligned with the roadmap.
 
-> **Project status:** Early planning / prototype. The repository currently holds
-> the product spec and project documentation; application code has not been
-> scaffolded yet. The most valuable contributions right now are documentation,
-> adapter design, and HTML fixtures. See **[Initial Plan.md](Initial%20Plan.md)**
-> for the full plan and roadmap.
+## Before starting
 
-## Before you start
+1. Read [README.md](README.md), [ROADMAP.md](ROADMAP.md), and the relevant issue.
+2. Search existing issues and pull requests to avoid duplicate work.
+3. For a material change, open or claim one issue and agree on its acceptance
+   criteria before writing a large patch.
+4. Read [AGENTS.md](AGENTS.md) when using a coding agent and the nearest nested
+   `AGENTS.md` for subsystem rules.
 
-- Read **[README.md](README.md)** for the product overview.
-- Read **[Initial Plan.md](Initial%20Plan.md)** — the canonical product spec.
-- Read **[AGENTS.md](AGENTS.md)** if you're using an AI coding agent; it captures
-  the project's conventions and boundaries.
-- Check existing issues before opening a new one.
-- Review our **[Code of Conduct](CODE_OF_CONDUCT.md)** — it applies to all project spaces.
-
-## Good first contributions
-
-- **Request support for a forum** you use (open an issue with the URL pattern and
-  a sample thread).
-- **Submit an HTML fixture** — a saved, representative thread page we can build and
-  test an adapter against (see **[docs/FIXTURES.md](docs/FIXTURES.md)**).
-- **Create a JSON adapter** for a forum (the safest, simplest adapter type).
-- **Improve parser accuracy** or the generic fallback extractor.
-- **Improve documentation.**
-- **Test the extension on old/niche forums** and report what breaks.
-- **Help design the Adapter Studio** workflow.
-
-## Adapters
-
-Adapters teach ForumForge how to read a particular forum. See
-**[docs/ADAPTERS.md](docs/ADAPTERS.md)** for the full authoring guide. Prefer the
-safest tier that can do the job:
-
-1. **JSON selector adapters** — declarative CSS selectors + extraction rules. No
-   code execution. **Start here.**
-2. **Visual Adapter Studio** — a later, no-code way to generate adapters by
-   clicking page elements.
-3. **TypeScript adapters** — for sites selectors can't express. Treated as code
-   that runs in the user's browser, clearly marked, and reviewed before inclusion
-   in any public registry.
-
-Guidelines:
-
-- Test adapters against **saved HTML fixtures**, not live sites — keep tests
-  deterministic and don't hammer real forums. See **[docs/FIXTURES.md](docs/FIXTURES.md)**.
-- Adapters must **fail gracefully**: a missing field should degrade, not crash.
-- Document which forum software (and versions) the adapter targets, plus known
-  limitations.
-- Adapters must not collect unrelated data, bypass access controls, or make
-  unnecessary network requests. See **[SECURITY.md](SECURITY.md)**.
-
-## Privacy & security expectations for contributions
-
-ForumForge is local-first and privacy-respecting by design. Contributions must not:
-
-- add tracking, analytics, or hidden third-party requests;
-- send user data off-device by default;
-- enable AI features by default (AI is strictly opt-in);
-- broaden extension permissions without a concrete, justified feature need.
-
-If your change touches any of the above, call it out explicitly in the PR.
+Security reports do not belong in public issues. Follow
+[SECURITY.md](SECURITY.md).
 
 ## Development setup
 
-The project is a [pnpm](https://pnpm.io) + TypeScript monorepo (Node ≥ 20; see
-`.nvmrc`). Phase 0 packages live under `packages/`.
+The supported development and CI runtime is Node 22 (see `.nvmrc`). The package
+manager is pinned in `package.json`.
 
 ```bash
-pnpm install      # install workspace dependencies
-pnpm test         # run the test suite (Vitest)
-pnpm typecheck    # type-check every package
+corepack enable
+pnpm install --frozen-lockfile
+pnpm verify
 ```
 
-Documentation and adapter/fixture contributions don't require a local build.
+`pnpm verify` is the required handoff gate. It runs:
 
-Technical direction (see the plan): TypeScript, WebExtensions-style APIs,
-local-first storage, minimal dependencies, lockfiles committed.
+- strict TypeScript checks across workspaces;
+- all Vitest suites;
+- the extension bundle;
+- manifest, privacy-boundary, fixture, version, and documentation-link checks;
+- verification of the built extension file set.
+
+Useful focused commands:
+
+```bash
+pnpm --filter @forumforge/parser test
+pnpm --filter @forumforge/extension test
+pnpm typecheck
+pnpm build
+```
+
+Documentation-only changes still run `pnpm repo:check`. Changes to the
+extension, manifest, storage, parser selection, or user-visible behavior also
+require the applicable manual checks in [docs/TESTING.md](docs/TESTING.md).
+
+## Choose a contribution
+
+Good first contributions are:
+
+- reproduce a bug and reduce it to a sanitized fixture or unit test;
+- test the source build on a public Discourse, Hacker News, or generic forum
+  thread and report evidence;
+- improve generic-parser accuracy without harming fallback behavior;
+- anonymize and contribute an offline-safe HTML fixture;
+- clarify current behavior or a documented limitation.
+
+The JSON adapter runtime is planned but not implemented. Discuss its format in a
+tracking issue before submitting adapter-format code that establishes a public
+contract.
+
+## Adapter and fixture acceptance
+
+Parser changes must:
+
+- use deterministic fixture tests, not automated live requests;
+- preserve stable post IDs and fail gracefully when optional fields are absent;
+- include a false-positive test when adapter detection changes;
+- document target software, page types, and known limits;
+- keep authentic identities, prose, credentials, and gated content out of the
+  repository.
+
+Fixtures must be anonymized and offline-safe. Remove scripts, frames, forms,
+remote-loading assets, tokens, personal data, and unrelated markup while
+preserving the DOM structure the extractor needs. Follow
+[docs/FIXTURES.md](docs/FIXTURES.md).
 
 ## Pull requests
 
-- Keep PRs focused — one logical change per PR.
-- Don't add unrelated features, broad refactors, or premature abstractions.
-- Update relevant documentation in the same PR.
-- Describe what you changed, why, and how you verified it.
-- Be kind and constructive in review. This is a community project.
+Keep one logical change per pull request. A reviewable PR includes:
 
-## License
+- a linked issue or a concise reason an issue is unnecessary;
+- the user-visible behavior and failure states;
+- tests that would fail without the change;
+- exact automated commands and results;
+- manual browser evidence when required;
+- explicit notes for dependency, permission, storage-schema, privacy, or
+  security impact;
+- updated documentation and `CHANGELOG.md` for user-visible changes.
 
-By contributing, you agree that your contributions are licensed under the
-project's **[MIT License](LICENSE)**.
+Reviewers use [docs/CODE_REVIEW.md](docs/CODE_REVIEW.md). A passing CI run is
+necessary, not sufficient, for browser or release claims.
+
+## Dependencies and generated files
+
+Browser-extension dependencies increase bundle size and supply-chain risk.
+Prefer platform APIs and small local helpers; explain every new runtime
+dependency. Do not commit `dist/`, `artifacts/`, ZIPs, source maps, or local
+environment files.
+
+## Commits
+
+Use short, imperative messages. Do not include generated-by notices, assistant
+signatures, tool names, or synthetic co-author trailers. Contributors retain
+their own Git identity.
+
+## Conduct and license
+
+Participating means following the [Code of Conduct](CODE_OF_CONDUCT.md).
+Contributions are licensed under the repository's [MIT License](LICENSE).

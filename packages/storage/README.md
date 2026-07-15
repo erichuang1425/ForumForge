@@ -1,46 +1,58 @@
 # @forumforge/storage
 
-ForumForge's **local-first storage layer**: the on-device key/value seam that
-features persist to. Everything ForumForge keeps — read history, saved posts,
-local notes and tags, per-site settings, installed adapters — stays on the
-user's own device by default (see [docs/PRIVACY.md](../../docs/PRIVACY.md)).
+ForumForge's local-first storage layer: a small asynchronous key/value contract
+that keeps feature logic independent from a specific browser backend.
 
-This package defines the storage **contract** and a working in-memory backend.
-The browser backend lives where it can be exercised: the extension implements
-`StorageBackend` over `chrome.storage.local` in
-[`apps/extension/src/storage.ts`](../../apps/extension/src/storage.ts) (used by
-the "new posts since last visit" read history). The seam is the whole point —
-the persistent backend slots in there without any feature code or this package
-changing. Built only when there is real, testable work for it — no placeholder
-scaffolding (see [AGENTS.md](../../AGENTS.md)).
+The current extension stores three data categories on-device:
+
+- per-thread read history;
+- saved-post snapshots and source metadata;
+- private per-author notes scoped to a forum origin.
+
+The extension implements `StorageBackend` with `chrome.storage.local` in
+[`apps/extension/src/storage.ts`](../../apps/extension/src/storage.ts). No
+IndexedDB, sync, remote backend, tags, per-site settings, or installed-adapter
+records ship today. See [docs/PRIVACY.md](../../docs/PRIVACY.md).
 
 ## Exports
 
-- `StorageBackend` — the minimal async key/value contract (`get` / `set` /
-  `remove` / `keys`). The shipped extension implements this with
-  `chrome.storage.local` (or IndexedDB for larger data); the rest of the app
-  depends only on this interface.
-- `MemoryStorageBackend` — an in-memory `StorageBackend` for tests, non-browser
-  callers, and as a default fallback. Values are cloned in and out, so stored
-  state can't be mutated through a caller's reference.
-- `Collection<T>` — a typed, namespaced set of records keyed by id, layered over
-  any backend. Because a backend is one flat key space shared by every feature,
-  each collection prefixes its keys (`<namespace>:<id>`) so categories don't
-  collide. Construct one per category, e.g. `new Collection(backend, "saved")`.
+- `StorageBackend` — minimal async `get`, `set`, `remove`, and `keys`
+  operations.
+- `MemoryStorageBackend` — cloned in-memory values for deterministic tests and
+  non-browser callers.
+- `Collection<T>` — typed records in a namespaced flat key space, using
+  `<namespace>:<id>` keys so features do not collide.
 
 ## Example
 
 ```ts
-import { MemoryStorageBackend, Collection } from "@forumforge/storage";
+import { Collection, MemoryStorageBackend } from "@forumforge/storage";
 
-const backend = new MemoryStorageBackend(); // swapped for chrome.storage later
+const backend = new MemoryStorageBackend();
 const saved = new Collection(backend, "saved");
 
 await saved.set(post.id, post);
 const all = await saved.values();
 ```
 
+Production extension features receive the Chrome-backed implementation through
+the same interface.
+
+## Compatibility and migrations
+
+The current pre-release records are unversioned. Schema versioning, migration
+tests, upgrade preservation, and an in-product bulk clear control are tracked in
+[#14](https://github.com/erichuang1425/ForumForge/issues/14) and must be resolved
+before v0.1.
+
 ## Develop
 
-From the repo root: `pnpm test` runs the suite, `pnpm typecheck` type-checks all
-packages. This package has no runtime dependencies.
+From the repository root:
+
+```bash
+pnpm --filter @forumforge/storage test
+pnpm typecheck
+pnpm verify
+```
+
+This package has no runtime dependencies.

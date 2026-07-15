@@ -1,7 +1,5 @@
-# Allow free-form issues in addition to the templates below.
-blank_issues_enabled: true
-# Add contact links once GitHub Discussions is enabled for the repo, e.g.:
-# contact_links:
-#   - name: Questions & discussion
-#     url: https://github.com/erichuang1425/ForumForge/discussions
-#     about: Ask questions and discuss ideas here instead of opening an issue.
+blank_issues_enabled: false
+contact_links:
+  - name: Security policy
+    url: https://github.com/erichuang1425/ForumForge/blob/main/SECURITY.md
+    about: Report vulnerabilities privately; do not open a public issue.

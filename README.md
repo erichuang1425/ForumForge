@@ -1,139 +1,130 @@
 # ForumForge
 
-**Open-source tools to modernize any forum from your browser.**
+**Local-first tools that turn difficult forum threads into a clean reading and
+knowledge-saving experience.**
 
-ForumForge is a local-first browser extension and adapter framework that turns
-messy forum threads into clean reading views, thread maps, saved knowledge, and
-new-comment tracking.
-
-Old forums still contain some of the best knowledge on the internet — hardware
-troubleshooting, game modding, visa advice, programming help, car repair, niche
-hobbies. The problem is that this knowledge is buried in outdated layouts, huge
-quote chains, repeated replies, and unclear answers. ForumForge helps users make
-those communities more usable **without requiring the forum owner to rebuild the
-site.**
+ForumForge is an open-source browser extension and adapter framework. It reads
+the forum page the user explicitly opens, renders a clearer side-panel view, and
+stores personal reading state on the device.
 
 > Your favorite forum does not need to modernize. ForumForge can modernize it
 > from your browser.
 
-> **Status:** Phase 0 (Foundation) and Phase 1 (first useful version) are
-> complete. The foundation packages — [`@forumforge/core`](packages/core) (the
-> post model), [`@forumforge/parser`](packages/parser) (the generic extractor
-> plus Discourse and Hacker News adapters), and
-> [`@forumforge/storage`](packages/storage) (the local-first storage layer) —
-> plus the [`@forumforge/extension`](apps/extension) MV3 shell, on-demand
-> content script, and side panel are built, unit-tested, and the extension
-> bundles. The side panel now offers clean reading mode, OP highlighting,
-> new-since-last-visit tracking, saved comments, local user notes, and
-> Markdown export. Phase 2 (the adapter ecosystem) is next. The canonical
-> product spec is **[Initial Plan.md](Initial%20Plan.md)**; the phase
-> checklist is in **[ROADMAP.md](ROADMAP.md)**.
+> **Development status — 2026-07-15:** Phase 0 and Phase 1 implementation is
+> complete on the active development line. There is no tagged public release
+> yet. Real-browser acceptance testing, release assets, and the v0.1 release
+> checklist remain open; see [ROADMAP.md](ROADMAP.md).
 
----
+## Available in the current source build
 
-## What ForumForge does
+- Clean side-panel reading mode with allowlist-sanitized rich text.
+- Original-poster, moderator, and administrator highlighting.
+- New-since-last-visit tracking stored in `chrome.storage.local`.
+- Locally saved posts and private per-author notes.
+- Markdown export of saved posts.
+- Dedicated Discourse and Hacker News extractors.
+- A best-effort generic forum extractor as the fallback.
+- Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
+  extension build.
 
-- **Clean reading mode** — cleaner typography, quote collapsing, distraction reduction
-- **New since last visit** — locally tracks what you've read and highlights new posts
-- **OP / moderator / staff highlighting** — see which voices matter most
-- **Local user notes & tags** — private notes attached to usernames, stored on-device
-- **Saved comments** — keep the useful posts from any supported thread
-- **Markdown export** — turn thread knowledge into a clean note
-- **Thread maps** — make the structure of a long discussion visible
-- **Unanswered-question detection** — find where you can contribute
-- **Optional summaries** — opt-in, never on by default
-- **Custom adapters** — teach ForumForge to read niche and custom forums
+## Planned, not shipped
 
-## Principles
+- User-authored JSON adapters, validation, import/export, and an adapter SDK.
+- phpBB, XenForo, and vBulletin-style adapters.
+- Adapter Studio, thread maps, best-answer/unanswered detection, and an adapter
+  registry.
+- Optional AI features. These come last, stay isolated, and are opt-in.
 
-1. **Open source first** — the extension, adapter format, and examples are inspectable and modifiable.
-2. **Local first** — notes, read history, saved comments, and tags stay on your device by default.
-3. **Privacy-respecting** — no account, no tracking, no hidden network requests, AI strictly opt-in.
-4. **Adapter driven** — any forum can be supported without waiting for the core maintainers.
-5. **Useful without AI** — the core experience works fully before any AI feature is involved.
-6. **Community extensible** — users can request, create, improve, and share adapters.
+The detailed product boundaries are in
+[Initial Plan.md](Initial%20Plan.md). The implementation sequence and release
+gates are in [ROADMAP.md](ROADMAP.md).
 
-## The adapter system
+## Try the development build
 
-Every forum is different, so ForumForge reads forums through **adapters** rather
-than hardcoding a handful of sites. An adapter teaches ForumForge how to find a
-thread's title, posts, authors, timestamps, bodies, permalinks, reply nesting,
-pagination, roles, and the original poster.
+Prerequisites: Node 22, Corepack, and Chrome or a Chromium browser with
+`sidePanel.open()` (Chrome 116+ is the current declared minimum).
 
-There are three adapter tiers, safest first:
-
-1. **JSON selector adapters** — declarative CSS selectors and extraction rules. Safe, simple, no code execution.
-2. **Visual Adapter Studio** *(later)* — click elements on a page to generate an adapter, no coding required.
-3. **TypeScript adapters** — for complex sites. Powerful, clearly marked, and reviewed before entering any public registry.
-
-Built-in adapters so far: **Discourse** and **Hacker News** (both in
-[`packages/parser`](packages/parser), alongside the best-effort generic fallback
-parser used for everything else). Planned: phpBB, XenForo, vBulletin-style — these,
-plus a JSON adapter format contributors can add new forums with, land in Phase 2.
-
-See **[docs/ADAPTERS.md](docs/ADAPTERS.md)** for the adapter authoring guide, and
-**[Initial Plan.md](Initial%20Plan.md)** for the full product spec.
-
-## Architecture (target)
-
-```text
-forumforge/
-├── apps/
-│   ├── extension/        # the browser extension (WebExtensions)
-│   ├── adapter-studio/   # visual adapter builder (later phase)
-│   └── docs/             # documentation site
-├── packages/
-│   ├── core/             # post model + orchestration
-│   ├── adapter-sdk/      # types and helpers for writing adapters
-│   ├── parser/           # extraction engine
-│   ├── storage/          # local-first storage layer
-│   ├── ui/               # shared UI components
-│   └── ai-optional/      # opt-in, isolated AI features
-├── adapters/             # built-in adapters (discourse, hackernews, generic, …)
-├── examples/             # json-adapter and typescript-adapter examples
-└── docs/
+```bash
+corepack enable
+pnpm install --frozen-lockfile
+pnpm verify
 ```
 
-This is the **target** layout. Packages are built only when there is real work for
-them — no placeholder scaffolding. Phase 0 has landed `packages/core`,
-`packages/parser` (generic extractor, plus the Discourse and Hacker News
-adapters — the dedicated top-level `adapters/` directory and adapter-sdk runtime
-are still Phase 2), `packages/storage`, and the `apps/extension` shell (content
-script + side panel); the remaining packages and apps arrive as their roadmap
-phase begins.
+Then load the extension:
 
-## Roadmap
+1. Open `chrome://extensions`.
+2. Enable **Developer mode**.
+3. Choose **Load unpacked**.
+4. Select `apps/extension/dist`.
+5. Open a forum thread and click the ForumForge toolbar action.
 
-- **Phase 0 — Foundation:** extension shell, content script, side panel, post model, local storage, generic extractor
-- **Phase 1 — First useful version:** clean reading, OP highlighting, new-since-last-visit, saved comments, notes, Markdown export, Discourse + Hacker News adapters
-- **Phase 2 — Adapter ecosystem:** JSON format, validator, import/export, phpBB/XenForo/vBulletin adapters, contribution guide
-- **Phase 3 — Adapter Studio:** click-to-select builder + adapter preview/export
-- **Phase 4 — Intelligence layer:** thread map, best-answer & unanswered detection, optional summaries
-- **Phase 5 — Community layer:** public adapter registry, quality badges, fixture tests, broken-adapter reporting
+This is a source build, not a published store release. Please report results
+using the [browser test checklist](docs/TESTING.md).
 
-Full roadmap with checklists is in **[ROADMAP.md](ROADMAP.md)** (spec and rationale
-in **[Initial Plan.md](Initial%20Plan.md)**).
+## Current compatibility
 
-## Privacy & security
+| Target | Automated evidence | Browser evidence |
+| --- | --- | --- |
+| Chrome/Chromium 116+ | MV3 build and manifest checks | Release matrix pending |
+| Discourse threads | Sanitized fixture tests | Live-site matrix pending |
+| Hacker News item pages | Sanitized fixture tests | Live-site matrix pending |
+| Other forum pages | Generic parser tests | Site-specific results vary |
+| Firefox/Safari | None | Not currently supported |
 
-ForumForge is a reader-side enhancement layer for forums **you can already
-access**. It does not bypass access controls, scrape at scale, or copy restricted
-content. Local data stays local; AI is opt-in and works with your own provider or
-local model where practical. Safe (JSON) adapters cannot run arbitrary code or
-make hidden network requests; advanced (TypeScript) adapters are clearly marked
-and reviewed. See **[docs/PRIVACY.md](docs/PRIVACY.md)** and
-**[SECURITY.md](SECURITY.md)**.
+See [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for limitations and the
+evidence standard.
 
-## Contributing
+## Why adapters
 
-Contributions are welcome — especially forum support requests, HTML fixtures, JSON
-adapters, parser improvements, and documentation. See
-**[CONTRIBUTING.md](CONTRIBUTING.md)** and our **[Code of Conduct](CODE_OF_CONDUCT.md)**.
+Forums use many different DOM structures. An adapter teaches ForumForge how to
+find a thread title, post containers, authors, timestamps, bodies, permalinks,
+nesting, and roles. Dedicated extractors currently live in
+[`packages/parser`](packages/parser); the declarative JSON adapter runtime is
+the next product phase.
 
-Working with an AI coding agent in this repo? Read **[AGENTS.md](AGENTS.md)**
-(general agent guidance) and **[CLAUDE.md](CLAUDE.md)** (Claude-specific workflow).
+Adapter work must be deterministic and respectful: tests use small, anonymized,
+offline-safe HTML fixtures rather than repeated live-site requests. See
+[docs/ADAPTERS.md](docs/ADAPTERS.md) and
+[docs/FIXTURES.md](docs/FIXTURES.md).
+
+## Architecture
+
+```text
+apps/extension     Manifest V3 extension and side-panel UI
+packages/core      Shared ForumForgePost model and helpers
+packages/parser    Generic, Discourse, and Hacker News extraction
+packages/storage   Local-first storage contracts
+scripts            Verification, versioning, and release packaging
+docs               Product, contributor, privacy, testing, and release guidance
+```
+
+Packages are added only when their phase has real implementation work. The post
+model is the shared contract: parsers produce posts; storage and UI consume them.
+
+## Privacy and security
+
+ForumForge has no account, telemetry, analytics, hidden background requests, or
+remote processing in the current build. It uses `activeTab` so the user chooses
+which page to read, requests no host permissions, sanitizes extracted HTML before
+rendering, and stores feature data locally.
+
+ForumForge does not bypass access controls, automate scraping, or republish
+restricted content. Read [docs/PRIVACY.md](docs/PRIVACY.md) and
+[SECURITY.md](SECURITY.md) before changing permissions, storage, adapters, or
+message boundaries.
+
+## Contributing and project health
+
+Contributions are welcome: bug reports, browser-test evidence, sanitized
+fixtures, parser fixes, documentation, and focused product improvements.
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — setup and acceptance criteria
+- [SUPPORT.md](SUPPORT.md) — where to ask or report
+- [GOVERNANCE.md](GOVERNANCE.md) — decisions and maintainer responsibilities
+- [CHANGELOG.md](CHANGELOG.md) — user-visible changes
+- [docs/IMPACT.md](docs/IMPACT.md) — evidence-based project health ledger
+- [AGENTS.md](AGENTS.md) — instructions for coding agents
 
 ## License
 
-[MIT](LICENSE) © 2026 Eric Huang. ForumForge should remain open, hackable, and
-community-extensible.
+[MIT](LICENSE) © 2026 Eric Huang.

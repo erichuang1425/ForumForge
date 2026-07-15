@@ -1,0 +1,28 @@
+# Changelog
+
+All notable user-visible changes are recorded here. The project follows
+[Semantic Versioning](https://semver.org/) once tagged releases begin.
+
+## [Unreleased]
+
+### Added
+
+- Manifest V3 extension shell with an on-demand content script and side panel.
+- Clean reading mode with allowlist sanitization of untrusted forum HTML.
+- OP/staff highlighting, local read history, saved posts, private author notes,
+  and Markdown export.
+- Generic, Discourse, and Hacker News extractors with deterministic fixtures.
+- Local-first storage contracts and a `chrome.storage.local` implementation.
+- Canonical `pnpm verify` gate, manifest/privacy guardrails, deterministic
+  extension packaging, checksum generation, and release automation.
+- Maintainer, compatibility, testing, privacy, governance, and project-health
+  documentation.
+
+### Security
+
+- Validate complete extraction-response payloads before the side panel consumes
+  content-script messages.
+- Enforce the reviewed manifest permission set and absence of host permissions
+  and always-on content scripts.
+
+[Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main

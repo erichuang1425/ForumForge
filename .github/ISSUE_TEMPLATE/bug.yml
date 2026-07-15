@@ -1,0 +1,89 @@
+name: Bug report
+description: Report a reproducible ForumForge problem
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve ForumForge. Remove private notes, personal data,
+        cookies, tokens, and authentic forum content from anything you attach.
+  - type: input
+    id: version
+    attributes:
+      label: ForumForge version or commit
+      description: Use the tag, commit SHA, or branch you tested.
+      placeholder: v0.1.0 or abc1234
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome stable
+        - Chrome beta/dev/canary
+        - Microsoft Edge
+        - Other Chromium browser
+        - Unsupported browser
+    validations:
+      required: true
+  - type: input
+    id: browser_version
+    attributes:
+      label: Browser and operating-system version
+      placeholder: Chrome 128 on Windows 11
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Public page or forum type
+      description: Link only public, non-gated content. A software/page type is enough when a URL is unsafe to share.
+      placeholder: Discourse topic, Hacker News item, phpBB thread, or public URL
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened?
+      description: Include the visible error or incorrect result.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Load the unpacked extension...
+        2. Open...
+        3. Click...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Did this work in an earlier build?
+      options:
+        - Not sure
+        - No, this is the first build I tested
+        - Yes
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Paste relevant console output or attach a redacted screenshot/fixture. Never include secrets or private forum content.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed personal data, private content, cookies, tokens, and credentials from this report.
+          required: true

@@ -28,7 +28,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] Merge the Phase 1 implementation into current `main`
 - [ ] Complete and record Chrome 116+ manual testing on the final package
 - [ ] Record same-extension-ID schema upgrade and clear-data browser evidence
-- [ ] Add extension icons and store listing assets
+- [x] Add reviewed 16, 32, 48, and 128 pixel extension icons
+- [ ] Prepare store listing copy and capture accurate candidate screenshots
 - [ ] Set version 0.1.0, finalize the changelog, tag, and publish a GitHub release
 - [ ] Run a small public pilot and triage the resulting issues
 

@@ -10,6 +10,7 @@ const expected = new Set([
   "background.js.map",
   "content.js",
   "content.js.map",
+  "icons",
   "manifest.json",
   "sidepanel.html",
   "sidepanel.js",
@@ -27,7 +28,17 @@ if (missing.length || unexpected.length) {
 
 for (const file of expected) {
   const info = await stat(join(dist, file));
+  if (file === "icons") {
+    if (!info.isDirectory()) throw new Error("Build icons output is not a directory");
+    continue;
+  }
   if (!info.isFile() || info.size === 0) throw new Error(`Build output is empty: ${file}`);
+}
+
+const expectedIcons = ["icon-16.png", "icon-32.png", "icon-48.png", "icon-128.png"];
+const actualIcons = await readdir(join(dist, "icons"));
+if (JSON.stringify(actualIcons.sort()) !== JSON.stringify(expectedIcons.sort())) {
+  throw new Error(`Unexpected built icons: ${actualIcons.join(", ")}`);
 }
 
 const sourceManifest = JSON.parse(await readFile(join(extension, "manifest.json"), "utf8"));

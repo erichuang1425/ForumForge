@@ -2,6 +2,7 @@
 // and copies the static assets (manifest, side panel HTML) alongside them.
 //
 // Output: dist/{background,content,sidepanel}.js + manifest.json + sidepanel.html
+// + icons/. Release builds omit source maps.
 // Load dist/ as an unpacked extension (chrome://extensions → Load unpacked).
 import { build } from "esbuild";
 import { cp, mkdir, rm } from "node:fs/promises";
@@ -10,6 +11,7 @@ import { fileURLToPath } from "node:url";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const outdir = join(root, "dist");
+const release = process.argv.includes("--release");
 
 await rm(outdir, { recursive: true, force: true });
 await mkdir(outdir, { recursive: true });
@@ -27,11 +29,12 @@ await build({
   format: "iife",
   platform: "browser",
   target: ["chrome116"],
-  sourcemap: true,
+  sourcemap: !release,
   logLevel: "info",
 });
 
 await cp(join(root, "manifest.json"), join(outdir, "manifest.json"));
 await cp(join(root, "public", "sidepanel.html"), join(outdir, "sidepanel.html"));
+await cp(join(root, "public", "icons"), join(outdir, "icons"), { recursive: true });
 
 console.log("Built ForumForge extension → dist/");

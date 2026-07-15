@@ -6,7 +6,17 @@ import { fileURLToPath } from "node:url";
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const dist = join(root, "apps", "extension", "dist");
 const artifacts = join(root, "artifacts");
-const files = ["background.js", "content.js", "manifest.json", "sidepanel.html", "sidepanel.js"];
+const files = [
+  "background.js",
+  "content.js",
+  "icons/icon-16.png",
+  "icons/icon-32.png",
+  "icons/icon-48.png",
+  "icons/icon-128.png",
+  "manifest.json",
+  "sidepanel.html",
+  "sidepanel.js",
+];
 
 const crcTable = Array.from({ length: 256 }, (_, value) => {
   let crc = value;
@@ -60,6 +70,19 @@ const records = await Promise.all(
   files.map(async (name) => ({ name, data: await readFile(join(dist, name)) })),
 );
 const manifest = JSON.parse(records.find(({ name }) => name === "manifest.json").data.toString());
+const declaredIcons = new Set([
+  ...Object.values(manifest.icons ?? {}),
+  ...Object.values(manifest.action?.default_icon ?? {}),
+]);
+const packagedFiles = new Set(files);
+for (const icon of declaredIcons) {
+  if (!packagedFiles.has(icon)) throw new Error(`Manifest icon is not packaged: ${icon}`);
+}
+for (const { name, data } of records) {
+  if (name.endsWith(".js") && data.includes("sourceMappingURL=")) {
+    throw new Error(`Release bundle references a source map: ${name}`);
+  }
+}
 const archiveName = `forumforge-${manifest.version}-chrome.zip`;
 
 const locals = [];

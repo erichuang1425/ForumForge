@@ -45,8 +45,9 @@ packages remain implementation workspaces and are not published independently.
 
 5. Extract the generated ZIP to a clean directory and complete
    [TESTING.md](TESTING.md) against that exact artifact.
-6. Verify the ZIP contains only `manifest.json`, `sidepanel.html`, and the
-   three JavaScript bundles. Source maps and source files must not ship.
+6. Verify the ZIP contains only `manifest.json`, `sidepanel.html`, the three
+   JavaScript bundles, and `icons/icon-{16,32,48,128}.png`. Source maps,
+   source-map references, and source files must not ship.
 7. Compare the printed SHA-256 with `artifacts/*.sha256`.
 8. Review the final diff against [CODE_REVIEW.md](CODE_REVIEW.md).
 9. For a storage-changing release, attach before/after key inventories and state
@@ -73,7 +74,8 @@ Never tag or publish from an unmerged feature branch.
 
 Before the first Chrome Web Store submission:
 
-- add reviewed 16, 32, 48, and 128 pixel extension icons;
+- confirm the reviewed 16, 32, 48, and 128 pixel extension icons still match
+  the current product identity;
 - prepare accurate screenshots and listing copy;
 - link the current privacy notice and support channel;
 - confirm the permission justification matches the shipped manifest;

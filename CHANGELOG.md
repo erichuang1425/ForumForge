@@ -20,6 +20,8 @@ All notable user-visible changes are recorded here. The project follows
   failure messaging, and reset of rendered local state.
 - Canonical `pnpm verify` gate, manifest/privacy guardrails, deterministic
   extension packaging, checksum generation, and release automation.
+- Reviewed 16, 32, 48, and 128 pixel PNG icons for extension, toolbar,
+  management-page, and store use.
 - Maintainer, compatibility, testing, privacy, governance, and project-health
   documentation.
 
@@ -42,5 +44,7 @@ All notable user-visible changes are recorded here. The project follows
   active tab or URL changes before local state is read or written.
 - Assign deterministic collision-safe ids when pages repeat post ids, and
   reject any duplicate-id extraction payload that crosses the message boundary.
+- Build release ZIPs without source maps or source-map references and verify
+  every manifest icon is present in the deterministic package.
 
 [Unreleased]: https://github.com/erichuang1425/ForumForge/commits/main

@@ -76,7 +76,9 @@ Before the first Chrome Web Store submission:
 
 - confirm the reviewed 16, 32, 48, and 128 pixel extension icons still match
   the current product identity;
-- prepare accurate screenshots and listing copy;
+- review the source-controlled [listing copy and asset requirements](STORE_LISTING.md),
+  then capture accurate screenshots and the required promotional tile from the
+  exact accepted artifact;
 - link the current privacy notice and support channel;
 - confirm the permission justification matches the shipped manifest;
 - complete the store's privacy questionnaire from observed behavior;
@@ -84,6 +86,9 @@ Before the first Chrome Web Store submission:
 
 Store publish is manual. A store rejection is fixed through a new reviewed
 release candidate; do not silently replace an existing GitHub artifact.
+
+Run any prerelease user test from the source-controlled [pilot runbook](PILOT.md)
+and record actual participants separately from invitations or maintainer tests.
 
 ## Rollback and hotfix
 

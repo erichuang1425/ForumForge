@@ -45,17 +45,19 @@ function insideDiamond(x, y, centerX, centerY, radius) {
 }
 
 function colorAt(x, y) {
-  if (!insideRoundedRectangle(x, y, 0.0625, 0.0625, 0.9375, 0.9375, 0.1875)) {
+  // Chrome Web Store guidance gives square artwork a 96-by-96 footprint inside
+  // the 128-pixel asset, which is a one-eighth transparent inset on each side.
+  if (!insideRoundedRectangle(x, y, 0.125, 0.125, 0.875, 0.875, 0.15625)) {
     return [0, 0, 0, 0];
   }
 
   const white = [248, 250, 252, 255];
-  const isVertical = x >= 0.265625 && x <= 0.390625 && y >= 0.21875 && y <= 0.78125;
-  const isTop = x >= 0.265625 && x <= 0.703125 && y >= 0.21875 && y <= 0.34375;
-  const isMiddle = x >= 0.265625 && x <= 0.625 && y >= 0.453125 && y <= 0.578125;
+  const isVertical = x >= 0.296875 && x <= 0.40625 && y >= 0.265625 && y <= 0.734375;
+  const isTop = x >= 0.296875 && x <= 0.671875 && y >= 0.265625 && y <= 0.375;
+  const isMiddle = x >= 0.296875 && x <= 0.609375 && y >= 0.46875 && y <= 0.578125;
   if (isVertical || isTop || isMiddle) return white;
 
-  if (insideDiamond(x, y, 0.7109375, 0.7109375, 0.1171875)) {
+  if (insideDiamond(x, y, 0.6875, 0.6875, 0.1015625)) {
     return [245, 158, 11, 255];
   }
 

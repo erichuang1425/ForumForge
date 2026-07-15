@@ -11,9 +11,10 @@ stores personal reading state on the device.
 > from your browser.
 
 > **Development status — 2026-07-16:** Phase 0 and Phase 1 implementation is
-> complete on the active development line. There is no tagged public release
-> yet. Release-candidate assembly, exact-artifact browser acceptance, and the
-> v0.1 release checklist remain open; see [ROADMAP.md](ROADMAP.md).
+> complete on the active development line, and version 0.1.0 is being assembled
+> as an untagged release candidate. There is no tagged public release yet.
+> Exact-artifact browser acceptance and the remaining v0.1 release checklist
+> stay open; see [ROADMAP.md](ROADMAP.md).
 
 ## Available in the current source build
 
@@ -62,6 +63,10 @@ Then load the extension:
 
 This is a source build, not a published store release. Please report results
 using the [browser test checklist](docs/TESTING.md).
+
+Release-candidate pilots use the safety and feedback instructions in
+[docs/PILOT.md](docs/PILOT.md). Store copy and image requirements are maintained
+in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 
 ## Current compatibility
 

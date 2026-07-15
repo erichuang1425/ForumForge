@@ -1,9 +1,9 @@
 # ForumForge privacy notice
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
-This notice describes the current pre-release source build. ForumForge is
-local-first: it processes the page the user chooses and does not operate a
+This notice describes the current untagged 0.1.0 release candidate. ForumForge
+is local-first: it processes the page the user chooses and does not operate a
 ForumForge account, analytics service, or remote backend.
 
 ## Data processed on a forum page

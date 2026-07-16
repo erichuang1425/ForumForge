@@ -63,7 +63,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] Add reviewed 16, 32, 48, and 128 pixel extension icons
 - [x] Prepare truthful store listing copy, permission text, and asset requirements
 - [ ] Capture accurate candidate screenshots and the required promotional tile
-- [ ] Set version 0.1.0, finalize the changelog, tag, and publish a GitHub release
+- [x] Set version 0.1.0 and finalize the dated release-candidate changelog
+- [ ] Tag and publish a GitHub release after merge and explicit approval
 - [ ] Run a small public pilot and triage the resulting issues
 
 The exact release process is in [docs/RELEASING.md](docs/RELEASING.md).

@@ -86,6 +86,54 @@ describe("on-page reading studio", () => {
     expect(launcherFocus).toHaveBeenCalledOnce();
   });
 
+  it("wraps focus past controls hidden by responsive layout", () => {
+    const doc = fixtureDocument();
+    const view = createPageReaderView(doc, thread, {
+      sourceUrl: "https://forum.example/threads/cameras.42/",
+    });
+    view.mount();
+    view.open();
+
+    const controls = Array.from(
+      view.shadow.querySelectorAll<HTMLElement>(
+        "button:not([disabled]), a[href], textarea:not([disabled]), [tabindex='0']",
+      ),
+    );
+    for (const control of controls) {
+      const hiddenByResponsiveLayout =
+        control.matches(".ff-reader__refresh, .ff-reader__top-library") ||
+        Boolean(control.closest(".ff-reader__tools"));
+      Object.defineProperty(control, "getClientRects", {
+        configurable: true,
+        value: () => hiddenByResponsiveLayout ? [] : [{ width: 1, height: 1 }],
+      });
+    }
+
+    const close = view.shadow.querySelector<HTMLButtonElement>(".ff-reader__close");
+    const lastVisible = controls.filter((control) =>
+      !control.closest("[hidden]") && control.getClientRects().length > 0
+    ).at(-1);
+    if (!close || !lastVisible) throw new Error("focus controls missing");
+    const closeFocus = vi.spyOn(close, "focus");
+    Object.defineProperty(view.shadow, "activeElement", {
+      configurable: true,
+      value: lastVisible,
+    });
+    const keydown = new (doc.defaultView as unknown as { Event: typeof Event }).Event(
+      "keydown",
+      { bubbles: true, cancelable: true },
+    );
+    Object.defineProperties(keydown, {
+      key: { value: "Tab" },
+      shiftKey: { value: false },
+    });
+
+    view.shadow.dispatchEvent(keydown);
+
+    expect(keydown.defaultPrevented).toBe(true);
+    expect(closeFocus).toHaveBeenCalledOnce();
+  });
+
   it("reframes the thread as a publication-like conversation without trusting page HTML", () => {
     const view = createPageReaderView(fixtureDocument(), thread, {
       sourceUrl: "https://forum.example/threads/cameras.42/",

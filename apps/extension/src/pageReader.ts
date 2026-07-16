@@ -106,6 +106,15 @@ function isElementTarget(value: EventTarget | null): value is Element {
   return typeof value === "object" && value !== null && "closest" in value;
 }
 
+function isRenderedFocusControl(control: HTMLElement): boolean {
+  if (control.closest("[hidden]")) return false;
+  if (typeof control.getClientRects === "function" && control.getClientRects().length === 0) {
+    return false;
+  }
+  const visibility = control.ownerDocument.defaultView?.getComputedStyle?.(control).visibility;
+  return visibility !== "hidden" && visibility !== "collapse";
+}
+
 /**
  * Build the complete on-page reading studio in a closed shadow root. The caller
  * owns storage and extraction callbacks; this view owns layout, focus, local UI
@@ -446,7 +455,7 @@ export function createPageReaderView(
       shadow.querySelectorAll<HTMLElement>(
         "button:not([disabled]), a[href], textarea:not([disabled]), [tabindex='0']",
       ),
-    ).filter((control) => !control.closest("[hidden]"));
+    ).filter(isRenderedFocusControl);
     const first = controls[0];
     const last = controls.at(-1);
     if (!first || !last) return;

@@ -108,6 +108,8 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   containment, and a slim edge launcher for reopening or closing it.
 - Keep desktop reader actions in one compact top-bar row and remove the edge
   launcher from the reading surface until the reader closes.
+- Keep the reader focus loop on controls that remain rendered after responsive
+  desktop-only sections collapse.
 - Keep saves and notes fail-closed in the page reader while local data is being
   cleared, including when an earlier write finishes during the clear.
 - Refresh the side panel with clearer action hierarchy, card-based reading,

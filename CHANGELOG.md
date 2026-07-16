@@ -42,6 +42,11 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   numeric post coherence, attachment links without media loading, explicit
   capcodes, flat quote relationships, missing fields, and index/lookalike
   rejection. Live-site and packaged-browser behavior remain unverified.
+- A narrowly detected Arca article extractor with synthetic offline tests for
+  Korean metadata, canonical IDs, nested comments, manager roles, deleted
+  comments, media-only placeholders, and false-positive rejection. A
+  2026-07-16 read-only command-line extraction succeeded on one public article;
+  packaged-browser behavior remains unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

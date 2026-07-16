@@ -50,6 +50,9 @@ library holds compact reading, exports, and privacy controls.
 - Narrowly detected 4chan thread extraction, backed by a synthetic offline
   imageboard fixture. Attachment filenames and links are retained without
   loading media; live-site and packaged-browser evidence is pending.
+- Narrowly detected Arca article extraction with nested comments and local
+  media-only placeholders. It is backed by a synthetic fixture and a dated
+  read-only command-line extraction; packaged-browser evidence is pending.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
@@ -108,6 +111,7 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | Nairaland topic pages | Synthetic paired-row fixture tests | No packaged-extension or live-site evidence |
 | PTT article pages | Synthetic article-and-push fixture tests | No packaged-extension or live-site evidence |
 | 4chan thread pages | Synthetic imageboard fixture tests | No packaged-extension or live-site evidence; media is link-only |
+| Arca article pages | Synthetic nested-comment fixture tests | 2026-07-16 read-only command-line extraction succeeded on one public article; no packaged-extension/browser evidence |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 

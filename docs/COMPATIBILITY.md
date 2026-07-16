@@ -26,6 +26,7 @@ Last updated: 2026-07-16
 | Nairaland topic pages using paired metadata/body rows | Dedicated | Synthetic offline fixture tests covering numeric post IDs, authors, timestamps, body links, explicit `(op)`/`(m)` roles, missing fields, and false-positive detection | No packaged-extension or live-site evidence; current live markup, pagination, edited timestamps, and layout variants remain unverified |
 | PTT article pages using the article metadata and push-reply shell | Dedicated | Synthetic offline fixture tests covering Chinese metadata, article/footer isolation, push direction, authors, timestamps, body links, OP matching, empty replies, and false-positive detection | No packaged-extension or live-site evidence; current live markup, pagination, deleted content, IP/date variants, and layout variants remain unverified |
 | 4chan dedicated thread pages using coherent numeric post markup | Dedicated | Synthetic offline fixture tests covering subject, post IDs, authors/tripcodes, timestamps, explicit capcodes, local quote parents, deleted/empty replies, inert attachment links, index rejection, and mismatched-ID rejection | No packaged-extension or live-site evidence; current live markup, archived/deleted threads, board-specific variants, media, embeds, and moderation states remain unverified; attachment media is not rendered or loaded |
+| Arca article pages using the canonical board-article wrapper | Dedicated | Synthetic offline fixture tests covering Korean metadata, canonical numeric IDs, authors, timestamps, nested comments, OP matching, manager roles, deleted comments, media-only placeholders, and false-positive detection; 2026-07-16 read-only command-line extraction on one public article detected and extracted five numeric posts through depth 2 | No packaged-extension or Chrome evidence; other channels, authentication states, dynamically appended comments, deleted/blocked pages, pagination, embeds, and media remain unverified; remote media is not rendered |
 | Other forums | Generic fallback | Representative generic fixture | Accuracy varies; pagination and custom DOM often need a dedicated adapter |
 
 The phpBB row is evidence for the tested stock prosilver DOM contract only. It
@@ -46,6 +47,15 @@ The 2026-07-16 direct public-page request did not return usable thread markup an
 the isolated in-app browser controller was unavailable, so no live extraction
 or selector-level comparison is claimed. ForumForge retains attachment metadata
 and safe links, but deliberately does not load or render imageboard media.
+
+The Arca row combines a synthetic, anonymized fixture with a 2026-07-16
+read-only command-line extraction against one public article. The check returned
+HTTP 200, selected the dedicated adapter, extracted five numeric posts with a
+maximum depth of 2, found a title, and emitted no remote media URL through the
+post-link field. No title, author, or body text was printed or retained. This is
+current selector/extraction evidence, not packaged-extension, Chrome, or visual
+evidence. Media remains represented only by local placeholder text when a body
+has no readable text; the established sanitizer drops remote media elements.
 
 On 2026-07-16, the XenForo comparison checked public DOM structure for official
 normal, question, and article thread pages on `xenforo.com/community` without

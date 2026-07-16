@@ -201,4 +201,25 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts).toHaveLength(1);
     expect(thread.posts[0]).toMatchObject({ id: "500", author: "ivy", role: "op" });
   });
+
+  it("picks the Arca adapter only for a canonical board article", () => {
+    const html = `<!doctype html><html><body><article class="board-article">
+      <div class="article-view"><div class="article-wrapper"><div class="article-head">
+        <div class="title-row"><div class="title">합성 아카라이브 글</div></div>
+        <div class="member-info"><span class="user-info"><a href="/u/@ivy">ivy</a></span></div>
+      </div><div class="article-link"><a href="/b/tools/900">원문</a></div>
+      <div class="article-body"><div class="article-content">본문입니다.</div></div>
+      <div class="article-comment"><div class="comment-wrapper">
+        <div class="comment-item" id="c_901"><div class="content">
+          <div class="info-row"><span class="user-info"><a href="/u/@mira">mira</a></span></div>
+          <div class="message">댓글입니다.</div>
+        </div></div>
+      </div></div></div></div></article></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("합성 아카라이브 글");
+    expect(thread.posts).toHaveLength(2);
+    expect(thread.posts[0]).toMatchObject({ id: "900", author: "ivy", role: "op" });
+    expect(thread.posts[1]).toMatchObject({ id: "901", author: "mira", parentId: "900" });
+  });
 });

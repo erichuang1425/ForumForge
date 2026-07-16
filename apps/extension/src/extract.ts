@@ -1,4 +1,5 @@
 import {
+  extractThreadArca,
   extractThreadGeneric,
   extractThreadDiscourse,
   extractThreadFourChan,
@@ -8,6 +9,7 @@ import {
   extractThreadPhpBB,
   extractThreadVBulletin,
   extractThreadXenForo,
+  isArcaPage,
   isDiscoursePage,
   isFourChanPage,
   isHackerNewsPage,
@@ -23,7 +25,7 @@ import {
  * Extract the thread from a page's document.
  *
  * Picks a site-specific adapter when the page's own markup signals one: Hacker
- * News, PTT, and 4chan thread pages first, then Discourse's generator marker,
+ * News, PTT, 4chan, and Arca thread pages first, then Discourse's generator marker,
  * XenForo's versioned public-thread signature, phpBB's narrow topic-page
  * signature, and a signed vBulletin 4.x showthread page. All other pages fall
  * back to the generic best-effort parser. This is the one seam where adapter
@@ -36,6 +38,7 @@ export function extractThreadFromDocument(doc: Document): ExtractedThread {
   if (isHackerNewsPage(doc)) return extractThreadHackerNews(doc);
   if (isPttPage(doc)) return extractThreadPtt(doc);
   if (isFourChanPage(doc)) return extractThreadFourChan(doc);
+  if (isArcaPage(doc)) return extractThreadArca(doc);
   if (isDiscoursePage(doc)) return extractThreadDiscourse(doc);
   if (isXenForoPage(doc)) return extractThreadXenForo(doc);
   if (isPhpBBPage(doc)) return extractThreadPhpBB(doc);

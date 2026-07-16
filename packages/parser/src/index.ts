@@ -39,4 +39,9 @@ export {
   isFourChanPage,
   type FourChanExtractOptions,
 } from "./fourchan";
+export {
+  extractThreadArca,
+  isArcaPage,
+  type ArcaExtractOptions,
+} from "./arca";
 export type { ExtractedThread, ExtractOptions } from "./types";

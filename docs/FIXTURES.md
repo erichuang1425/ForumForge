@@ -16,9 +16,10 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > by a synthetic 4.2.5 fixture, Nairaland topic extraction represented by a
 > synthetic paired-row fixture, PTT article extraction represented by a
 > synthetic article-and-push fixture, and 4chan thread extraction represented by
-> a synthetic imageboard fixture. The phpBB, XenForo, vBulletin, Nairaland, PTT,
-> and 4chan fixtures are synthetic and offline-safe. On 2026-07-16, the XenForo
-> fixture selectors
+> a synthetic imageboard fixture, and Arca article extraction represented by a
+> synthetic nested-comment fixture. The phpBB, XenForo, vBulletin, Nairaland,
+> PTT, 4chan, and Arca fixtures are synthetic and offline-safe. On 2026-07-16,
+> the XenForo fixture selectors
 > received a read-only structural comparison against normal, question, and
 > article thread pages on the official `xenforo.com/community` forum; ForumForge
 > extraction was not run there and no page content was retained. The vBulletin
@@ -38,6 +39,10 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > capcodes, quote links, and attachment metadata without any image or remote
 > resource. A direct public-page request did not return usable thread markup, so
 > no current live page was retained or successfully inspected.
+> The Arca fixture selectors received a 2026-07-16 read-only comparison and
+> command-line extraction against one public article. The adapter detected the
+> page and extracted five numeric posts through depth 2; no page content was
+> printed or retained. This is not packaged-extension or browser evidence.
 > None of these synthetic fixtures is packaged-extension or live extraction
 > evidence. Phase 2 extends the same pattern to contributor-made declarative
 > adapters; Phase 5 adds registry-wide quality reporting.

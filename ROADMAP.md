@@ -35,6 +35,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
       article-and-push fixture
 - [x] Add narrowly detected 4chan thread extraction with a synthetic offline
       imageboard fixture and inert attachment links
+- [x] Add narrowly detected Arca article extraction with nested comments, a
+      synthetic offline fixture, and dated read-only public-page evidence
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract

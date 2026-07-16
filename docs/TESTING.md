@@ -115,6 +115,13 @@ a clean profile for install testing and an existing profile for upgrade testing.
       dedicated extractor. Confirm no attachment image, embed, or other remote
       media is loaded by ForumForge; record archives and board variants as
       pending unless separately observed.
+- [ ] Arca article page: Korean title/author metadata, canonical numeric ID,
+      timestamp, body links, OP, nested comments, manager roles, deleted
+      comments, media-only placeholders, and comment permalinks.
+- [ ] Arca channel lists and nonnumeric canonical-link lookalikes do not select
+      the dedicated extractor. Confirm remote images, video, emoticons, embeds,
+      and avatars are not loaded by ForumForge; record dynamically appended
+      comments and channel/authentication variants as pending unless observed.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

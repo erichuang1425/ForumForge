@@ -34,11 +34,11 @@ reader "Local library" ─▶ background ─▶ opens the secondary side panel
   that can still request and render the current thread, plus saved-post export
   and local-data controls. It is the compact companion rather than the primary
   invocation surface.
-- **`src/extract.ts`** — the seam that chooses how to read a page: the Discourse
-  or Hacker News adapter when the page's own markup signals one
-  (`isDiscoursePage` / `isHackerNewsPage` from `@forumforge/parser`), otherwise
-  the generic fallback parser. More site-specific adapters land here as they're
-  built (Phase 2 adds the JSON adapter format for community-contributed ones).
+- **`src/extract.ts`** — the seam that chooses how to read a page: the
+  Discourse, Hacker News, phpBB, XenForo, vBulletin, or Nairaland adapter when
+  the page's own markup signals one, otherwise the generic fallback parser.
+  More site-specific adapters land here as they're built (Phase 2 adds the JSON
+  adapter format for community-contributed ones).
 - **`src/render.ts`** — builds the read-only view. Author, role and timestamp are
   written with `textContent`; the body renders the post's rich `contentHtml`
   through the sanitizer (clean reading mode), falling back to plain text.

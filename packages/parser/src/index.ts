@@ -24,4 +24,9 @@ export {
   isVBulletinPage,
   type VBulletinExtractOptions,
 } from "./vbulletin";
+export {
+  extractThreadNairaland,
+  isNairalandPage,
+  type NairalandExtractOptions,
+} from "./nairaland";
 export type { ExtractedThread, ExtractOptions } from "./types";

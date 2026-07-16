@@ -13,8 +13,10 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > **Status:** Fixture-backed parser tests exist today for the generic, Discourse,
 > Hacker News, phpBB 3.3 stock prosilver, and XenForo 2.3 default public thread
 > extractors, plus stock/classic vBulletin 4.x showthread extraction represented
-> by a synthetic 4.2.5 fixture. The phpBB, XenForo, and vBulletin fixtures are
-> synthetic and offline-safe. On 2026-07-16, the XenForo fixture selectors
+> by a synthetic 4.2.5 fixture and Nairaland topic extraction represented by a
+> synthetic paired-row fixture. The phpBB, XenForo, vBulletin, and Nairaland
+> fixtures are synthetic and offline-safe. On 2026-07-16, the XenForo fixture
+> selectors
 > received a read-only structural comparison against normal, question, and
 > article thread pages on the official `xenforo.com/community` forum; ForumForge
 > extraction was not run there and no page content was retained. The vBulletin
@@ -24,6 +26,9 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > and a public
 > [vBulletin 4 support-template excerpt](https://forum.vbulletin.com/forum/vbulletin-4/vbulletin-4-questions-problems-and-troubleshooting/359755-how-can-i-remove-ads-in-postbit-from-specific-forums),
 > but ForumForge extraction was not run on a live vBulletin 4 installation.
+> The Nairaland fixture was informed by publicly indexed page text and stable
+> `.narrow`, `.user`, and numeric `/post/{id}` signatures, but no current live
+> page was retained or successfully inspected.
 > None of these synthetic fixtures is packaged-extension or live extraction
 > evidence. Phase 2 extends the same pattern to contributor-made declarative
 > adapters; Phase 5 adds registry-wide quality reporting.

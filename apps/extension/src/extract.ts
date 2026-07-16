@@ -2,11 +2,13 @@ import {
   extractThreadGeneric,
   extractThreadDiscourse,
   extractThreadHackerNews,
+  extractThreadNairaland,
   extractThreadPhpBB,
   extractThreadVBulletin,
   extractThreadXenForo,
   isDiscoursePage,
   isHackerNewsPage,
+  isNairalandPage,
   isPhpBBPage,
   isVBulletinPage,
   isXenForoPage,
@@ -33,5 +35,6 @@ export function extractThreadFromDocument(doc: Document): ExtractedThread {
   if (isXenForoPage(doc)) return extractThreadXenForo(doc);
   if (isPhpBBPage(doc)) return extractThreadPhpBB(doc);
   if (isVBulletinPage(doc)) return extractThreadVBulletin(doc);
+  if (isNairalandPage(doc)) return extractThreadNairaland(doc);
   return extractThreadGeneric(doc);
 }

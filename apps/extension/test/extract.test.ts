@@ -130,4 +130,22 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts[0]?.author).toBe("ivy");
     expect(thread.posts[0]?.role).toBeUndefined();
   });
+
+  it("picks the Nairaland adapter only for a paired numeric topic post", () => {
+    const html = `<!doctype html><html><body><div class="body">
+      <h2><a href="/80/synthetic-topic">Synthetic topic</a></h2>
+      <table summary="posts"><tbody>
+        <tr><td><a href="/post/801#801">Synthetic topic</a>
+          by <a class="user" href="/user/ivy">ivy</a><span>(op)</span>:
+          8:00am On Jul 16, 2026</td></tr>
+        <tr><td><div class="narrow">Hello from Nairaland.</div></td></tr>
+      </tbody></table></div></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("Synthetic topic");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]?.id).toBe("801");
+    expect(thread.posts[0]?.author).toBe("ivy");
+    expect(thread.posts[0]?.role).toBe("op");
+  });
 });

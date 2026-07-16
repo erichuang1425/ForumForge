@@ -30,6 +30,10 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   synthetic offline 4.2.5 fixture tests for legacy/EOL compatibility. It does
   not infer OP; branding-free, customized, localized, other-major, and live
   browser behavior remain unverified.
+- A narrowly detected Nairaland topic extractor with synthetic offline tests
+  for paired post metadata/body rows, explicit OP/moderator markers, missing
+  fields, and false-positive rejection. Live-site, pagination, and packaged
+  browser behavior remain unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

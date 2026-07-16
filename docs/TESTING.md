@@ -96,6 +96,12 @@ a clean profile for install testing and an existing profile for upgrade testing.
       Record branding-free installs, customized templates, localized roles,
       other major versions, pagination, and live browser behavior as pending
       unless separately observed.
+- [ ] Nairaland topic page: title, numeric post IDs, authors, profile links,
+      timestamps, permalinks, body links, explicit `(op)` and `(m)` markers,
+      missing fields, and edited-timestamp behavior.
+- [ ] Nairaland forum indexes and unrelated compact tables do not select the
+      dedicated extractor. Record pagination and any layout that does not pair
+      a post metadata row with the next `.narrow` body row as pending.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

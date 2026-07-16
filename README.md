@@ -26,6 +26,8 @@ stores personal reading state on the device.
 - Versioned local storage with deterministic migration tests and a
   confirmation-gated user-data clear control.
 - Dedicated Discourse and Hacker News extractors.
+- Narrowly detected phpBB 3.3 stock prosilver topic-page extraction, backed by
+  a synthetic offline fixture. Live-site and custom-theme evidence is pending.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
@@ -33,7 +35,7 @@ stores personal reading state on the device.
 ## Planned, not shipped
 
 - User-authored JSON adapters, validation, import/export, and an adapter SDK.
-- phpBB, XenForo, and vBulletin-style adapters.
+- Wider phpBB version/theme coverage plus XenForo and vBulletin-style adapters.
 - Adapter Studio, thread maps, best-answer/unanswered detection, and an adapter
   registry.
 - Optional AI features. These come last, stay isolated, and are opt-in.
@@ -75,6 +77,7 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | Chrome/Chromium 116+ | MV3 build and manifest checks | Release matrix pending |
 | Discourse threads | Sanitized fixture tests | Live-site matrix pending |
 | Hacker News item pages | Sanitized fixture tests | Live-site matrix pending |
+| phpBB 3.3 stock prosilver topic pages | Synthetic fixture tests | Live-site and custom-theme testing pending |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 
@@ -99,7 +102,7 @@ offline-safe HTML fixtures rather than repeated live-site requests. See
 ```text
 apps/extension     Manifest V3 extension and side-panel UI
 packages/core      Shared ForumForgePost model and helpers
-packages/parser    Generic, Discourse, and Hacker News extraction
+packages/parser    Generic, Discourse, Hacker News, and phpBB extraction
 packages/storage   Local-first storage contracts
 scripts            Verification, versioning, and release packaging
 docs               Product, contributor, privacy, testing, and release guidance

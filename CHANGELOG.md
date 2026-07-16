@@ -17,6 +17,9 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
 - OP/staff highlighting, local read history, saved posts, private author notes,
   and Markdown export.
 - Generic, Discourse, and Hacker News extractors with deterministic fixtures.
+- A narrowly detected phpBB 3.3 stock prosilver topic-page extractor with a
+  synthetic offline fixture. Live-site and custom-theme verification remain
+  pending.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

@@ -9,4 +9,9 @@ export {
   isHackerNewsPage,
   type HackerNewsExtractOptions,
 } from "./hackernews";
+export {
+  extractThreadPhpBB,
+  isPhpBBPage,
+  type PhpBBExtractOptions,
+} from "./phpbb";
 export type { ExtractedThread, ExtractOptions } from "./types";

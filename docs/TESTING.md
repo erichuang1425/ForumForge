@@ -65,6 +65,12 @@ a clean profile for install testing and an existing profile for upgrade testing.
 - [ ] Hacker News: normal item, Ask HN self-post, nested replies, dead/deleted
       comments, and an item with no comments.
 - [ ] Hacker News non-item pages do not select the Hacker News extractor.
+- [ ] phpBB 3.3 stock prosilver topic: title, numeric post IDs, authors,
+      timestamps, profile links, permalinks, body links, explicit English staff
+      ranks, missing fields, and no display-order OP inference.
+- [ ] phpBB forum indexes and unrelated lookalike pages do not select the phpBB
+      extractor; the first visible author is never inferred to be the OP because
+      phpBB display order and direct-post views can hide the true topic start.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

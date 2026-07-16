@@ -1,20 +1,27 @@
 # Contributing HTML fixtures
 
-An **HTML fixture** is a saved copy of a representative forum thread page. Fixtures
-are the foundation of reliable adapters: they let us build and test an adapter
-against real markup **deterministically**, without repeatedly hitting a live forum.
+An **HTML fixture** is a small representative forum-thread document, either a
+sanitized capture or a hand-authored synthetic page that follows a documented
+DOM contract. Fixtures are the foundation of reliable adapters: they let us build
+and test an adapter against realistic markup **deterministically**, without
+repeatedly hitting a live forum.
 
 Submitting a fixture is one of the most useful contributions you can make — even if
 you never write an adapter yourself. See **[../CONTRIBUTING.md](../CONTRIBUTING.md)**
 and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 
 > **Status:** Fixture-backed parser tests exist today for the generic, Discourse,
-> and Hacker News extractors. Phase 2 extends the same pattern to contributor-made
-> declarative adapters; Phase 5 adds registry-wide quality reporting.
+> Hacker News, and phpBB 3.3 stock prosilver extractors. The phpBB fixture is
+> synthetic and offline-safe; it is not live-site compatibility evidence. Phase 2
+> extends the same pattern to contributor-made declarative adapters; Phase 5 adds
+> registry-wide quality reporting.
 
 ## What makes a good fixture
 
-- A **real, public** thread page from the forum you want supported.
+- A representative DOM for the exact forum software, version, and theme being
+  tested. Prefer a sanitized public-page capture when one can be shared safely;
+  a small hand-authored synthetic fixture is also appropriate when it follows a
+  documented stock-template contract.
 - Ideally a thread with some variety: an original post, several replies, and — if
   the forum has them — a moderator/admin post, a quote, and a code block.
 - If the thread is paginated, capturing **page 1** (and optionally page 2) helps

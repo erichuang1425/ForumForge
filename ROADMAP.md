@@ -21,6 +21,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] New-since-last-visit tracking
 - [x] Saved posts, private author notes, and Markdown export
 - [x] Discourse and Hacker News extractors with fixtures
+- [x] Add a narrowly detected phpBB 3.3 stock prosilver topic extractor with a
+      synthetic offline fixture
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract
@@ -48,7 +50,9 @@ The implementation epic is
 - [ ] Add adapter matching, extraction, and generic fallback orchestration
 - [ ] Add safe local import/export
 - [ ] Publish minimal JSON and TypeScript examples
-- [ ] Add phpBB, XenForo, and vBulletin-style fixtures/adapters
+- [ ] Express supported targets in declarative adapters, expand phpBB beyond the
+      current fixture-backed 3.3 stock prosilver markup, and add XenForo and
+      vBulletin-style fixtures/adapters
 - [ ] Update the adapter contribution guide against the working runtime
 
 ## Later

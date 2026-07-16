@@ -67,4 +67,24 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts).toHaveLength(1);
     expect(thread.posts[0]?.author).toBe("bob");
   });
+
+  it("picks the phpBB adapter only for a signed topic page", () => {
+    const html = `<!doctype html>
+      <html><body id="phpbb" class="section-viewtopic"><div id="page-body">
+        <h2 class="topic-title"><a href="./viewtopic.php?t=8">Synthetic topic</a></h2>
+        <div id="p81" class="post"><dl class="postprofile">
+          <dt><a class="username" href="./memberlist.php?u=4">ivy</a></dt>
+        </dl><div class="postbody">
+          <h3><a href="./viewtopic.php?p=81#p81">Synthetic topic</a></h3>
+          <p class="author"><time datetime="2026-06-01T08:00:00Z">June 1</time></p>
+          <div class="content">Hello from phpBB.</div>
+        </div></div>
+      </div></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("Synthetic topic");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]?.id).toBe("81");
+    expect(thread.posts[0]?.author).toBe("ivy");
+  });
 });

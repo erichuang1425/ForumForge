@@ -1,9 +1,9 @@
 # Writing ForumForge adapters
 
-An **adapter** teaches ForumForge how to read one forum. ForumForge doesn't
-hardcode support for a handful of sites — instead, adapters describe where the
-title, posts, authors, timestamps, bodies, permalinks, roles, and pagination live
-on a given forum's pages.
+An **adapter** teaches ForumForge how to read one forum. The planned adapter
+runtime will describe where the title, posts, authors, timestamps, bodies,
+permalinks, roles, and pagination live instead of limiting support to
+hand-written site integrations.
 
 This guide is the how-to. For the security model behind adapters, see
 **[../SECURITY.md](../SECURITY.md)**. For the product context, see
@@ -12,11 +12,13 @@ This guide is the how-to. For the security model behind adapters, see
 > **Status:** The JSON/TypeScript adapter *formats* below are the planned design.
 > The runtime that loads and validates them is not built yet (see
 > **[../ROADMAP.md](../ROADMAP.md)**, Phase 2), and formats may evolve before the
-> first release. **Discourse and Hacker News are supported today**, but as
-> hand-written extractors in [`packages/parser`](../packages/parser)
-> (`extractThreadDiscourse` / `extractThreadHackerNews`), not yet expressed as
-> JSON or `ForumForgeAdapter` adapters — that migration happens once the Phase 2
-> adapter runtime exists.
+> first release. **Discourse, Hacker News, and phpBB 3.3 stock prosilver topic
+> pages have hand-written extractors today** in
+> [`packages/parser`](../packages/parser), not yet JSON or `ForumForgeAdapter`
+> adapters. The phpBB claim is limited to synthetic fixture evidence; live-site,
+> packaged-browser, custom-theme, and other-version verification remains
+> pending. Migration to declarative adapters happens once the Phase 2 runtime
+> exists.
 
 ## Choose the safest tier that works
 

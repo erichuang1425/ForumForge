@@ -3,7 +3,7 @@
 Compatibility claims require either deterministic fixture evidence or a dated
 manual test. “Builds successfully” is not equivalent to “works on a live site.”
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
 ## Browsers
 
@@ -20,7 +20,11 @@ Last updated: 2026-07-15
 | --- | --- | --- | --- |
 | Discourse topic pages | Dedicated | Sanitized representative fixture | Live markup, lazy loading, login states, and pagination need release testing |
 | Hacker News item pages | Dedicated | Thread and Ask HN fixtures; non-item detection tests | Only item pages; deleted/dead variants need browser evidence |
+| phpBB 3.3 topic pages using stock prosilver markup | Dedicated | Synthetic topic fixture; missing-field, English staff-rank, OP non-inference, and false-positive detection tests | No dated packaged-browser or live-site evidence; custom themes, localized/custom ranks, other versions, and pagination remain unverified |
 | Other forums | Generic fallback | Representative generic fixture | Accuracy varies; pagination and custom DOM often need a dedicated adapter |
+
+The phpBB row is evidence for the tested stock prosilver DOM contract only. It
+is not a claim of broad phpBB compatibility.
 
 ForumForge currently extracts the DOM loaded in the active tab. It does not crawl
 additional pages, expand every lazy-loaded post, or bypass a login/access

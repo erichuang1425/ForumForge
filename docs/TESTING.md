@@ -40,6 +40,13 @@ visual indentation capping, source-order jump targets, reduced-motion scroll
 selection, language propagation, and sanitizer reuse. These component tests do
 not prove visual appearance, browser reflow, zoom, or packaged behavior.
 
+The parser-to-reader integration suite also sends the Nairaland, Hacker News,
+PTT, 4chan, Arca, DC Inside, FMKorea, and Stack Overflow offline fixture output
+directly through the discussion-aware renderer. It checks that every extracted
+post renders exactly once, archetype-specific roles and relationships remain
+visible, and active embedded media is absent. This is deterministic pipeline
+evidence, not live-site or exact-artifact browser evidence.
+
 Before release, also create the exact user artifact:
 
 ```bash

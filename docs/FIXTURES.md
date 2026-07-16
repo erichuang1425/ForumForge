@@ -21,7 +21,8 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > synthetic gallery-article and rendered-comment fixture. The phpBB, XenForo,
 > vBulletin, Nairaland, PTT, 4chan, Arca, and DC Inside fixtures are synthetic
 > and offline-safe. FMKorea article extraction is represented by a synthetic
-> article-and-comment-page fixture that is also offline-safe. On 2026-07-16,
+> article-and-comment-page fixture, and Stack Overflow extraction by a synthetic
+> question/answer/comment fixture; both are offline-safe. On 2026-07-16,
 > the XenForo fixture selectors
 > received a read-only structural comparison against normal, question, and
 > article thread pages on the official `xenforo.com/community` forum; ForumForge
@@ -59,8 +60,19 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > from the loaded comment page, including 30 replies with loaded parents. Public
 > prose and identities were not copied into the fixture or repository. This is
 > not packaged-extension or Chrome evidence, and it does not cover other comment
-> pages. Phase 2 extends the same pattern to contributor-made declarative
-> adapters; Phase 5 adds registry-wide quality reporting.
+> pages.
+> The Stack Overflow fixture follows the current question, answer, comment,
+> author, timestamp, and share-permalink structures. On 2026-07-16, the exact
+> local source was evaluated inside one isolated public question and extracted
+> 32 unique numeric posts: one question, 26 loaded answers, and five loaded
+> comments. Public prose and identities were not copied into the fixture or
+> repository. This is not packaged-extension or Chrome evidence, and collapsed
+> comments were not expanded.
+> No F95Zone fixture exists because public-page inspection was unavailable. Do
+> not relabel the generic XenForo fixture as F95Zone evidence; a maintainer with
+> access should contribute a small sanitized harmless-thread fixture first.
+> Phase 2 extends the same pattern to contributor-made declarative adapters;
+> Phase 5 adds registry-wide quality reporting.
 
 ## What makes a good fixture
 

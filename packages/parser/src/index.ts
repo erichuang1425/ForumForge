@@ -54,4 +54,9 @@ export {
   isFmKoreaPage,
   type FmKoreaExtractOptions,
 } from "./fmkorea";
+export {
+  extractThreadStackOverflow,
+  isStackOverflowPage,
+  type StackOverflowExtractOptions,
+} from "./stackoverflow";
 export type { ExtractedThread, ExtractOptions } from "./types";

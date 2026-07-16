@@ -140,6 +140,19 @@ a clean profile for install testing and an existing profile for upgrade testing.
       the dedicated extractor. Confirm ForumForge does not request other comment
       pages or load remote media; record pagination, missing parents, other
       boards/themes, and authentication states as pending unless observed.
+- [ ] Stack Overflow question page: title, coherent numeric question/answer and
+      comment IDs, share permalinks, exact user-ID OP matching, author profile
+      links, timestamps, code/lists/tables/links, answer/comment parents, deleted
+      comments, and media-only placeholders.
+- [ ] Stack Overflow question lists, mismatched title/data/element IDs, foreign
+      comment wrappers, mismatched share/comment permalinks, and answer parent-ID
+      conflicts do not select or contaminate the dedicated extractor. Confirm
+      remote media is not loaded by ForumForge; record collapsed comments,
+      accepted-answer presentation, other Stack Exchange sites, and login states
+      as pending unless observed.
+- [ ] F95Zone harmless public thread: establish its exact forum/version/theme
+      signature with a sanitized fixture before testing extraction. Do not mark
+      this row passed solely because the generic XenForo adapter returns posts.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

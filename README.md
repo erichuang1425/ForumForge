@@ -62,6 +62,10 @@ library holds compact reading, exports, and privacy controls.
   including explicit reply relationships and exact member-ID OP matching. It is
   backed by a synthetic fixture and a dated extraction inside one isolated
   rendered public page; packaged-extension and Chrome evidence is pending.
+- Narrowly detected Stack Overflow question extraction with loaded answers and
+  comments, code-rich bodies, exact user-ID OP matching, and post hierarchy. It
+  is backed by a synthetic fixture and a dated extraction inside one isolated
+  rendered public question; packaged-extension and Chrome evidence is pending.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
@@ -123,6 +127,8 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | Arca article pages | Synthetic nested-comment fixture tests | 2026-07-16 read-only command-line extraction succeeded on one public article; no packaged-extension/browser evidence |
 | DC Inside gallery articles | Synthetic article-and-comment fixture tests | 2026-07-16 read-only command-line extraction succeeded on one public article; static markup contained no loaded comments; no packaged-extension/browser evidence |
 | FMKorea article pages | Synthetic article-and-comment fixture tests | 2026-07-16 exact-source extraction succeeded inside one isolated rendered public page; no packaged-extension/Chrome evidence |
+| Stack Overflow question pages | Synthetic question/answer/comment fixture tests | 2026-07-16 exact-source extraction succeeded inside one isolated rendered public question; no packaged-extension/Chrome evidence |
+| F95Zone threads | No site-specific evidence | Public-page browser access was unavailable on 2026-07-16; the existing XenForo adapter is not a F95Zone support claim |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 

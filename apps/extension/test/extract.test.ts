@@ -260,4 +260,22 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts).toHaveLength(1);
     expect(thread.posts[0]).toMatchObject({ id: "960", author: "ivy", role: "op" });
   });
+
+  it("picks the Stack Overflow adapter for a coherent question", () => {
+    const html = `<!doctype html><html><body>
+      <h1><a class="question-hyperlink" href="/questions/970/example">Example question</a></h1>
+      <div id="question" class="question" data-questionid="970" data-author-username="ivy">
+        <div class="s-prose js-post-body">Question body.</div>
+        <div class="post-signature owner"><div class="user-action-time">
+          <span class="relativetime" title="2026-07-16 16:00:00Z"></span></div>
+          <div class="user-details"><a href="/users/10/ivy">ivy</a></div></div>
+        <div class="js-post-menu"><a class="js-share-link" href="/q/970">Share</a></div>
+      </div><div id="answers"></div>
+    </body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("Example question");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]).toMatchObject({ id: "970", author: "ivy", role: "op" });
+  });
 });

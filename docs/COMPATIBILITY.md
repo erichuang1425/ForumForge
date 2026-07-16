@@ -29,6 +29,8 @@ Last updated: 2026-07-16
 | Arca article pages using the canonical board-article wrapper | Dedicated | Synthetic offline fixture tests covering Korean metadata, canonical numeric IDs, authors, timestamps, nested comments, OP matching, manager roles, deleted comments, media-only placeholders, and false-positive detection; 2026-07-16 read-only command-line extraction on one public article detected and extracted five numeric posts through depth 2 | No packaged-extension or Chrome evidence; other channels, authentication states, dynamically appended comments, deleted/blocked pages, pagination, embeds, and media remain unverified; remote media is not rendered |
 | DC Inside gallery articles using the current gallery-view shell | Dedicated | Synthetic offline fixture tests covering Korean metadata, coherent numeric IDs, named and IP-qualified anonymous identities, already-rendered comments/replies, OP matching, deleted comments, media-only placeholders, and false-positive detection; 2026-07-16 read-only command-line extraction on one public article detected and extracted its article | The static public response contained no rendered comments; no packaged-extension or Chrome evidence; dynamically loaded comments, gallery variants, authentication states, deleted/blocked pages, pagination, embeds, and media remain unverified; remote media is not rendered |
 | FMKorea article pages using the current rendered `rd`/`fdb` shell | Dedicated | Synthetic offline fixture tests covering Korean metadata, coherent numeric document/comment/permalink IDs, exact member-ID OP matching, current-page comments, explicit reply-parent links, deleted comments, media-only placeholders, missing parents, and false-positive detection; 2026-07-16 exact-source extraction inside one isolated rendered public page produced 51 unique numeric posts, including 30 replies through depth 2 | No packaged-extension or Chrome evidence; the browser version was unavailable; only one public article and one of its paginated comment pages were observed; other boards/themes, authentication states, deleted/blocked pages, other comment pages, embeds, and media remain unverified; ForumForge does not crawl pagination or load remote media |
+| Stack Overflow question pages using the current question/answer/comment shell | Dedicated | Synthetic offline fixture tests covering coherent numeric question/answer/comment identities, parent and share-permalink validation, exact user-ID OP matching, question/answer/comment hierarchy, timestamps, code-rich bodies, deleted comments, media-only placeholders, and false-positive detection; 2026-07-16 exact-source extraction inside one isolated rendered public question produced 32 unique numeric posts: one question, 26 answers, and five loaded comments | No packaged-extension or Chrome evidence; the browser version was unavailable; only one public question was observed; collapsed/lazy comments were not expanded, accepted status is not represented by the current post model, and other Stack Exchange sites, deleted/closed pages, authentication states, embeds, and media remain unverified; remote media is not rendered |
+| F95Zone threads | Not claimed | No sanitized site fixture or dated public-page extraction evidence | Automated public-page inspection was unavailable on 2026-07-16. F95Zone may expose XenForo-derived markup, but the existing XenForo 2.3 default-theme row is not evidence for its custom site. A sanitized maintainer-supplied fixture and real-browser run are required before claiming support. |
 | Other forums | Generic fallback | Representative generic fixture | Accuracy varies; pagination and custom DOM often need a dedicated adapter |
 
 The phpBB row is evidence for the tested stock prosilver DOM contract only. It
@@ -80,6 +82,26 @@ sanitizer drops remote media elements. No public page content was copied into
 the repository or retained as a fixture. This is rendered-DOM selector and
 extraction evidence, not packaged-extension, Chrome, visual, persistence, or
 network evidence. The isolated browser did not expose a version string.
+
+The Stack Overflow row combines a synthetic, anonymized fixture with a
+2026-07-16 read-only extraction inside one isolated in-app browser question.
+The exact local source selected the dedicated adapter and extracted the question,
+all 26 loaded answers, and five loaded comments. All 32 IDs were unique and
+numeric; every post had an author and timestamp; answers and comments retained
+their observed parents; and 25 bodies retained code markup. Six source bodies
+contained media markup, which remains untrusted input and is dropped by the
+established reader sanitizer. Collapsed comments were not expanded. No public
+page content was copied into the repository or retained as a fixture. This is
+rendered-DOM selector and extraction evidence, not packaged-extension, Chrome,
+visual, persistence, or network evidence. The isolated browser did not expose a
+version string.
+
+F95Zone could not be inspected in the available public-page tools on
+2026-07-16. The available isolated browser denied navigation, and no alternate
+automation route was used. A generic or XenForo fallback may produce
+some output, but that is not a compatibility claim. The next safe evidence is a
+small sanitized fixture supplied by a maintainer who can access a harmless
+public thread, followed by the packaged-extension browser matrix.
 
 On 2026-07-16, the XenForo comparison checked public DOM structure for official
 normal, question, and article thread pages on `xenforo.com/community` without

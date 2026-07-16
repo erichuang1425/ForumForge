@@ -42,6 +42,10 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
       rendered-comment template comparison
 - [x] Add narrowly detected FMKorea article extraction for the loaded comment
       page with a synthetic offline fixture and dated rendered-page evidence
+- [x] Add narrowly detected Stack Overflow question/answer/comment extraction
+      with a synthetic offline fixture and dated rendered-page evidence
+- [ ] Validate F95Zone against a maintainer-supplied sanitized fixture and real
+      browser page; automated public-page inspection is currently unavailable
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract

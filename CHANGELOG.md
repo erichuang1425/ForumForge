@@ -60,6 +60,12 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   media-only placeholders, and false-positive rejection. On 2026-07-16, the
   exact source extracted one rendered public page in an isolated in-app browser;
   packaged-extension and Chrome behavior remain unverified.
+- A narrowly detected Stack Overflow question extractor with synthetic offline
+  tests for coherent question, answer, comment, parent, permalink, and user IDs;
+  code-rich content; OP matching; deleted comments; media-only placeholders;
+  and false-positive rejection. On 2026-07-16, the exact source extracted one
+  rendered public question in an isolated in-app browser; packaged-extension and
+  Chrome behavior remain unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

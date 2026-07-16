@@ -20,7 +20,8 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > synthetic nested-comment fixture, and DC Inside extraction represented by a
 > synthetic gallery-article and rendered-comment fixture. The phpBB, XenForo,
 > vBulletin, Nairaland, PTT, 4chan, Arca, and DC Inside fixtures are synthetic
-> and offline-safe. On 2026-07-16,
+> and offline-safe. FMKorea article extraction is represented by a synthetic
+> article-and-comment-page fixture that is also offline-safe. On 2026-07-16,
 > the XenForo fixture selectors
 > received a read-only structural comparison against normal, question, and
 > article thread pages on the official `xenforo.com/community` forum; ForumForge
@@ -51,9 +52,15 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > static response contained no rendered comments. No page content was printed
 > or retained. This is not rendered-comment, packaged-extension, or browser
 > evidence. Synthetic fixtures are deterministic DOM-contract evidence, not by
-> themselves live or packaged-extension evidence. Phase 2 extends the same
-> pattern to contributor-made declarative adapters; Phase 5 adds registry-wide
-> quality reporting.
+> themselves live or packaged-extension evidence.
+> The FMKorea fixture follows the current rendered `rd` article and `fdb`
+> comment structures. On 2026-07-16, the exact local source was evaluated inside
+> one isolated public article page and extracted its article plus 50 comments
+> from the loaded comment page, including 30 replies with loaded parents. Public
+> prose and identities were not copied into the fixture or repository. This is
+> not packaged-extension or Chrome evidence, and it does not cover other comment
+> pages. Phase 2 extends the same pattern to contributor-made declarative
+> adapters; Phase 5 adds registry-wide quality reporting.
 
 ## What makes a good fixture
 

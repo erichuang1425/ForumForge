@@ -131,6 +131,15 @@ a clean profile for install testing and an existing profile for upgrade testing.
       extractor. Confirm ForumForge makes no comment endpoint request and loads
       no remote media; record comments absent from the loaded DOM, gallery
       variants, and authentication states as pending unless observed.
+- [ ] FMKorea article page: Korean title/author metadata, coherent numeric
+      document and comment IDs, canonical article/comment permalinks, exact
+      member-ID OP matching, current-page comments, explicit reply-parent links,
+      deleted comments, media-only placeholders, and timestamps.
+- [ ] FMKorea board lists, nonnumeric/mismatched document IDs, foreign comment
+      wrappers, and mismatched comment permalinks do not select or contaminate
+      the dedicated extractor. Confirm ForumForge does not request other comment
+      pages or load remote media; record pagination, missing parents, other
+      boards/themes, and authentication states as pending unless observed.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

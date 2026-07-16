@@ -58,6 +58,10 @@ library holds compact reading, exports, and privacy controls.
   read-only article extraction, and a structural comparison with the site's
   first-party comment template; rendered-comment and packaged-browser evidence
   is pending.
+- Narrowly detected FMKorea article extraction for the loaded comment page,
+  including explicit reply relationships and exact member-ID OP matching. It is
+  backed by a synthetic fixture and a dated extraction inside one isolated
+  rendered public page; packaged-extension and Chrome evidence is pending.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
@@ -118,6 +122,7 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | 4chan thread pages | Synthetic imageboard fixture tests | No packaged-extension or live-site evidence; media is link-only |
 | Arca article pages | Synthetic nested-comment fixture tests | 2026-07-16 read-only command-line extraction succeeded on one public article; no packaged-extension/browser evidence |
 | DC Inside gallery articles | Synthetic article-and-comment fixture tests | 2026-07-16 read-only command-line extraction succeeded on one public article; static markup contained no loaded comments; no packaged-extension/browser evidence |
+| FMKorea article pages | Synthetic article-and-comment fixture tests | 2026-07-16 exact-source extraction succeeded inside one isolated rendered public page; no packaged-extension/Chrome evidence |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 

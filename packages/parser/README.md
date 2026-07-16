@@ -3,7 +3,7 @@
 The ForumForge **extraction engine**. It turns forum-page DOM into
 [`ForumForgePost`](../core/README.md) values that the rest of ForumForge consumes.
 
-This package ships eleven extractors:
+This package ships twelve extractors:
 
 - **`extractThreadGeneric`** — the best-effort fallback for pages with no
   site-specific adapter. It walks a prioritized set of common forum/comment
@@ -97,6 +97,15 @@ This package ships eleven extractors:
   first-party comment rendering template. The static public response contained
   no rendered comments; packaged-browser behavior, loaded-comment extraction,
   and broader gallery/auth/media variants remain unverified.
+- **`extractThreadFmKorea`** targets the current FMKorea `rd` article shell and
+  its loaded `fdb` comment page. It requires coherent numeric document, content,
+  comment, and permalink identities; matches OP replies only by exact member ID;
+  and follows explicit loaded reply-parent links without fetching another
+  comment page. Evidence includes a synthetic offline fixture and a 2026-07-16
+  exact-source extraction inside one isolated rendered public page. That check
+  extracted 51 unique numeric posts, including 30 replies through depth 2.
+  Packaged-extension, Chrome, other comment pages, and broader board/auth/media
+  variants remain unverified.
 
 `apps/extension/src/extract.ts` is the one place that chooses between them —
 each extractor here is independent and adapter selection isn't this package's
@@ -109,20 +118,21 @@ concern.
   `extractThreadPhpBB(root, options?)`, `extractThreadXenForo(root, options?)`,
   `extractThreadVBulletin(root, options?)`, `extractThreadNairaland(root, options?)`,
   `extractThreadPtt(root, options?)`, `extractThreadFourChan(root, options?)`,
-  `extractThreadArca(root, options?)`, and `extractThreadDcInside(root, options?)`
-  extract a thread from a `Document`
+  `extractThreadArca(root, options?)`, `extractThreadDcInside(root, options?)`,
+  and `extractThreadFmKorea(root, options?)` extract a thread from a `Document`
   or any element containing it. Each returns `{ title?, baseUrl?, posts }`
   (`ExtractedThread`).
 - `isDiscoursePage(root)`, `isHackerNewsPage(root)`, `isPhpBBPage(root)`,
   `isXenForoPage(root)`, `isVBulletinPage(root)`, `isNairalandPage(root)`, and
   `isPttPage(root)`, `isFourChanPage(root)`, `isArcaPage(root)`, and
-  `isDcInsidePage(root)`
+  `isDcInsidePage(root)`, and `isFmKoreaPage(root)`
   detect whether a document matches that extractor.
 - `ExtractedThread`, `ExtractOptions`, `GenericExtractOptions`,
   `DiscourseExtractOptions`, `HackerNewsExtractOptions`,
   `PhpBBExtractOptions`, `XenForoExtractOptions`, `VBulletinExtractOptions`, and
   `NairalandExtractOptions`, `PttExtractOptions`, `FourChanExtractOptions`, and
-  `ArcaExtractOptions` and `DcInsideExtractOptions` are result and option types.
+  `ArcaExtractOptions`, `DcInsideExtractOptions`, and `FmKoreaExtractOptions`
+  are result and option types.
 
 Pass `options.baseUrl` when parsing detached HTML (tests, fixtures) so relative
 permalinks and links resolve to absolute URLs; in a live browser the DOM already

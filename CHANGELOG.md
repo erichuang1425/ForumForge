@@ -54,6 +54,12 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   command-line extraction succeeded on one public article; its static response
   contained no rendered comments, so rendered-comment and packaged-browser
   behavior remain unverified.
+- A narrowly detected FMKorea article extractor with synthetic offline tests
+  for coherent document IDs, Korean metadata, exact member-ID OP matching,
+  current-page comments, explicit reply-parent links, deleted comments,
+  media-only placeholders, and false-positive rejection. On 2026-07-16, the
+  exact source extracted one rendered public page in an isolated in-app browser;
+  packaged-extension and Chrome behavior remain unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

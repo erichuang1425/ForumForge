@@ -244,4 +244,20 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts).toHaveLength(1);
     expect(thread.posts[0]).toMatchObject({ id: "950", author: "ivy", role: "op" });
   });
+
+  it("picks the FMKorea adapter only for a coherent numeric article", () => {
+    const html = `<!doctype html><html><body><div class="rd" data-docsrl="960">
+      <div class="rd_hd"><div class="top_area"><span class="date m_no">2026.07.16</span>
+        <h1>합성 에펨코리아 글</h1></div><div class="btm_area">
+        <a class="member_10 member_plate" href="#popup_menu_area">ivy</a></div></div>
+      <div class="rd_body"><div class="document_address"><a href="/best/960">원문</a></div>
+        <article><div class="document_960_10 xe_content">본문입니다.</div></article></div>
+      <div class="fdb_lst" id="960_comment"><ul class="fdb_lst_ul"></ul></div>
+    </div></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("합성 에펨코리아 글");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]).toMatchObject({ id: "960", author: "ivy", role: "op" });
+  });
 });

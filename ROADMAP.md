@@ -40,6 +40,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] Add narrowly detected DC Inside article extraction with a synthetic
       offline fixture, dated read-only article evidence, and a first-party
       rendered-comment template comparison
+- [x] Add narrowly detected FMKorea article extraction for the loaded comment
+      page with a synthetic offline fixture and dated rendered-page evidence
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract

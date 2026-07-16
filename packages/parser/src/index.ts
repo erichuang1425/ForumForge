@@ -49,4 +49,9 @@ export {
   isDcInsidePage,
   type DcInsideExtractOptions,
 } from "./dcinside";
+export {
+  extractThreadFmKorea,
+  isFmKoreaPage,
+  type FmKoreaExtractOptions,
+} from "./fmkorea";
 export type { ExtractedThread, ExtractOptions } from "./types";

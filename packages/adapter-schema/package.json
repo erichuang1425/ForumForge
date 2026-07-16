@@ -2,7 +2,7 @@
   "name": "@forumforge/adapter-schema",
   "version": "0.0.0",
   "private": true,
-  "description": "Versioned, data-only ForumForge adapter contracts and validation helpers.",
+  "description": "Versioned data-only ForumForge adapter contracts, validation, and matching.",
   "type": "module",
   "license": "MIT",
   "exports": {

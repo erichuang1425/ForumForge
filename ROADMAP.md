@@ -78,7 +78,8 @@ The implementation epic is
 
 - [x] Define the versioned JSON adapter schema, threat model, and hard budgets
 - [x] Implement bounded schema validation with actionable path-based errors
-- [ ] Add adapter matching, extraction, and generic fallback orchestration
+- [x] Add deterministic URL/detector matching with bounded generic fallback
+- [ ] Add bounded extraction and generic-parser runtime orchestration
 - [ ] Add safe local import/export
 - [ ] Publish minimal JSON and TypeScript examples
 - [ ] Express the bundled hand-written targets in declarative adapters and

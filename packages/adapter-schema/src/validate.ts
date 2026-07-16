@@ -1,8 +1,9 @@
 import { ADAPTER_VALIDATION_LIMITS } from "./limits";
+import { canonicalizeAdapterPathnameGlob } from "./pathname";
 import {
   ADAPTER_READ_ATTRIBUTES,
   ADAPTER_SCHEMA_VERSION,
-  type ForumForgeAdapterV1,
+  type ValidatedForumForgeAdapterV1,
 } from "./types";
 
 export type AdapterValidationErrorCode =
@@ -27,7 +28,7 @@ export type AdapterValidationError = {
 };
 
 export type AdapterValidationResult =
-  | { ok: true; value: ForumForgeAdapterV1 }
+  | { ok: true; value: ValidatedForumForgeAdapterV1 }
   | { ok: false; errors: AdapterValidationError[] };
 
 type JsonRecord = Record<string, unknown>;
@@ -39,6 +40,8 @@ type ReadDestination =
   | "timestamp"
   | "permalink"
   | "parentId";
+
+const validatedAdapters = new WeakSet<object>();
 
 const LAYOUTS = new Set([
   "linear",
@@ -70,20 +73,6 @@ const SAFE_SELECTOR_ATTRIBUTES = new Set([
   "name",
   "role",
   "title",
-]);
-
-const CANONICAL_ENCODED_ASCII_BYTES = new Set([
-  0x20,
-  0x22,
-  0x23,
-  0x25,
-  0x3c,
-  0x3e,
-  0x3f,
-  0x5e,
-  0x60,
-  0x7b,
-  0x7d,
 ]);
 
 class ErrorCollector {
@@ -532,40 +521,16 @@ function validatePathname(
     errors,
   );
   if (pathname === undefined) return undefined;
-  if (
-    !pathname.startsWith("/") ||
-    /[^\x21-\x7e]/.test(pathname) ||
-    /["#<>?\\^`{}]/.test(pathname) ||
-    pathname.includes("**")
-  ) {
-    errors.add(path, "format", "Expected a canonical ASCII-serialized pathname glob beginning with '/'.");
+  const canonical = canonicalizeAdapterPathnameGlob(
+    pathname,
+    ADAPTER_VALIDATION_LIMITS.pathnameCodePoints,
+  );
+  if (!canonical.ok) {
+    errors.add(path, "format", canonical.message);
     return undefined;
   }
-
-  for (let index = 0; index < pathname.length; index += 1) {
-    if (pathname[index] !== "%") continue;
-    const escape = pathname.slice(index + 1, index + 3);
-    if (!/^[0-9A-F]{2}$/.test(escape)) {
-      errors.add(path, "format", "Percent escapes must contain two uppercase hexadecimal digits.");
-      return undefined;
-    }
-    const byte = Number.parseInt(escape, 16);
-    if (byte < 0x80 && !CANONICAL_ENCODED_ASCII_BYTES.has(byte)) {
-      errors.add(path, "format", "Percent-encoded ASCII must use its canonical literal form; encoded slash, dot, backslash, and star are unsupported.");
-      return undefined;
-    }
-    index += 2;
-  }
-  for (const literalSegment of pathname.split("*")) {
-    try {
-      decodeURIComponent(literalSegment);
-    } catch {
-      errors.add(path, "format", "Percent escapes must form valid UTF-8 within each literal glob segment.");
-      return undefined;
-    }
-  }
-  if (pathname.split("/").some((segment) => segment === "." || segment === "..")) {
-    errors.add(path, "format", "Dot path segments are not canonical URL pathnames.");
+  if (canonical.value !== pathname) {
+    errors.add(path, "format", "Use uppercase escapes and literal ASCII in the canonical pathname glob.");
     return undefined;
   }
   const wildcards = [...pathname].filter((character) => character === "*").length;
@@ -904,9 +869,20 @@ export function validateAdapter(input: unknown): AdapterValidationResult {
   if (errors.errors.length > 0) return { ok: false, errors: errors.errors };
 
   try {
+    const value = structuredClone(input) as ValidatedForumForgeAdapterV1;
+    for (const match of value.matches) Object.freeze(match);
+    Object.freeze(value.matches);
+    Object.freeze(value.detect);
+    Object.freeze(value.thread.title);
+    Object.freeze(value.thread);
+    for (const read of Object.values(value.posts.fields)) Object.freeze(read);
+    Object.freeze(value.posts.fields);
+    Object.freeze(value.posts);
+    Object.freeze(value);
+    validatedAdapters.add(value);
     return {
       ok: true,
-      value: structuredClone(input) as ForumForgeAdapterV1,
+      value,
     };
   } catch {
     return {
@@ -914,6 +890,12 @@ export function validateAdapter(input: unknown): AdapterValidationResult {
       errors: [{ path: "$", code: "non-json-value", message: "Expected JSON data." }],
     };
   }
+}
+
+export function isValidatedAdapter(
+  value: unknown,
+): value is ValidatedForumForgeAdapterV1 {
+  return typeof value === "object" && value !== null && validatedAdapters.has(value);
 }
 
 export function parseAdapterJson(source: string): AdapterValidationResult {

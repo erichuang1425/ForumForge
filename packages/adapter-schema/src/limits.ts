@@ -25,3 +25,12 @@ export const ADAPTER_EXTRACTION_LIMITS = {
   htmlContentCodeUnits: 262_144,
   totalRetainedCodeUnits: 8_388_608,
 } as const;
+
+export const ADAPTER_MATCH_LIMITS = {
+  registryEntries: 128,
+  currentUrlCodeUnits: 8_192,
+  loadedPathnameCodePoints: 4_096,
+  urlMatchWork: 1_000_000,
+  detectionCandidates: 16,
+  selectorQueries: 64,
+} as const;

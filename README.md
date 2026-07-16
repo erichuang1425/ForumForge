@@ -76,10 +76,10 @@ library holds compact reading, exports, and privacy controls.
 
 ## Planned, not shipped
 
-- User-authored JSON-adapter matching, extraction, persistence, import/export,
-  an adapter SDK, and declarative migration of the bundled hand-written
-  extractors. The isolated schema and validator foundation exists but is not
-  connected to the extension.
+- User-authored JSON-adapter extraction, persistence, import/export, an adapter
+  SDK, and declarative migration of the bundled hand-written extractors. The
+  isolated schema, validator, and deterministic matcher foundation exists but
+  is not connected to the extension.
 - Wider phpBB and vBulletin version/theme coverage.
 - Adapter Studio, thread maps, best-answer/unanswered detection, and an adapter
   registry.
@@ -158,7 +158,7 @@ offline-safe HTML fixtures rather than repeated live-site requests. See
 
 ```text
 apps/extension     Manifest V3 extension, on-page reader, and local-library panel
-packages/adapter-schema  Versioned data-only adapter schema and validator
+packages/adapter-schema  Data-only adapter schema, validator, and matcher
 packages/core      Shared ForumForgePost model and helpers
 packages/parser    Generic and dedicated forum/site extraction
 packages/storage   Local-first storage contracts

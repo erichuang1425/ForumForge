@@ -90,3 +90,9 @@ export type ForumForgeAdapterV1 = {
     fields: AdapterPostFieldsV1;
   };
 };
+
+declare const validatedAdapterBrand: unique symbol;
+
+export type ValidatedForumForgeAdapterV1 = ForumForgeAdapterV1 & {
+  readonly [validatedAdapterBrand]: true;
+};

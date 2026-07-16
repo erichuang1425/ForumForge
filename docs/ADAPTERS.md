@@ -11,7 +11,8 @@ This guide is the how-to. For the security model behind adapters, see
 
 > **Status:** The versioned, data-only JSON v1 schema and bounded validator now
 > exist as an isolated Phase 2 foundation in
-> [`packages/adapter-schema`](../packages/adapter-schema). Matching, extraction,
+> [`packages/adapter-schema`](../packages/adapter-schema). Deterministic URL and
+> detector selection also exists in that isolated package. Extraction,
 > persistence, import/export UI, and extension integration are not built yet (see
 > **[../ROADMAP.md](../ROADMAP.md)**, Phase 2). **Discourse, Hacker News, phpBB
 > 3.3 stock prosilver, XenForo
@@ -139,6 +140,16 @@ universal selectors fail validation with a path to the affected field.
 Use `parseAdapterJson()` for every imported file. The exported JSON Schema is
 useful for editor hints and structural interoperability, but schema-only
 acceptance is not a security boundary and is unsupported.
+
+Path matching uses a canonical ASCII serialization of `URL.pathname`; `*`
+matches zero or more serialized pathname characters, including `/`. Selection
+never relies on URL matching alone: every `detect` selector must exist. If more
+than one adapter qualifies, reviewed bundled entries precede local entries,
+then more literal path characters, fewer wildcards, and lexical adapter IDs
+decide. A failed detector continues to the next candidate; exhausted budgets or
+no qualifying candidate return an explicit generic fallback. Bundled priority
+comes from a package-owned opaque catalog; imported data cannot label itself as
+bundled.
 
 JSON adapters are **declarative only**. They cannot run arbitrary JavaScript, call
 `eval`, make network requests, crawl pagination, mutate the DOM, or track across

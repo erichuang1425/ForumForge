@@ -1,5 +1,22 @@
 export { adapterV1Schema } from "./schema";
-export { ADAPTER_EXTRACTION_LIMITS, ADAPTER_VALIDATION_LIMITS } from "./limits";
+export {
+  ADAPTER_EXTRACTION_LIMITS,
+  ADAPTER_MATCH_LIMITS,
+  ADAPTER_VALIDATION_LIMITS,
+} from "./limits";
+export {
+  matchesPathnameGlob,
+  selectAdapterForPage,
+  type AdapterDetectionRoot,
+  type AdapterFallbackReason,
+  type AdapterRegistryV1,
+  type AdapterSelection,
+  type AdapterTrustTier,
+} from "./match";
+export {
+  EMPTY_BUNDLED_ADAPTER_CATALOG,
+  type BundledAdapterCatalogV1,
+} from "./provenance";
 export {
   parseAdapterJson,
   validateAdapter,
@@ -29,4 +46,5 @@ export {
   type AdapterTimestampAttribute,
   type AdapterUrlMatchV1,
   type ForumForgeAdapterV1,
+  type ValidatedForumForgeAdapterV1,
 } from "./types";

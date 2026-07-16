@@ -472,6 +472,7 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 
 * [x] Versioned JSON adapter format and threat model
 * [x] Bounded adapter validator with path-based errors
+* [x] Deterministic URL/detector matcher with safe generic fallback
 * [ ] Adapter import/export
 * [ ] Adapter examples
 * [ ] phpBB adapter

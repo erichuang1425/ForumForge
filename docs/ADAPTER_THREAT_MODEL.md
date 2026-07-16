@@ -80,6 +80,11 @@ and selectors. The validator and future runtime must also enforce these limits:
 | --- | ---: |
 | UTF-8 JSON import | 65,536 bytes |
 | Adapters considered in one local registry | 128 |
+| URL-matched candidates queried against the page | 16 |
+| Selector queries during one selection | 64 |
+| Current page URL | 8,192 code units |
+| Canonical loaded pathname | 4,096 Unicode code points |
+| Aggregate URL-match work in one selection | 1,000,000 charged code units |
 | URL match records per adapter | 16 |
 | Required detection selectors | 8 |
 | One selector | 256 Unicode code points |
@@ -114,7 +119,9 @@ browser matching still depends on the size of the page the user opened.
 
 Matching must normalize URLs with the platform `URL` parser and compare exact
 origins. Path globs support literal characters plus `*` only and are evaluated
-by a linear matcher, never by constructing a regular expression.
+by a linear matcher, never by constructing a regular expression. A wildcard
+matches zero or more serialized pathname characters, including `/`. Ambiguous
+loaded paths fail to the generic result rather than weakening canonical rules.
 
 For each adapter, the most specific matching URL record supplies its score:
 more literal pathname code points, then fewer wildcards, then the record's
@@ -126,12 +133,20 @@ URL candidates are then ordered by:
 3. fewer wildcards before more; and
 4. adapter ID in ascending Unicode code-point order.
 
+The package, not imported data or a registry caller, owns bundled provenance.
+Only an opaque catalog created by the reviewed source-build seam can enter the
+bundled tier; a forged or cloned catalog fails closed. Local entries cannot
+assert a higher trust tier. URL matching charges the lengths of each compared
+origin, glob, and loaded pathname against one aggregate 1,000,000-code-unit
+budget before any detector queries run.
+
 Detection runs in that order. Every detector for a candidate must match; a
 syntax error or missing detector rejects that candidate and continues to the
 next ranked candidate. Only after all candidates fail does orchestration use
-the generic parser. The same input registry, URL, and document must always
-select the same adapter regardless of insertion order. A tie never combines
-selectors from multiple adapters.
+the generic parser; the current foundation returns that fallback decision but
+does not yet invoke a parser. The same input registry, URL, and page root must
+always select the same adapter regardless of insertion order. A tie never
+combines selectors from multiple adapters.
 
 ## Validation and failure behavior
 

@@ -52,6 +52,9 @@ describe("adapter v1 validator", () => {
     if (!result.ok) throw new Error("Expected adapter validation to pass.");
     expect(result.value).not.toBe(input);
     expect(result.value.posts).not.toBe(input.posts);
+    expect(Object.isFrozen(result.value)).toBe(true);
+    expect(Object.isFrozen(result.value.matches)).toBe(true);
+    expect(Object.isFrozen(result.value.posts.fields.content)).toBe(true);
   });
 
   it("parses valid bounded JSON before validating it", () => {

@@ -1,7 +1,7 @@
 # @forumforge/extension
 
 The ForumForge **browser extension** is a Manifest V3 app that transforms the
-thread on the current page into an immersive, publication-like reader. A slim
+thread on the current page into an immersive, discussion-aware reader. A small
 edge launcher remains available after the reader closes, and the side panel is a
 secondary local library for compact reading, exports, and privacy controls. The
 current source also includes OP highlighting, **new posts since last visit**,
@@ -30,6 +30,14 @@ reader "Local library" ─▶ background ─▶ opens the secondary side panel
   launcher and full-window reading workspace. The UI lives in a closed shadow
   root, traps focus while open, restores the forum and prior focus when closed,
   and uses only packaged system-font styles and generated marks.
+- **`src/threadPresentation.ts`** — a pure, bounded presentation builder. It
+  turns validated parent relationships into a deterministic tree, flattens
+  missing or forward references, caps visual nesting, and retains every source
+  post exactly once.
+- **`src/pageThreadRenderer.ts`** — the immersive reader's semantic renderer.
+  It selects one of six conversation presentations (linear,
+  article-and-comments, nested, PTT, imageboard, or Q&A) from the extracted
+  thread metadata while reusing the established sanitizer and post actions.
 - **`src/sidepanel.ts`** + **`public/sidepanel.html`** — the panel UI: a button
   that can still request and render the current thread, plus saved-post export
   and local-data controls. It is the compact companion rather than the primary
@@ -40,8 +48,9 @@ reader "Local library" ─▶ background ─▶ opens the secondary side panel
   signals one, otherwise the generic fallback parser.
   More site-specific adapters land here as they're built (Phase 2 adds the JSON
   adapter format for community-contributed ones).
-- **`src/render.ts`** — builds the read-only view. Author, role and timestamp are
-  written with `textContent`; the body renders the post's rich `contentHtml`
+- **`src/render.ts`** — builds the compact read-only view and provides the safe
+  post primitive shared by the immersive renderer. Author, role and timestamp
+  are written with `textContent`; the body renders the post's rich `contentHtml`
   through the sanitizer (clean reading mode), falling back to plain text.
   **OP highlighting:** OP / moderator / admin posts get a readable role badge and
   a colored edge (driven by a `data-role` attribute and styled in

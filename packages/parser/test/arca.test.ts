@@ -38,6 +38,14 @@ describe("isArcaPage", () => {
 describe("extractThreadArca", () => {
   it("extracts the article and loaded comments with stable numeric ids", () => {
     const thread = extract();
+    expect(thread).toMatchObject({ layout: "article-comments", source: "arca" });
+    expect(thread.posts.map((post) => post.kind)).toEqual([
+      "article",
+      "comment",
+      "comment",
+      "comment",
+      "comment",
+    ]);
     expect(thread.title).toBe("낡은 라디오 수리 기록");
     expect(thread.baseUrl).toBe(baseUrl);
     expect(thread.posts.map((post) => post.id)).toEqual(["700", "701", "702", "703", "704"]);

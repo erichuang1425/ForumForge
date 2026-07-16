@@ -123,9 +123,18 @@ type ForumForgePost = {
   permalink?: string;
   parentId?: string;   // for nested replies
   depth?: number;      // nesting depth
+  kind?: "topic" | "article" | "question" | "answer" | "comment" | "reply";
+  reaction?: "push" | "boo" | "neutral";
+  score?: number;      // finite safe integer shown by the source
+  accepted?: boolean;
   links?: string[];
 };
 ```
+
+The extracted thread can also carry a closed renderer `layout` and reviewed
+built-in `source`. Hand-written adapters emit these only from their
+already-selected DOM contract; the renderer never guesses them from an
+arbitrary hostname. Missing semantics fall back to the linear layout.
 
 ## TypeScript adapter
 

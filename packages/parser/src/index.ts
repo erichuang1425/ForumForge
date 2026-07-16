@@ -59,4 +59,9 @@ export {
   isStackOverflowPage,
   type StackOverflowExtractOptions,
 } from "./stackoverflow";
-export type { ExtractedThread, ExtractOptions } from "./types";
+export type {
+  ExtractedThread,
+  ExtractOptions,
+  ThreadLayout,
+  ThreadSource,
+} from "./types";

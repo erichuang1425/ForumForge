@@ -1,5 +1,24 @@
-import type { ForumForgePost } from "@forumforge/core";
-import type { ExtractedThread } from "@forumforge/parser";
+import { isForumForgePost } from "@forumforge/core";
+import type { ExtractedThread, ThreadLayout, ThreadSource } from "@forumforge/parser";
+
+const THREAD_LAYOUTS: readonly ThreadLayout[] = [
+  "linear",
+  "article-comments",
+  "nested",
+  "ptt",
+  "imageboard",
+  "qa",
+];
+const THREAD_SOURCES: readonly ThreadSource[] = [
+  "nairaland",
+  "hacker-news",
+  "ptt",
+  "4chan",
+  "arca",
+  "dc-inside",
+  "fmkorea",
+  "stack-overflow",
+];
 
 /**
  * The message protocol between the side panel and the page's content script.
@@ -70,50 +89,24 @@ export function isExtractResponse(value: unknown): value is ExtractResponse {
 function isExtractedThread(value: unknown): value is ExtractedThread {
   if (!isRecord(value) || !Array.isArray(value.posts)) return false;
   if (!isOptionalString(value.title) || !isOptionalString(value.baseUrl)) return false;
+  if (
+    value.layout !== undefined &&
+    (typeof value.layout !== "string" || !THREAD_LAYOUTS.includes(value.layout as ThreadLayout))
+  ) {
+    return false;
+  }
+  if (
+    value.source !== undefined &&
+    (typeof value.source !== "string" || !THREAD_SOURCES.includes(value.source as ThreadSource))
+  ) {
+    return false;
+  }
   const postIds = new Set<string>();
   for (const post of value.posts) {
     if (!isForumForgePost(post) || postIds.has(post.id)) return false;
     postIds.add(post.id);
   }
   return true;
-}
-
-function isForumForgePost(value: unknown): value is ForumForgePost {
-  if (!isRecord(value)) return false;
-  if (
-    typeof value.id !== "string" ||
-    value.id.trim().length === 0 ||
-    typeof value.author !== "string" ||
-    typeof value.contentText !== "string"
-  ) {
-    return false;
-  }
-  if (
-    !isOptionalString(value.authorUrl) ||
-    !isOptionalString(value.timestamp) ||
-    !isOptionalString(value.contentHtml) ||
-    !isOptionalString(value.permalink) ||
-    !isOptionalString(value.parentId)
-  ) {
-    return false;
-  }
-  if (
-    value.role !== undefined &&
-    (typeof value.role !== "string" ||
-      !["op", "user", "mod", "admin"].includes(value.role))
-  ) {
-    return false;
-  }
-  if (
-    value.depth !== undefined &&
-    (!Number.isInteger(value.depth) || Number(value.depth) < 0)
-  ) {
-    return false;
-  }
-  return (
-    value.links === undefined ||
-    (Array.isArray(value.links) && value.links.every((link) => typeof link === "string"))
-  );
 }
 
 function isOptionalString(value: unknown): boolean {

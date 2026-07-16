@@ -52,6 +52,30 @@ describe("createPost", () => {
     expect(createPost({ depth: -1 }).depth).toBeUndefined();
   });
 
+  it("keeps only bounded discussion semantics", () => {
+    expect(
+      createPost({
+        kind: "answer",
+        reaction: "push",
+        score: -3,
+        accepted: true,
+      }),
+    ).toMatchObject({
+      kind: "answer",
+      reaction: "push",
+      score: -3,
+      accepted: true,
+    });
+    // @ts-expect-error invalid post kinds are rejected at runtime
+    expect(createPost({ kind: "script" }).kind).toBeUndefined();
+    // @ts-expect-error invalid reaction values are rejected at runtime
+    expect(createPost({ reaction: "viral" }).reaction).toBeUndefined();
+    expect(createPost({ score: Number.POSITIVE_INFINITY }).score).toBeUndefined();
+    expect(createPost({ score: 1.5 }).score).toBeUndefined();
+    expect(createPost({ score: Number.MAX_SAFE_INTEGER + 1 }).score).toBeUndefined();
+    expect(createPost({ accepted: false }).accepted).toBe(false);
+  });
+
   it("de-duplicates links and omits the field when empty", () => {
     expect(createPost({ links: ["a", "a", "b"] }).links).toEqual(["a", "b"]);
     expect(createPost({ links: ["", "  "] }).links).toBeUndefined();

@@ -120,6 +120,24 @@ This package ships thirteen extractors:
 each extractor here is independent and adapter selection isn't this package's
 concern.
 
+## Discussion semantics
+
+Reviewed built-in adapters can add a closed `layout` and `source` to the
+thread, plus optional `kind`, PTT `reaction`, safe-integer `score`, and
+`accepted` fields to posts. These values come from the adapter's already-proven
+DOM contract, never an arbitrary hostname. Missing semantics remain valid and
+use the linear reader fallback. Current layout mappings are:
+
+- Nairaland: `linear`;
+- DC Inside, FMKorea, and Arca: `article-comments`;
+- Hacker News: `nested`;
+- PTT: `ptt` with `push`, `boo`, or `neutral` comment reactions;
+- 4chan: `imageboard` with `topic` and `reply` post kinds;
+- Stack Overflow: `qa` with question, answer, comment, score, and accepted state.
+
+This is deterministic parser/component evidence, not packaged-browser evidence.
+F95Zone remains unclaimed until its own sanitized fixture and browser run exist.
+
 ## Exports
 
 - `extractThreadGeneric(root, options?)`, `extractThreadDiscourse(root, options?)`,
@@ -130,14 +148,16 @@ concern.
   `extractThreadArca(root, options?)`, `extractThreadDcInside(root, options?)`,
   `extractThreadFmKorea(root, options?)`, and
   `extractThreadStackOverflow(root, options?)` extract a thread from a `Document`
-  or any element containing it. Each returns `{ title?, baseUrl?, posts }`
+  or any element containing it. Each returns
+  `{ title?, baseUrl?, layout?, source?, posts }`
   (`ExtractedThread`).
 - `isDiscoursePage(root)`, `isHackerNewsPage(root)`, `isPhpBBPage(root)`,
   `isXenForoPage(root)`, `isVBulletinPage(root)`, `isNairalandPage(root)`, and
   `isPttPage(root)`, `isFourChanPage(root)`, `isArcaPage(root)`, and
   `isDcInsidePage(root)`, `isFmKoreaPage(root)`, and `isStackOverflowPage(root)`
   detect whether a document matches that extractor.
-- `ExtractedThread`, `ExtractOptions`, `GenericExtractOptions`,
+- `ExtractedThread`, `ThreadLayout`, `ThreadSource`, `ExtractOptions`,
+  `GenericExtractOptions`,
   `DiscourseExtractOptions`, `HackerNewsExtractOptions`,
   `PhpBBExtractOptions`, `XenForoExtractOptions`, `VBulletinExtractOptions`, and
   `NairalandExtractOptions`, `PttExtractOptions`, `FourChanExtractOptions`, and

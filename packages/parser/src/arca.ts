@@ -154,7 +154,15 @@ export function extractThreadArca(
   const article = findArticle(root);
   const wrapper = article ? findWrapper(article) : undefined;
   const canonical = wrapper ? canonicalArticle(wrapper) : undefined;
-  if (!wrapper || !canonical) return baseUrl ? { baseUrl, posts: [] } : { posts: [] };
+  if (!wrapper || !canonical) {
+    const empty: ExtractedThread = {
+      layout: "article-comments",
+      source: "arca",
+      posts: [],
+    };
+    if (baseUrl) empty.baseUrl = baseUrl;
+    return empty;
+  }
 
   const canonicalUrl = resolveUrl(canonical.href, baseUrl);
   const head = wrapper.querySelector(":scope > .article-head");
@@ -172,6 +180,7 @@ export function extractThreadArca(
     contentHtml: articleContent.html,
     permalink: canonicalUrl,
     depth: 0,
+    kind: "article",
     links: articleContent.links,
   });
 
@@ -194,12 +203,15 @@ export function extractThreadArca(
         permalink: resolveUrl(`#c_${id}`, canonicalUrl),
         parentId,
         depth: commentDepth(comment),
+        kind: "comment",
         links: content.links,
       }),
     ];
   });
 
   const result: ExtractedThread = {
+    layout: "article-comments",
+    source: "arca",
     baseUrl: baseUrl ?? canonicalUrl,
     posts: ensureUniquePostIds([articlePost, ...comments]),
   };

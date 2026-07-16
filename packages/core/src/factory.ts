@@ -1,7 +1,21 @@
-import type { ForumForgePost, ForumRole } from "./post";
+import type {
+  ForumForgePost,
+  ForumPostKind,
+  ForumReaction,
+  ForumRole,
+} from "./post";
 import { cleanText, dedupeLinks, normalizeWhitespace } from "./text";
 
 const ROLES: readonly ForumRole[] = ["op", "user", "mod", "admin"];
+const POST_KINDS: readonly ForumPostKind[] = [
+  "topic",
+  "article",
+  "question",
+  "answer",
+  "comment",
+  "reply",
+];
+const REACTIONS: readonly ForumReaction[] = ["push", "boo", "neutral"];
 
 /** Loose, adapter-friendly input: everything optional. Required fields are filled in. */
 export type PostInput = Partial<ForumForgePost>;
@@ -68,8 +82,15 @@ export function createPost(input: PostInput): ForumForgePost {
   if (input.permalink?.trim()) post.permalink = input.permalink.trim();
   if (input.parentId?.trim()) post.parentId = input.parentId.trim();
   if (typeof input.depth === "number" && input.depth >= 0) {
-    post.depth = Math.floor(input.depth);
+    const depth = Math.floor(input.depth);
+    if (Number.isSafeInteger(depth)) post.depth = depth;
   }
+  if (input.kind && POST_KINDS.includes(input.kind)) post.kind = input.kind;
+  if (input.reaction && REACTIONS.includes(input.reaction)) post.reaction = input.reaction;
+  if (typeof input.score === "number" && Number.isSafeInteger(input.score)) {
+    post.score = input.score;
+  }
+  if (typeof input.accepted === "boolean") post.accepted = input.accepted;
 
   const links = dedupeLinks(input.links);
   if (links.length > 0) post.links = links;
@@ -81,10 +102,35 @@ export function createPost(input: PostInput): ForumForgePost {
 export function isForumForgePost(value: unknown): value is ForumForgePost {
   if (typeof value !== "object" || value === null) return false;
   const v = value as Record<string, unknown>;
+  if (
+    typeof v.id !== "string" ||
+    v.id.trim().length === 0 ||
+    typeof v.author !== "string" ||
+    typeof v.contentText !== "string"
+  ) {
+    return false;
+  }
+  for (const field of ["authorUrl", "timestamp", "contentHtml", "permalink", "parentId"]) {
+    if (v[field] !== undefined && typeof v[field] !== "string") return false;
+  }
+  if (v.role !== undefined && !ROLES.includes(v.role as ForumRole)) return false;
+  if (v.kind !== undefined && !POST_KINDS.includes(v.kind as ForumPostKind)) return false;
+  if (v.reaction !== undefined && !REACTIONS.includes(v.reaction as ForumReaction)) return false;
+  if (
+    v.depth !== undefined &&
+    (typeof v.depth !== "number" || !Number.isSafeInteger(v.depth) || v.depth < 0)
+  ) {
+    return false;
+  }
+  if (
+    v.score !== undefined &&
+    (typeof v.score !== "number" || !Number.isSafeInteger(v.score))
+  ) {
+    return false;
+  }
+  if (v.accepted !== undefined && typeof v.accepted !== "boolean") return false;
   return (
-    typeof v.id === "string" &&
-    v.id.length > 0 &&
-    typeof v.author === "string" &&
-    typeof v.contentText === "string"
+    v.links === undefined ||
+    (Array.isArray(v.links) && v.links.every((link) => typeof link === "string"))
   );
 }

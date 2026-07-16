@@ -1,4 +1,5 @@
 import { cleanText, createPost, normalizeWhitespace } from "@forumforge/core";
+import type { ForumReaction } from "@forumforge/core";
 import { ensureUniquePostIds } from "./ids";
 import type { ExtractedThread, ExtractOptions } from "./types";
 import { documentBaseUrl, resolveUrl } from "./url";
@@ -117,6 +118,14 @@ function pushContent(push: Element): { text: string; html?: string } {
   return { text, html: wrapper.innerHTML || undefined };
 }
 
+function pushReaction(push: Element): ForumReaction | undefined {
+  const tag = normalizeWhitespace(push.querySelector(".push-tag")?.textContent ?? "");
+  if (tag === "\u63a8") return "push";
+  if (tag === "\u5653") return "boo";
+  if (tag === "\u2192") return "neutral";
+  return undefined;
+}
+
 /** Best-effort extraction for a PTT article and its flat push-reply stream. */
 export function extractThreadPtt(
   root: ParentNode,
@@ -138,6 +147,7 @@ export function extractThreadPtt(
     contentHtml: body.html,
     permalink: baseUrl,
     depth: 0,
+    kind: "article",
     links: body.links.map((href) => resolveUrl(href, baseUrl)),
   });
 
@@ -160,12 +170,16 @@ export function extractThreadPtt(
           permalink: baseUrl,
           parentId: "article",
           depth: 1,
+          kind: "comment",
+          reaction: pushReaction(push),
           links: contentElement ? extractLinks(contentElement, baseUrl) : [],
         });
       })
     : [];
 
   const result: ExtractedThread = {
+    layout: "ptt",
+    source: "ptt",
     posts: ensureUniquePostIds([articlePost, ...pushPosts]),
   };
   const title = extractTitle(root, meta);

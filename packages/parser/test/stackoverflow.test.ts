@@ -36,9 +36,18 @@ describe("isStackOverflowPage", () => {
 describe("extractThreadStackOverflow", () => {
   it("extracts the question, visible comments, answers, and answer comments in reading order", () => {
     const thread = extract();
+    expect(thread).toMatchObject({ layout: "qa", source: "stack-overflow" });
     expect(thread.title).toBe("How should I restore an old radio?");
     expect(thread.baseUrl).toBe(baseUrl);
     expect(thread.posts.map((post) => post.id)).toEqual(["700", "701", "702", "710", "711", "720"]);
+    expect(thread.posts.map((post) => post.kind)).toEqual([
+      "question",
+      "comment",
+      "comment",
+      "answer",
+      "comment",
+      "answer",
+    ]);
   });
 
   it("preserves question identity, timestamp, rich text, permalink, and body links", () => {
@@ -74,6 +83,15 @@ describe("extractThreadStackOverflow", () => {
       depth: 2,
       permalink: `${baseUrl}#comment711_710`,
     });
+  });
+
+  it("preserves bounded vote scores and accepted-answer state", () => {
+    const [question, , , accepted, , otherAnswer] = extract().posts;
+    expect(question).toMatchObject({ score: 12 });
+    expect(accepted).toMatchObject({ score: 7, accepted: true });
+    expect(otherAnswer).toMatchObject({ score: -2 });
+    expect(question?.accepted).toBeUndefined();
+    expect(otherAnswer?.accepted).toBeUndefined();
   });
 
   it("uses local text for an otherwise unreadable media-only answer", () => {

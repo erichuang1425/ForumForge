@@ -9,6 +9,18 @@
 /** An author's role in a thread, as far as an adapter can determine it. */
 export type ForumRole = "op" | "user" | "mod" | "admin";
 
+/** Structural meaning an adapter can prove for a post in its discussion. */
+export type ForumPostKind =
+  | "topic"
+  | "article"
+  | "question"
+  | "answer"
+  | "comment"
+  | "reply";
+
+/** The three explicit reaction directions exposed by a PTT push row. */
+export type ForumReaction = "push" | "boo" | "neutral";
+
 export type ForumForgePost = {
   /** Stable id, unique within a thread. Generated when the forum exposes none. */
   id: string;
@@ -33,6 +45,14 @@ export type ForumForgePost = {
   parentId?: string;
   /** Reply depth (0 = top level), for nested threads. */
   depth?: number;
+  /** Structural kind, only when the selected adapter can prove it. */
+  kind?: ForumPostKind;
+  /** PTT reaction direction, read from its explicit push tag. */
+  reaction?: ForumReaction;
+  /** Signed integer score shown by the source, when reliably available. */
+  score?: number;
+  /** Whether the source explicitly marks this as an accepted answer. */
+  accepted?: boolean;
   /** Outbound links found in the post body, de-duplicated, first-seen order. */
   links?: string[];
 };

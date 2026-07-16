@@ -139,6 +139,16 @@ function postTimestamp(post: Element): string | undefined {
   return ownerCreated?.getAttribute("title")?.trim() || undefined;
 }
 
+function postScore(post: Element): number | undefined {
+  const score = post.querySelector(
+    ':scope > .post-layout .js-vote-count[itemprop="upvoteCount"]',
+  );
+  const raw = normalizeWhitespace(score?.getAttribute("data-value") ?? score?.textContent ?? "");
+  if (!/^-?(?:0|[1-9]\d*)$/.test(raw)) return undefined;
+  const value = Number(raw);
+  return Number.isSafeInteger(value) ? value : undefined;
+}
+
 function commentTimestamp(comment: Element): string | undefined {
   const raw = comment
     .querySelector(".comment-date .relativetime-clean[title]")
@@ -227,7 +237,11 @@ export function extractThreadStackOverflow(
 ): ExtractedThread {
   const baseUrl = options.baseUrl ?? documentBaseUrl(root);
   const signedQuestion = findSignedQuestion(root, baseUrl);
-  if (!signedQuestion) return baseUrl ? { baseUrl, posts: [] } : { posts: [] };
+  if (!signedQuestion) {
+    const empty: ExtractedThread = { layout: "qa", source: "stack-overflow", posts: [] };
+    if (baseUrl) empty.baseUrl = baseUrl;
+    return empty;
+  }
 
   const { element: questionElement, id: questionId, titleAnchor } = signedQuestion;
   const scope = pageScope(questionElement, root);
@@ -248,6 +262,8 @@ export function extractThreadStackOverflow(
     contentHtml: questionContent.html,
     permalink: questionPermalink,
     depth: 0,
+    kind: "question",
+    score: postScore(questionElement),
     links: questionContent.links,
   });
 
@@ -264,6 +280,7 @@ export function extractThreadStackOverflow(
       permalink: record.permalink,
       parentId,
       depth,
+      kind: "comment",
       links: content.links,
     });
   };
@@ -287,6 +304,9 @@ export function extractThreadStackOverflow(
       permalink: record.permalink,
       parentId: questionId,
       depth: 1,
+      kind: "answer",
+      score: postScore(record.element),
+      accepted: record.element.classList.contains("accepted-answer") ? true : undefined,
       links: content.links,
     });
     const comments = commentsForPost(record.element, record.id, baseUrl).map((comment) =>
@@ -296,6 +316,8 @@ export function extractThreadStackOverflow(
   });
 
   const result: ExtractedThread = {
+    layout: "qa",
+    source: "stack-overflow",
     baseUrl: baseUrl ?? questionPermalink,
     posts: ensureUniquePostIds([question, ...questionComments, ...answers]),
   };

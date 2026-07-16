@@ -28,6 +28,25 @@ describe("messaging guards", () => {
 
   it("recognizes thread and error responses", () => {
     expect(isExtractResponse({ type: "forumforge/thread", thread: { posts: [] } })).toBe(true);
+    expect(
+      isExtractResponse({
+        type: "forumforge/thread",
+        thread: {
+          layout: "qa",
+          source: "stack-overflow",
+          posts: [
+            {
+              id: "1",
+              author: "Ada",
+              contentText: "Hello",
+              kind: "answer",
+              score: -1,
+              accepted: true,
+            },
+          ],
+        },
+      }),
+    ).toBe(true);
     expect(isExtractResponse({ type: "forumforge/error", message: "nope" })).toBe(true);
   });
 
@@ -62,6 +81,51 @@ describe("messaging guards", () => {
         type: "forumforge/thread",
         thread: {
           posts: [{ id: "1", author: "Ada", contentText: "Hello", role: ["op"] }],
+        },
+      },
+      { type: "forumforge/thread", thread: { layout: "portal", posts: [] } },
+      { type: "forumforge/thread", thread: { source: "example.com", posts: [] } },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [{ id: "1", author: "Ada", contentText: "Hello", kind: "script" }],
+        },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [{ id: "1", author: "Ada", contentText: "Hello", reaction: "viral" }],
+        },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [{ id: "1", author: "Ada", contentText: "Hello", score: "7" }],
+        },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [{ id: "1", author: "Ada", contentText: "Hello", score: 1.5 }],
+        },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [
+            {
+              id: "1",
+              author: "Ada",
+              contentText: "Hello",
+              score: Number.MAX_SAFE_INTEGER + 1,
+            },
+          ],
+        },
+      },
+      {
+        type: "forumforge/thread",
+        thread: {
+          posts: [{ id: "1", author: "Ada", contentText: "Hello", accepted: "yes" }],
         },
       },
       {

@@ -67,6 +67,10 @@ fragments are dropped, client-side route fragments and query strings are kept.
 Notes use the full URL origin. Timestamps are ISO strings. The saved `post` is a
 snapshot using the
 [`ForumForgePost`](../core/src/post.ts) shape at save time.
+New snapshots may therefore include optional adapter-proven `kind`, PTT
+`reaction`, safe-integer `score`, and `accepted` fields. Older schema-1
+snapshots omit them and remain valid; the additive fields do not change keys or
+deletion ownership.
 
 ### Version and migration rules
 

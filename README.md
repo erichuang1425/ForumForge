@@ -5,7 +5,7 @@ knowledge-saving experience.**
 
 ForumForge is an open-source browser extension and adapter framework. It reads
 the forum page the user explicitly opens and turns it into an immersive,
-publication-like reading view inside that page. A slim edge launcher keeps the
+discussion-aware reading view inside that page. A small edge launcher keeps the
 reader close without permanently occupying the screen, while a secondary local
 library holds compact reading, exports, and privacy controls.
 
@@ -22,6 +22,10 @@ library holds compact reading, exports, and privacy controls.
 
 - A compact on-page launcher and full-window, forum-native reading mode with
   allowlist-sanitized rich text.
+- Six deterministic conversation presentations for linear threads,
+  article-and-comment discussions, nested replies, PTT reactions, imageboards,
+  and question-and-answer pages. Automated fixture tests cover the semantic
+  mapping; exact packaged-browser visual acceptance remains pending.
 - A secondary side-panel library for compact reading, saved-post export, and
   local-data controls.
 - Original-poster, moderator, and administrator highlighting.

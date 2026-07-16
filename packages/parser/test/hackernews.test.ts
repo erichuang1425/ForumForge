@@ -34,11 +34,21 @@ describe("isHackerNewsPage", () => {
 
 describe("extractThreadHackerNews", () => {
   it("reads the story title, stripping the ' | Hacker News' suffix", () => {
-    expect(extract().title).toBe("Tell HN: Something interesting");
+    expect(extract()).toMatchObject({
+      title: "Tell HN: Something interesting",
+      layout: "nested",
+      source: "hacker-news",
+    });
   });
 
   it("extracts every comment row", () => {
     expect(extract().posts).toHaveLength(4);
+    expect(extract().posts.map((post) => post.kind)).toEqual([
+      "comment",
+      "comment",
+      "comment",
+      "comment",
+    ]);
   });
 
   it("captures ids, authors, and timestamps from the title attribute", () => {
@@ -114,6 +124,7 @@ describe("extractThreadHackerNews self-post text", () => {
     expect(posts[0]?.author).toBe("daniel");
     expect(posts[0]?.role).toBe("op");
     expect(posts[0]?.contentText).toContain("best way to learn Rust");
+    expect(posts[0]).toMatchObject({ kind: "article", score: 10 });
   });
 
   it("resolves the self-post's author URL, timestamp, and permalink", () => {

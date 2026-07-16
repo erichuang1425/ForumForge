@@ -1,10 +1,10 @@
 import type { ExtractedThread } from "@forumforge/parser";
 import {
-  renderThread,
   setNoteState,
   setSaveButtonState,
   type RenderOptions,
 } from "./render";
+import { renderPageThread } from "./pageThreadRenderer";
 import { PAGE_READER_STYLES } from "./pageReaderStyles";
 
 export type PageReaderCallbacks = {
@@ -62,44 +62,17 @@ function sourceLabel(sourceUrl: string): string {
   }
 }
 
-function initials(author: string): string {
-  const words = author.trim().split(/\s+/u).filter(Boolean);
-  if (words.length === 0) return "?";
-  if (words.length === 1) return Array.from(words[0] ?? "?").slice(0, 2).join("").toUpperCase();
-  return `${Array.from(words[0] ?? "?")[0] ?? "?"}${Array.from(words.at(-1) ?? "?")[0] ?? "?"}`.toUpperCase();
-}
-
 function participantCount(thread: ExtractedThread): number {
   return new Set(thread.posts.map((post) => post.author.trim().toLocaleLowerCase())).size;
-}
-
-function decoratePosts(doc: Document, root: HTMLElement, thread: ExtractedThread): void {
-  const posts = Array.from(root.querySelectorAll<HTMLElement>(".ff-post"));
-  for (const [index, postElement] of posts.entries()) {
-    const post = thread.posts[index];
-    if (!post) continue;
-    postElement.setAttribute("data-tone", String(index % 3));
-
-    const identity = postElement.querySelector<HTMLElement>(".ff-post__identity");
-    if (identity) {
-      const avatar = element(doc, "span", "ff-post__avatar", initials(post.author));
-      avatar.setAttribute("aria-hidden", "true");
-      identity.prepend(avatar);
-    }
-
-    const actions = postElement.querySelector<HTMLElement>(".ff-post__actions");
-    if (actions) {
-      const ordinal = element(doc, "span", "ff-post__ordinal", `#${index + 1}`);
-      ordinal.setAttribute("aria-label", `Post ${index + 1}`);
-      actions.prepend(ordinal);
-    }
-  }
 }
 
 function scrollToPost(root: ParentNode, selector: string): void {
   const target = root.querySelector<HTMLElement>(selector);
   if (!target || typeof target.scrollIntoView !== "function") return;
-  target.scrollIntoView({ behavior: "smooth", block: "start" });
+  const reduceMotion =
+    target.ownerDocument.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)").matches ??
+    false;
+  target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
 }
 
 function isElementTarget(value: EventTarget | null): value is Element {
@@ -127,6 +100,8 @@ export function createPageReaderView(
 ): PageReaderView {
   const callbacks = options.callbacks ?? {};
   const host = doc.createElement(HOST_TAG);
+  const documentLanguage = doc.documentElement.lang.trim();
+  if (documentLanguage) host.lang = documentLanguage;
   host.style.setProperty("all", "initial", "important");
   host.style.setProperty("position", "fixed", "important");
   host.style.setProperty("inset", "0", "important");
@@ -245,13 +220,12 @@ export function createPageReaderView(
   const status = element(doc, "p", "ff-reader__status", options.storageNotice ?? "");
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
-  const rendered = renderThread(doc, thread, {
+  const rendered = renderPageThread(doc, thread, {
     newPostIds: options.newPostIds,
     savedPostIds: options.savedPostIds,
     userNotes: options.userNotes,
     showTitle: false,
   });
-  decoratePosts(doc, rendered, thread);
   main.append(intro, status, rendered);
 
   const tools = element(doc, "aside", "ff-reader__tools");
@@ -370,8 +344,12 @@ export function createPageReaderView(
   });
   close.addEventListener("click", closeReader);
   refresh.addEventListener("click", () => callbacks.onRefresh?.());
-  jumpStart.addEventListener("click", () => scrollToPost(shadow, ".ff-post"));
-  jumpLatest.addEventListener("click", () => scrollToPost(shadow, ".ff-post:last-child"));
+  jumpStart.addEventListener("click", () =>
+    scrollToPost(shadow, ".ff-post[data-source-index='0']"),
+  );
+  jumpLatest.addEventListener("click", () =>
+    scrollToPost(shadow, `.ff-post[data-source-index='${Math.max(0, postCount - 1)}']`),
+  );
 
   shadow.addEventListener("click", (event) => {
     if (!isElementTarget(event.target)) return;

@@ -5,6 +5,25 @@ All notable user-visible changes are recorded here. The project follows
 
 ## [Unreleased]
 
+### Added
+
+- Adapter-proven discussion layouts and post semantics for linear forums,
+  article/comment communities, nested Hacker News threads, PTT reactions,
+  4chan imageboards, and Stack Overflow Q&A. Scores and accepted-answer state
+  currently have deterministic fixture evidence; exact-package Chrome evidence
+  remains pending.
+- A bounded presentation layer and immersive archetype renderers that preserve
+  every post, flatten unsafe relationships, cap visual indentation, and keep all
+  rich content on the established sanitizer path.
+
+### Changed
+
+- Keep the edge launcher fully inside the viewport as a compact 32 by 68 pixel
+  control instead of exposing only a narrow slice of its target.
+- Keep Refresh, Local library, and Return to forum reachable in narrow reader
+  layouts, propagate the source page language, use readable English/CJK line
+  measures, and honor reduced-motion preferences for programmatic scrolling.
+
 ## [0.1.0] - 2026-07-16
 
 This version is assembled as an untagged release candidate. Chrome acceptance,

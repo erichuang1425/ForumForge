@@ -86,7 +86,7 @@ export function renderThread(
   list.className = "ff-posts";
   for (const [index, post] of thread.posts.entries()) {
     list.append(
-      renderPost(doc, post, thread.baseUrl, index, {
+      renderPostItem(doc, post, thread.baseUrl, index, {
         isNew: newPostIds?.has(post.id) ?? false,
         isSaved: savedPostIds?.has(post.id) ?? false,
         note: userNotes?.get(post.author) ?? "",
@@ -98,14 +98,14 @@ export function renderThread(
 }
 
 /** Per-post view flags resolved from {@link RenderOptions}. */
-type PostFlags = { isNew: boolean; isSaved: boolean; note: string };
+export type PostRenderState = { isNew: boolean; isSaved: boolean; note: string };
 
-function renderPost(
+export function renderPostItem(
   doc: Document,
   post: ForumForgePost,
   baseUrl: string | undefined,
   index: number,
-  flags: PostFlags,
+  flags: PostRenderState,
 ): HTMLElement {
   const item = doc.createElement("li");
   item.className = "ff-post";
@@ -113,6 +113,10 @@ function renderPost(
   // map a Save toggle back to the post it belongs to.
   item.setAttribute("data-post-id", post.id);
   if (post.role) item.setAttribute("data-role", post.role);
+  if (post.kind) item.setAttribute("data-kind", post.kind);
+  if (post.reaction) item.setAttribute("data-reaction", post.reaction);
+  if (post.score !== undefined) item.setAttribute("data-score", String(post.score));
+  if (post.accepted) item.setAttribute("data-accepted", "true");
   if (flags.isNew) item.setAttribute("data-new", "true");
   if (flags.isSaved) item.setAttribute("data-saved", "true");
 

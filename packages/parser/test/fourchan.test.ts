@@ -38,9 +38,16 @@ describe("isFourChanPage", () => {
 describe("extractThreadFourChan", () => {
   it("extracts the subject and every numeric post in document order", () => {
     const thread = extract();
+    expect(thread).toMatchObject({ layout: "imageboard", source: "4chan" });
     expect(thread.title).toBe("Restoring a tabletop radio");
     expect(thread.baseUrl).toBe(baseUrl);
     expect(thread.posts.map((post) => post.id)).toEqual(["100", "101", "102", "103"]);
+    expect(thread.posts.map((post) => post.kind)).toEqual([
+      "topic",
+      "reply",
+      "reply",
+      "reply",
+    ]);
   });
 
   it("keeps attachment metadata inert while preserving its link", () => {

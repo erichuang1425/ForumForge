@@ -10,8 +10,8 @@ artifact evidence supports them.
 - **Name:** ForumForge
 - **Primary language:** English
 - **Category:** Productivity
-- **Short description:** Modernize messy forum threads into a clean, readable
-  view — local-first, from your own browser.
+- **Short description:** Turn dense forum threads into a calm,
+  discussion-aware reader — local-first, from your own browser.
 - **Single purpose:** Turn a forum thread the user explicitly chooses into an
   immersive on-page reading view, with related reading state stored locally.
 
@@ -20,8 +20,8 @@ artifact evidence supports them.
 ForumForge turns the forum thread you choose into an immersive reading
 experience. Open a thread and select ForumForge: the extension extracts only the
 page currently loaded in that tab and reorganizes its posts into a focused,
-publication-like workspace. Close the workspace to return to the untouched
-forum, with a slim edge launcher available when you want the reader again.
+forum-native workspace. Close the workspace to return to the untouched forum,
+with a small edge launcher available when you want the reader again.
 
 A secondary local-library panel provides compact reading, saved-post export,
 and privacy controls. The redesign is for forum conversations: it emphasizes
@@ -31,6 +31,8 @@ site resemble a coding platform or a generic dashboard.
 Current features:
 
 - a full-window thread view with sanitized rich text and conversation overview;
+- discussion-aware presentations for linear, article-and-comment, nested, PTT,
+  imageboard, and question-and-answer structures;
 - a compact in-page launcher and secondary local library;
 - original-poster and staff labels when the page exposes those roles;
 - local new-since-last-visit markers;
@@ -38,11 +40,13 @@ Current features:
 - Markdown export for saved posts; and
 - a confirmed control for clearing ForumForge user data.
 
-ForumForge includes dedicated extraction logic for representative Discourse
-and Hacker News thread structures, plus a best-effort generic fallback. Forum
-markup varies. Paginated, lazy-loaded, private, or heavily customized pages may
-be incomplete or unsupported, and ForumForge does not crawl additional pages or
-bypass access controls.
+ForumForge includes dedicated, fixture-tested extraction logic for Discourse,
+Hacker News, Nairaland, PTT, 4chan, Arca, DC Inside, FMKorea, Stack Overflow,
+and narrowly detected stock forum-engine structures, plus a best-effort generic
+fallback. Exact packaged-browser evidence is still pending for the added site
+adapters. Forum markup varies: paginated, lazy-loaded, private, or heavily
+customized pages may be incomplete or unsupported, and ForumForge does not crawl
+additional pages or bypass access controls.
 
 ForumForge is local-first. It has no account, analytics, ads, telemetry, remote
 AI, or ForumForge backend. It requests no host permissions and injects its
@@ -112,7 +116,7 @@ reduced by half. Avoid text in the tile so it can serve future locales.
 | --- | --- | --- |
 | 1 | Immersive reader over a synthetic generic forum | Exact packaged UI; clear overview, authors, timestamps, and readable replies |
 | 2 | The slim launcher beside the unchanged forum, followed by the open reader | Launcher intrusion and open/close behavior actually observed |
-| 3 | A representative Discourse or Hacker News conversation | Sanitized rich text or actual nesting and missing-field behavior |
+| 3 | Representative nested, PTT, imageboard, and Q&A conversations | Exact packaged semantic layouts; non-color labels, bounded nesting, and missing-field behavior |
 | 4 | Saved state and a non-sensitive sample note in the reader, plus export in the library | Persistence confirmed after restart; no private note content |
 | 5 | Local library and privacy controls in a narrow or 200%-zoomed panel | Keyboard/zoom behavior confirmed; no claim that a clear has run if it has not |
 

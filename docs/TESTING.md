@@ -33,6 +33,13 @@ The storage lifecycle suite deterministically covers:
 These tests use injected storage and DOM implementations. They do not prove
 Chrome update, persistence, focus, or assistive-technology behavior.
 
+The semantic presentation suite also deterministically covers all six reader
+layouts, adapter-proven post kinds, PTT reaction directions, Stack Overflow
+scores/accepted state, missing and malformed parent relationships, four-level
+visual indentation capping, source-order jump targets, reduced-motion scroll
+selection, language propagation, and sanitizer reuse. These component tests do
+not prove visual appearance, browser reflow, zoom, or packaged behavior.
+
 Before release, also create the exact user artifact:
 
 ```bash
@@ -143,13 +150,14 @@ a clean profile for install testing and an existing profile for upgrade testing.
 - [ ] Stack Overflow question page: title, coherent numeric question/answer and
       comment IDs, share permalinks, exact user-ID OP matching, author profile
       links, timestamps, code/lists/tables/links, answer/comment parents, deleted
-      comments, and media-only placeholders.
+      comments, media-only placeholders, signed integer scores, and accepted
+      answer state.
 - [ ] Stack Overflow question lists, mismatched title/data/element IDs, foreign
       comment wrappers, mismatched share/comment permalinks, and answer parent-ID
       conflicts do not select or contaminate the dedicated extractor. Confirm
       remote media is not loaded by ForumForge; record collapsed comments,
-      accepted-answer presentation, other Stack Exchange sites, and login states
-      as pending unless observed.
+      score/accepted selector variants, other Stack Exchange sites, and login
+      states as pending unless observed.
 - [ ] F95Zone harmless public thread: establish its exact forum/version/theme
       signature with a sanitized fixture before testing extraction. Do not mark
       this row passed solely because the generic XenForo adapter returns posts.
@@ -249,10 +257,25 @@ exists, actual Chrome upgrade preservation is **unverified**.
 - [ ] The underlying forum is not focusable while the reader is open and its
       prior scroll-lock/inert state is restored when the reader closes.
 - [ ] The launcher remains discoverable without covering meaningful page
-      content at default size, 200% zoom, and narrow viewport widths.
+      content at default size, 200% zoom, and narrow viewport widths. Its full
+      pointer target remains in the viewport.
 - [ ] Content remains usable at 200% zoom in narrow/wide page readers and side
       panels; the three-column reader reflows without horizontal page scrolling.
 - [ ] Long code blocks, tables, links, and notes do not hide controls.
+- [ ] Refresh, Local library, and Return to forum remain reachable at 320 CSS
+      pixels and during 200% zoom/reflow.
+- [ ] Linear, article/comment, nested, PTT, imageboard, and Q&A fixtures each
+      render every source post once with the intended grouping and no page-level
+      horizontal scrolling.
+- [ ] Push/Boo/Neutral, accepted answer, score, role, saved, and new states have
+      readable text and do not rely on color alone.
+- [ ] Deep nested replies cap visual indentation without hiding content; missing,
+      self, and forward parents flatten safely.
+- [ ] English prose stays near a 60–75 character measure; Korean and Traditional
+      Chinese examples remain comfortably readable without forced horizontal
+      scrolling.
+- [ ] With reduced motion enabled, opening/closing has no meaningful animation
+      and jump controls do not invoke smooth programmatic scrolling.
 
 ## Evidence record
 

@@ -34,6 +34,18 @@ function extractSubmitter(root: ParentNode): string | undefined {
   return text ? normalizeWhitespace(text) || undefined : undefined;
 }
 
+function extractStoryScore(root: ParentNode, storyId: string | undefined): number | undefined {
+  if (!storyId) return undefined;
+  for (const element of root.querySelectorAll(".subtext .score")) {
+    if (element.getAttribute("id") !== `score_${storyId}`) continue;
+    const match = /^(\d+)\s+points?$/i.exec(normalizeWhitespace(element.textContent ?? ""));
+    if (!match) return undefined;
+    const score = Number(match[1]);
+    return Number.isSafeInteger(score) ? score : undefined;
+  }
+  return undefined;
+}
+
 function extractAuthor(row: Element, baseUrl?: string): { author?: string; authorUrl?: string } {
   const el = row.querySelector(".comhead .hnuser");
   const text = el?.textContent ? normalizeWhitespace(el.textContent) : "";
@@ -106,6 +118,8 @@ function extractStoryPost(root: ParentNode, submitter: string | undefined, baseU
     contentHtml: toptext.innerHTML,
     permalink: permalinkHref && permalinkHref.trim() ? resolveUrl(permalinkHref, baseUrl) : undefined,
     depth: 0,
+    kind: "article",
+    score: extractStoryScore(root, storyId),
     links: Array.from(toptext.querySelectorAll("a[href]"))
       .map((a) => a.getAttribute("href"))
       .filter((href): href is string => Boolean(href && href.trim()))
@@ -151,12 +165,17 @@ export function extractThreadHackerNews(
       permalink: extractPermalink(row, baseUrl),
       parentId,
       depth,
+      kind: "comment",
       links: extractLinks(row, baseUrl),
     });
   });
 
   const posts = ensureUniquePostIds(storyPost ? [storyPost, ...commentPosts] : commentPosts);
-  const result: ExtractedThread = { posts };
+  const result: ExtractedThread = {
+    layout: "nested",
+    source: "hacker-news",
+    posts,
+  };
   const title = extractTitle(root);
   if (title) result.title = title;
   if (baseUrl) result.baseUrl = baseUrl;

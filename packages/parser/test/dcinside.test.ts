@@ -51,6 +51,14 @@ describe("isDcInsidePage", () => {
 describe("extractThreadDcInside", () => {
   it("extracts the article and already-loaded comments in DOM order", () => {
     const thread = extract();
+    expect(thread).toMatchObject({ layout: "article-comments", source: "dc-inside" });
+    expect(thread.posts.map((post) => post.kind)).toEqual([
+      "article",
+      "comment",
+      "comment",
+      "comment",
+      "comment",
+    ]);
     expect(thread.title).toBe("오래된 라디오 수리 기록");
     expect(thread.baseUrl).toBe(baseUrl);
     expect(thread.posts.map((post) => post.id)).toEqual(["800", "801", "802", "803", "804"]);

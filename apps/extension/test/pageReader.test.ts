@@ -156,6 +156,35 @@ describe("on-page reading studio", () => {
     );
   });
 
+  it("propagates page language and disables programmatic smooth scrolling for reduced motion", () => {
+    const doc = fixtureDocument();
+    doc.documentElement.lang = "ko";
+    Object.defineProperty(doc.defaultView, "matchMedia", {
+      configurable: true,
+      value: vi.fn(() => ({ matches: true })),
+    });
+    const view = createPageReaderView(doc, thread, {
+      sourceUrl: "https://forum.example/threads/cameras.42/",
+    });
+    view.mount();
+
+    const latest = view.shadow.querySelector<HTMLElement>(".ff-post[data-source-index='1']");
+    const jumpLatest = Array.from(
+      view.shadow.querySelectorAll<HTMLButtonElement>(".ff-reader__jump"),
+    ).at(1);
+    if (!latest || !jumpLatest) throw new Error("latest-post controls missing");
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(latest, "scrollIntoView", {
+      configurable: true,
+      value: scrollIntoView,
+    });
+
+    jumpLatest.click();
+
+    expect(view.host.lang).toBe("ko");
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: "auto", block: "start" });
+  });
+
   it("keeps save, note, refresh, and library actions inside explicit callbacks", async () => {
     const onSave = vi.fn(async () => true);
     const onNoteSave = vi.fn(async () => undefined);
@@ -225,5 +254,9 @@ describe("on-page reading studio", () => {
     expect(PAGE_READER_STYLES).toMatch(
       /\.ff-reader__top-library\s*\{[^}]*width:\s*auto;/u,
     );
+    expect(PAGE_READER_STYLES).toMatch(/\.ff-launcher\s*\{[^}]*width:\s*32px;/u);
+    expect(PAGE_READER_STYLES).toMatch(/\.ff-launcher\s*\{[^}]*height:\s*68px;/u);
+    expect(PAGE_READER_STYLES).not.toContain("translateX(-32px)");
+    expect(PAGE_READER_STYLES).toContain("max-width: 68ch");
   });
 });

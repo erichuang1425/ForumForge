@@ -18,6 +18,12 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
       reader, and local-library side panel
 - [x] Core post model, generic parser, and local storage seam
 - [x] Publication-like reading mode and allowlist HTML sanitizer
+- [x] Add an adapter-proven semantic contract and discussion-aware immersive
+      layouts for linear, article/comment, nested, PTT, imageboard, and Q&A
+      threads, with deterministic component tests
+- [ ] Build and inspect the deterministic six-layout visual preview gallery
+- [ ] Repeat launcher, archetype, CJK, reduced-motion, narrow-panel, and 200%
+      zoom checks against the exact candidate artifact in isolated Chrome
 - [x] OP/staff highlighting
 - [x] New-since-last-visit tracking
 - [x] Saved posts, private author notes, and Markdown export

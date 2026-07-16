@@ -11,9 +11,12 @@ ForumForge account, analytics service, or remote backend.
 The toolbar action injects ForumForge only into the active tab selected by the
 user, temporarily reads that page's thread structure and visible post data, and
 opens the immersive reader. Processed fields can include titles, authors,
-timestamps, post bodies, permalinks, and reply relationships. Processing occurs
-inside the browser to create the isolated on-page view. Closing the reader leaves
-a slim launcher in that document until the page is navigated or closed.
+timestamps, post bodies, permalinks, and reply relationships. For reviewed
+built-in adapters, processed fields can also include discussion layout, post
+kind, PTT reaction direction, a displayed integer score, and accepted-answer
+state. Processing occurs inside the browser to create the isolated on-page
+view. Closing the reader leaves a slim launcher in that document until the page
+is navigated or closed.
 
 The reader's **Local library** action can open a secondary side panel for
 compact reading, exports, and privacy controls. It does not grant access to any
@@ -27,7 +30,9 @@ third-party service.
 ForumForge uses `chrome.storage.local` for:
 
 - per-thread read-history identifiers and visit state;
-- saved-post snapshots, including the source URL, author, and saved content;
+- saved-post snapshots, including the source URL, author, saved content, and any
+  adapter-proven post kind, reaction, score, or accepted state present when it
+  was saved;
 - private notes keyed by author and forum origin.
 
 This data stays in the browser profile. ForumForge has no server copy and cannot

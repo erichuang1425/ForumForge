@@ -38,6 +38,14 @@ describe("isFmKoreaPage", () => {
 describe("extractThreadFmKorea", () => {
   it("extracts the article and current comment page in DOM order", () => {
     const thread = extract();
+    expect(thread).toMatchObject({ layout: "article-comments", source: "fmkorea" });
+    expect(thread.posts.map((post) => post.kind)).toEqual([
+      "article",
+      "comment",
+      "comment",
+      "comment",
+      "comment",
+    ]);
     expect(thread.title).toBe("오래된 극장 간판 복원");
     expect(thread.baseUrl).toBe(baseUrl);
     expect(thread.posts.map((post) => post.id)).toEqual(["9000", "9001", "9002", "9003", "9004"]);

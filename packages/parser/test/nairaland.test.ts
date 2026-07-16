@@ -40,6 +40,7 @@ describe("isNairalandPage", () => {
 describe("extractThreadNairaland", () => {
   it("extracts the topic title and stable numeric post ids", () => {
     const thread = extract();
+    expect(thread).toMatchObject({ layout: "linear", source: "nairaland" });
     expect(thread.title).toBe("Restoring a pocket radio");
     expect(thread.baseUrl).toBe(baseUrl);
     expect(thread.posts.map((post) => post.id)).toEqual(["900101", "900102", "900103"]);

@@ -41,6 +41,7 @@ describe("isPttPage", () => {
 describe("extractThreadPtt", () => {
   it("extracts the article and every push with deterministic ids", () => {
     const thread = extract();
+    expect(thread).toMatchObject({ layout: "ptt", source: "ptt" });
     expect(thread.title).toBe("[討論] 修理舊收音機");
     expect(thread.baseUrl).toBe(baseUrl);
     expect(thread.posts.map((post) => post.id)).toEqual([
@@ -80,6 +81,18 @@ describe("extractThreadPtt", () => {
       permalink: baseUrl,
     });
     expect(opPush).toMatchObject({ author: "ada", role: "op" });
+    expect(extract().posts.map((post) => post.kind)).toEqual([
+      "article",
+      "comment",
+      "comment",
+      "comment",
+    ]);
+    expect(extract().posts.map((post) => post.reaction)).toEqual([
+      undefined,
+      "push",
+      "neutral",
+      "boo",
+    ]);
   });
 
   it("degrades an empty push without borrowing the previous reply", () => {

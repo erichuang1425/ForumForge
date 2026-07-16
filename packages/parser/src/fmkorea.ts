@@ -185,7 +185,15 @@ export function extractThreadFmKorea(
 ): ExtractedThread {
   const baseUrl = options.baseUrl ?? documentBaseUrl(root);
   const signed = findSignedThread(root);
-  if (!signed) return baseUrl ? { baseUrl, posts: [] } : { posts: [] };
+  if (!signed) {
+    const empty: ExtractedThread = {
+      layout: "article-comments",
+      source: "fmkorea",
+      posts: [],
+    };
+    if (baseUrl) empty.baseUrl = baseUrl;
+    return empty;
+  }
 
   const { container, articleBody: bodyElement, id } = signed;
   const header = container.querySelector(".rd_hd");
@@ -201,6 +209,7 @@ export function extractThreadFmKorea(
     contentHtml: body.html,
     permalink,
     depth: 0,
+    kind: "article",
     links: body.links,
   });
 
@@ -226,11 +235,14 @@ export function extractThreadFmKorea(
       permalink: record.permalink,
       parentId: parent.id,
       depth: parent.depth,
+      kind: "comment",
       links: content.links,
     });
   });
 
   const result: ExtractedThread = {
+    layout: "article-comments",
+    source: "fmkorea",
     posts: ensureUniquePostIds([article, ...comments]),
   };
   const title = normalizeWhitespace(

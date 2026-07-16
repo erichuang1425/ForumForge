@@ -129,7 +129,11 @@ export function extractThreadNairaland(
     }),
   );
 
-  const result: ExtractedThread = { posts };
+  const result: ExtractedThread = {
+    layout: "linear",
+    source: "nairaland",
+    posts,
+  };
   const title = extractTitle(root);
   if (title) result.title = title;
   if (baseUrl) result.baseUrl = baseUrl;

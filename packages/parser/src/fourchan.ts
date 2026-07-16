@@ -211,12 +211,17 @@ export function extractThreadFourChan(
         permalink: href ? resolveUrl(href, baseUrl) : undefined,
         parentId,
         depth: isReply ? 1 : 0,
+        kind: isReply ? "reply" : "topic",
         links: content.links,
       });
     }),
   );
 
-  const result: ExtractedThread = { posts };
+  const result: ExtractedThread = {
+    layout: "imageboard",
+    source: "4chan",
+    posts,
+  };
   const title = extractTitle(root, records);
   if (title) result.title = title;
   if (baseUrl) result.baseUrl = baseUrl;

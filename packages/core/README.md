@@ -8,11 +8,14 @@ consume them. Keep the model minimal and stable — see
 
 ## Exports
 
-- `ForumForgePost`, `ForumRole` — the model types.
+- `ForumForgePost`, `ForumRole`, `ForumPostKind`, `ForumReaction` — the model
+  types. Optional adapter-proven semantics cover structural kind, PTT reaction
+  direction, signed integer score, and accepted-answer state.
 - `createPost(input)` — build a normalized post from loose adapter output, filling
   required fields with safe defaults (missing id → generated, missing author →
   `"Unknown"`, missing content → `""`).
-- `isForumForgePost(value)` — runtime guard for the required shape.
+- `isForumForgePost(value)` — runtime guard for required and known optional
+  fields, including semantic enums and safe-integer scores.
 - `normalizeWhitespace`, `cleanText`, `dedupeLinks` — pure text/link utilities.
 
 > `contentHtml` is **untrusted** and must be sanitized before rendering. See

@@ -159,7 +159,15 @@ export function extractThreadDcInside(
   const baseUrl = options.baseUrl ?? documentBaseUrl(root);
   const view = findView(root);
   const id = view ? articleId(view) : undefined;
-  if (!view || !id) return baseUrl ? { baseUrl, posts: [] } : { posts: [] };
+  if (!view || !id) {
+    const empty: ExtractedThread = {
+      layout: "article-comments",
+      source: "dc-inside",
+      posts: [],
+    };
+    if (baseUrl) empty.baseUrl = baseUrl;
+    return empty;
+  }
 
   const head = view.querySelector(".gallview_head");
   const opIdentity = head ? extractIdentity(head, baseUrl) : {};
@@ -177,6 +185,7 @@ export function extractThreadDcInside(
     contentHtml: body.html,
     permalink: baseUrl,
     depth: 0,
+    kind: "article",
     links: body.links,
   });
 
@@ -200,11 +209,14 @@ export function extractThreadDcInside(
       permalink: baseUrl ? resolveUrl(`#${fragment}`, baseUrl) : undefined,
       parentId: replyParentId(record, id, knownIds),
       depth: record.reply ? 2 : 1,
+      kind: "comment",
       links: content.links,
     });
   });
 
   const result: ExtractedThread = {
+    layout: "article-comments",
+    source: "dc-inside",
     posts: ensureUniquePostIds([articlePost, ...comments]),
   };
   const title = normalizeWhitespace(head?.querySelector(".title_subject")?.textContent ?? "");

@@ -3,7 +3,7 @@
 The ForumForge **extraction engine**. It turns forum-page DOM into
 [`ForumForgePost`](../core/README.md) values that the rest of ForumForge consumes.
 
-This package ships eight extractors:
+This package ships nine extractors:
 
 - **`extractThreadGeneric`** — the best-effort fallback for pages with no
   site-specific adapter. It walks a prioritized set of common forum/comment
@@ -71,6 +71,14 @@ This package ships eight extractors:
   and lookalikes on the generic fallback. Evidence is limited to a synthetic
   offline fixture; current live markup, pagination, and packaged-browser
   behavior remain unverified.
+- **`extractThreadFourChan`** targets dedicated 4chan thread pages whose signed
+  page state and post containers expose coherent numeric post, message, and
+  permalink IDs. It retains attachment filename/link metadata without loading
+  media, uses only explicit capcodes for staff roles, and records the first
+  local quote as a flat reply relationship. Board indexes and mismatched
+  lookalikes stay on the generic fallback. Evidence is limited to a synthetic
+  offline fixture; current live markup, archived threads, board variants,
+  media, and packaged-browser behavior remain unverified.
 
 `apps/extension/src/extract.ts` is the one place that chooses between them —
 each extractor here is independent and adapter selection isn't this package's
@@ -82,17 +90,19 @@ concern.
   `extractThreadHackerNews(root, options?)`,
   `extractThreadPhpBB(root, options?)`, `extractThreadXenForo(root, options?)`,
   `extractThreadVBulletin(root, options?)`, `extractThreadNairaland(root, options?)`,
-  and `extractThreadPtt(root, options?)` extract a thread from a `Document`
+  `extractThreadPtt(root, options?)`, and `extractThreadFourChan(root, options?)`
+  extract a thread from a `Document`
   or any element containing it. Each returns `{ title?, baseUrl?, posts }`
   (`ExtractedThread`).
 - `isDiscoursePage(root)`, `isHackerNewsPage(root)`, `isPhpBBPage(root)`,
   `isXenForoPage(root)`, `isVBulletinPage(root)`, `isNairalandPage(root)`, and
-  `isPttPage(root)`
+  `isPttPage(root)`, and `isFourChanPage(root)`
   detect whether a document matches that extractor.
 - `ExtractedThread`, `ExtractOptions`, `GenericExtractOptions`,
   `DiscourseExtractOptions`, `HackerNewsExtractOptions`,
   `PhpBBExtractOptions`, `XenForoExtractOptions`, `VBulletinExtractOptions`, and
-  `NairalandExtractOptions` and `PttExtractOptions` are result and option types.
+  `NairalandExtractOptions`, `PttExtractOptions`, and `FourChanExtractOptions`
+  are result and option types.
 
 Pass `options.baseUrl` when parsing detached HTML (tests, fixtures) so relative
 permalinks and links resolve to absolute URLs; in a live browser the DOM already

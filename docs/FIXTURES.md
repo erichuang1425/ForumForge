@@ -14,9 +14,10 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > Hacker News, phpBB 3.3 stock prosilver, and XenForo 2.3 default public thread
 > extractors, plus stock/classic vBulletin 4.x showthread extraction represented
 > by a synthetic 4.2.5 fixture, Nairaland topic extraction represented by a
-> synthetic paired-row fixture, and PTT article extraction represented by a
-> synthetic article-and-push fixture. The phpBB, XenForo, vBulletin, Nairaland,
-> and PTT fixtures are synthetic and offline-safe. On 2026-07-16, the XenForo
+> synthetic paired-row fixture, PTT article extraction represented by a
+> synthetic article-and-push fixture, and 4chan thread extraction represented by
+> a synthetic imageboard fixture. The phpBB, XenForo, vBulletin, Nairaland, PTT,
+> and 4chan fixtures are synthetic and offline-safe. On 2026-07-16, the XenForo
 > fixture selectors
 > received a read-only structural comparison against normal, question, and
 > article thread pages on the official `xenforo.com/community` forum; ForumForge
@@ -33,6 +34,10 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > The PTT fixture represents its article metadata and flat push-reply contract;
 > the public-page connection reset during inspection, so no current live page
 > was retained or successfully inspected.
+> The 4chan fixture represents a dedicated thread, numeric post identity,
+> capcodes, quote links, and attachment metadata without any image or remote
+> resource. A direct public-page request did not return usable thread markup, so
+> no current live page was retained or successfully inspected.
 > None of these synthetic fixtures is packaged-extension or live extraction
 > evidence. Phase 2 extends the same pattern to contributor-made declarative
 > adapters; Phase 5 adds registry-wide quality reporting.

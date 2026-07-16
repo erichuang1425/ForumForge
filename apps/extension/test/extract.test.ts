@@ -182,4 +182,23 @@ describe("extractThreadFromDocument", () => {
       parentId: "article",
     });
   });
+
+  it("picks the 4chan adapter only for a coherent thread page", () => {
+    const html = `<!doctype html><html><body class="is_thread board_tg">
+      <div class="board"><div class="thread" id="t500">
+        <div class="postContainer opContainer" id="pc500">
+          <div class="post op" id="p500"><div class="postInfo">
+            <span class="subject">Synthetic imageboard thread</span>
+            <span class="name">ivy</span><span class="postNum">
+              <a href="/tg/thread/500#p500">No.500</a></span></div>
+            <blockquote class="postMessage" id="m500">Hello from 4chan.</blockquote>
+          </div>
+        </div>
+      </div></div></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("Synthetic imageboard thread");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]).toMatchObject({ id: "500", author: "ivy", role: "op" });
+  });
 });

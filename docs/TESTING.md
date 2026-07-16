@@ -108,6 +108,13 @@ a clean profile for install testing and an existing profile for upgrade testing.
 - [ ] PTT board indexes and unrelated `.push` lookalikes do not select the
       dedicated extractor. Record pagination, deleted articles, IP/date
       variants, and layouts missing the signed article shell as pending.
+- [ ] 4chan dedicated thread page: subject, numeric post IDs, names/tripcodes,
+      timestamps, OP, explicit moderator/admin capcodes, quote relationships,
+      deleted/empty replies, and attachment filename/link behavior.
+- [ ] 4chan board indexes and mismatched-ID lookalikes do not select the
+      dedicated extractor. Confirm no attachment image, embed, or other remote
+      media is loaded by ForumForge; record archives and board variants as
+      pending unless separately observed.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

@@ -47,6 +47,9 @@ library holds compact reading, exports, and privacy controls.
 - Narrowly detected PTT article extraction, backed by a synthetic offline
   article-and-push fixture. Live-site, pagination, and packaged-browser evidence
   is pending.
+- Narrowly detected 4chan thread extraction, backed by a synthetic offline
+  imageboard fixture. Attachment filenames and links are retained without
+  loading media; live-site and packaged-browser evidence is pending.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
@@ -104,6 +107,7 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | vBulletin 4.x stock/classic showthread pages | Synthetic offline 4.2.5 fixture tests | No packaged-extension or live browser evidence |
 | Nairaland topic pages | Synthetic paired-row fixture tests | No packaged-extension or live-site evidence |
 | PTT article pages | Synthetic article-and-push fixture tests | No packaged-extension or live-site evidence |
+| 4chan thread pages | Synthetic imageboard fixture tests | No packaged-extension or live-site evidence; media is link-only |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 

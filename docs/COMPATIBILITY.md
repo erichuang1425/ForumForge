@@ -25,6 +25,7 @@ Last updated: 2026-07-16
 | vBulletin 4.x stock/classic showthread pages | Dedicated | Synthetic offline 4.2.5 fixture tests covering horizontal and legacy postbits, extraction, missing fields, explicit English moderator/administrator titles, staff-only non-inference, OP non-inference, other-major rejection, and false-positive detection | Legacy/EOL compatibility only; no packaged-extension or live browser evidence; branding-free installs, customized templates, localized roles, other major versions, and pagination remain unverified; OP is intentionally unset |
 | Nairaland topic pages using paired metadata/body rows | Dedicated | Synthetic offline fixture tests covering numeric post IDs, authors, timestamps, body links, explicit `(op)`/`(m)` roles, missing fields, and false-positive detection | No packaged-extension or live-site evidence; current live markup, pagination, edited timestamps, and layout variants remain unverified |
 | PTT article pages using the article metadata and push-reply shell | Dedicated | Synthetic offline fixture tests covering Chinese metadata, article/footer isolation, push direction, authors, timestamps, body links, OP matching, empty replies, and false-positive detection | No packaged-extension or live-site evidence; current live markup, pagination, deleted content, IP/date variants, and layout variants remain unverified |
+| 4chan dedicated thread pages using coherent numeric post markup | Dedicated | Synthetic offline fixture tests covering subject, post IDs, authors/tripcodes, timestamps, explicit capcodes, local quote parents, deleted/empty replies, inert attachment links, index rejection, and mismatched-ID rejection | No packaged-extension or live-site evidence; current live markup, archived/deleted threads, board-specific variants, media, embeds, and moderation states remain unverified; attachment media is not rendered or loaded |
 | Other forums | Generic fallback | Representative generic fixture | Accuracy varies; pagination and custom DOM often need a dedicated adapter |
 
 The phpBB row is evidence for the tested stock prosilver DOM contract only. It
@@ -39,6 +40,12 @@ The PTT row is evidence only for the synthetic article-and-push DOM contract.
 The public page connection reset during the 2026-07-16 command-line markup check
 and the isolated in-app browser controller was unavailable, so no live
 extraction or selector-level comparison is claimed.
+
+The 4chan row is evidence only for the synthetic dedicated-thread DOM contract.
+The 2026-07-16 direct public-page request did not return usable thread markup and
+the isolated in-app browser controller was unavailable, so no live extraction
+or selector-level comparison is claimed. ForumForge retains attachment metadata
+and safe links, but deliberately does not load or render imageboard media.
 
 On 2026-07-16, the XenForo comparison checked public DOM structure for official
 normal, question, and article thread pages on `xenforo.com/community` without

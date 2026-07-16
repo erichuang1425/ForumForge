@@ -38,6 +38,10 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   Chinese metadata, article/footer isolation, flat push replies, missing fields,
   and false-positive rejection. Live-site, pagination, and packaged-browser
   behavior remain unverified.
+- A narrowly detected 4chan thread extractor with synthetic offline tests for
+  numeric post coherence, attachment links without media loading, explicit
+  capcodes, flat quote relationships, missing fields, and index/lookalike
+  rejection. Live-site and packaged-browser behavior remain unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

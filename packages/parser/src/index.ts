@@ -34,4 +34,9 @@ export {
   isPttPage,
   type PttExtractOptions,
 } from "./ptt";
+export {
+  extractThreadFourChan,
+  isFourChanPage,
+  type FourChanExtractOptions,
+} from "./fourchan";
 export type { ExtractedThread, ExtractOptions } from "./types";

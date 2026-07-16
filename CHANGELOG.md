@@ -5,24 +5,7 @@ All notable user-visible changes are recorded here. The project follows
 
 ## [Unreleased]
 
-### Added
-
-- Adapter-proven discussion layouts and post semantics for linear forums,
-  article/comment communities, nested Hacker News threads, PTT reactions,
-  4chan imageboards, and Stack Overflow Q&A. Scores and accepted-answer state
-  currently have deterministic fixture evidence; exact-package Chrome evidence
-  remains pending.
-- A bounded presentation layer and immersive archetype renderers that preserve
-  every post, flatten unsafe relationships, cap visual indentation, and keep all
-  rich content on the established sanitizer path.
-
-### Changed
-
-- Keep the edge launcher fully inside the viewport as a compact 32 by 68 pixel
-  control instead of exposing only a narrow slice of its target.
-- Keep Refresh, Local library, and Return to forum reachable in narrow reader
-  layouts, propagate the source page language, use readable English/CJK line
-  measures, and honor reduced-motion preferences for programmatic scrolling.
+No changes yet.
 
 ## [0.1.0] - 2026-07-16
 
@@ -31,6 +14,14 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
 
 ### Added
 
+- Adapter-proven discussion layouts and post semantics for linear forums,
+  article/comment communities, nested Hacker News threads, PTT reactions,
+  4chan imageboards, and Stack Overflow Q&A. Scores and accepted-answer state
+  have deterministic fixture evidence; exact-package Chrome evidence remains
+  pending.
+- A bounded presentation layer and immersive archetype renderers that preserve
+  every post, flatten unsafe relationships, cap visual indentation, and keep all
+  rich content on the established sanitizer path.
 - Manifest V3 extension shell with an on-demand content script, compact
   on-page launcher, immersive reader, and secondary local-library side panel.
 - Publication-like reading mode with allowlist sanitization of untrusted forum
@@ -112,6 +103,11 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
 
 ### Changed
 
+- Keep the edge launcher fully inside the viewport as a compact 32 by 68 pixel
+  control instead of exposing only a narrow slice of its target.
+- Keep Refresh, Local library, and Return to forum reachable in narrow reader
+  layouts, propagate the source page language, use readable English/CJK line
+  measures, and honor reduced-motion preferences for programmatic scrolling.
 - Restore keyboard focus after a clear in another panel disables or hides the
   active local-data control.
 - Keep every panel's writes blocked when the initial clear-state guard write

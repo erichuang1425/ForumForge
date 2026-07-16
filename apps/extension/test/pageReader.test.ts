@@ -86,6 +86,37 @@ describe("on-page reading studio", () => {
     expect(launcherFocus).toHaveBeenCalledOnce();
   });
 
+  it("returns focus to the shadow launcher after it opens and Escape closes the reader", () => {
+    const doc = fixtureDocument();
+    const view = createPageReaderView(doc, thread, {
+      sourceUrl: "https://forum.example/threads/cameras.42/",
+    });
+    view.mount();
+    const launcher = view.shadow.querySelector<HTMLButtonElement>(".ff-launcher");
+    if (!launcher) throw new Error("launcher missing");
+    const launcherFocus = vi.spyOn(launcher, "focus");
+    Object.defineProperty(doc, "activeElement", {
+      configurable: true,
+      value: view.host,
+    });
+    Object.defineProperty(view.shadow, "activeElement", {
+      configurable: true,
+      value: launcher,
+    });
+
+    launcher.click();
+    const keydown = new (doc.defaultView as unknown as { Event: typeof Event }).Event(
+      "keydown",
+      { bubbles: true, cancelable: true },
+    );
+    Object.defineProperty(keydown, "key", { value: "Escape" });
+    view.shadow.dispatchEvent(keydown);
+
+    expect(keydown.defaultPrevented).toBe(true);
+    expect(view.shadow.querySelector(".ff-reader")?.hasAttribute("hidden")).toBe(true);
+    expect(launcherFocus).toHaveBeenCalledOnce();
+  });
+
   it("wraps focus past controls hidden by responsive layout", () => {
     const doc = fixtureDocument();
     const view = createPageReaderView(doc, thread, {

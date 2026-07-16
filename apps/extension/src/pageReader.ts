@@ -304,7 +304,12 @@ export function createPageReaderView(
   function openReader(): void {
     if (open) return;
     open = true;
-    previousFocus = doc.activeElement as HTMLElement | null;
+    // Document focus is retargeted to the shadow host when the launcher owns
+    // focus. Remember the real control so closing can restore a useful target.
+    previousFocus =
+      shadow.activeElement === launcher
+        ? launcher
+        : (doc.activeElement as HTMLElement | null);
     previousOverflow = doc.documentElement.style.overflow;
     previousBodyInert = doc.body.inert;
     doc.documentElement.style.overflow = "hidden";

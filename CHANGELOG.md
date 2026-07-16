@@ -105,6 +105,8 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
 
 - Keep the edge launcher fully inside the viewport as a compact 32 by 68 pixel
   control instead of exposing only a narrow slice of its target.
+- Return keyboard focus to the edge launcher when it opened the reader and
+  Escape or Return to forum closes the reading surface.
 - Keep Refresh, Local library, and Return to forum reachable in narrow reader
   layouts, propagate the source page language, use readable English/CJK line
   measures, and honor reduced-motion preferences for programmatic scrolling.

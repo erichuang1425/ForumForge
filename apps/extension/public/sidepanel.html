@@ -7,329 +7,761 @@
     <style>
       :root {
         color-scheme: light dark;
+        --ff-canvas: #f2f4f9;
+        --ff-surface: #ffffff;
+        --ff-surface-muted: #f7f8fc;
+        --ff-border: #d7deeb;
+        --ff-border-strong: #b6c0d2;
+        --ff-text: #172033;
+        --ff-muted: #536079;
+        --ff-brand: #233775;
+        --ff-brand-hover: #18285b;
+        --ff-brand-soft: #e9edfb;
+        --ff-accent: #b45309;
+        --ff-link: #1d4ed8;
+        --ff-danger: #b42318;
+        --ff-danger-soft: #fff1f0;
+        --ff-focus: #d97706;
+        --ff-shadow: 0 10px 28px rgb(23 32 51 / 0.08);
       }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --ff-canvas: #0f1422;
+          --ff-surface: #171e2f;
+          --ff-surface-muted: #1c2538;
+          --ff-border: #35425d;
+          --ff-border-strong: #52617d;
+          --ff-text: #f4f6fb;
+          --ff-muted: #bac3d4;
+          --ff-brand: #9fb0ff;
+          --ff-brand-hover: #bdc8ff;
+          --ff-brand-soft: #26345f;
+          --ff-accent: #fbbf24;
+          --ff-link: #a9b8ff;
+          --ff-danger: #ff9c94;
+          --ff-danger-soft: #3a2024;
+          --ff-focus: #fbbf24;
+          --ff-shadow: 0 12px 30px rgb(0 0 0 / 0.24);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 0;
+        background: var(--ff-canvas);
+      }
+
       body {
-        font: 14px/1.5 system-ui, sans-serif;
+        min-width: 0;
         margin: 0;
-        padding: 12px;
+        background: var(--ff-canvas);
+        color: var(--ff-text);
+        font: 14px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      button[disabled] {
+        cursor: default;
+        opacity: 0.58;
+      }
+
+      :where(button, a, textarea):focus-visible {
+        outline: 3px solid var(--ff-focus);
+        outline-offset: 2px;
+      }
+
+      .ff-shell {
+        width: min(100%, 48rem);
+        margin: 0 auto;
+        padding: 14px 12px 24px;
+      }
+
       .ff-bar {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 8px;
+        gap: 12px;
+        padding: 13px;
+        border: 1px solid var(--ff-border);
+        border-radius: 16px;
+        background: var(--ff-surface);
+        box-shadow: var(--ff-shadow);
       }
-      .ff-app {
-        font-size: 15px;
+
+      .ff-brand {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .ff-brand > div {
+        min-width: 0;
+      }
+
+      .ff-brand-mark {
+        position: relative;
+        display: grid;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 12px;
+        background: #1f3067;
+        color: #ffffff;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .ff-brand-mark::after {
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        width: 10px;
+        height: 10px;
+        background: #f59e0b;
+        content: "";
+        transform: rotate(45deg);
+      }
+
+      .ff-kicker {
         margin: 0;
-        flex: 1;
+        color: var(--ff-muted);
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 0.12em;
+        line-height: 1.35;
+        text-transform: uppercase;
       }
+
+      .ff-app {
+        margin: 1px 0 0;
+        font-size: 19px;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      .ff-actions {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ff-actions button {
+        min-height: 38px;
+        min-width: 0;
+        flex: 1 1 9rem;
+        padding: 7px 11px;
+        border-radius: 9px;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
       #ff-extract {
-        font: inherit;
         max-width: 100%;
-        padding: 6px 10px;
-        cursor: pointer;
+        border: 1px solid var(--ff-brand);
+        background: var(--ff-brand);
+        color: var(--ff-surface);
         white-space: normal;
       }
-      /* Export saved posts to a Markdown file. Disabled until there is
-         something to export, so the action never produces an empty note. */
+
+      #ff-extract:hover:not([disabled]) {
+        border-color: var(--ff-brand-hover);
+        background: var(--ff-brand-hover);
+      }
+
       #ff-export {
-        font: inherit;
         max-width: 100%;
-        padding: 6px 10px;
-        cursor: pointer;
-        background: transparent;
-        color: inherit;
-        border: 1px solid #8886;
-        border-radius: 4px;
+        border: 1px solid var(--ff-border-strong);
+        background: var(--ff-surface-muted);
+        color: var(--ff-text);
         white-space: normal;
       }
+
       #ff-export:hover:not([disabled]) {
-        border-color: #888a;
+        border-color: var(--ff-brand);
+        color: var(--ff-brand);
       }
-      #ff-export[disabled] {
-        cursor: default;
-        opacity: 0.6;
+
+      .ff-status-card {
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr);
+        align-items: start;
+        gap: 8px;
+        margin: 10px 2px 12px;
+        padding: 9px 10px;
+        border: 1px solid var(--ff-border);
+        border-radius: 11px;
+        background: var(--ff-surface-muted);
       }
+
+      .ff-status-icon {
+        display: grid;
+        width: 22px;
+        height: 22px;
+        place-items: center;
+        border-radius: 999px;
+        background: var(--ff-brand-soft);
+        color: var(--ff-brand);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
       #ff-status {
-        color: inherit;
-        margin: 8px 0 12px;
-      }
-      .ff-local-data {
-        border-top: 1px solid #8883;
-        margin-top: 16px;
-        padding-top: 12px;
-      }
-      .ff-local-data h2 {
-        font-size: 14px;
-        margin: 0 0 4px;
-      }
-      .ff-local-data p {
-        color: inherit;
-        margin: 0 0 8px;
-      }
-      #ff-clear-data {
-        font: inherit;
-        max-width: 100%;
-        padding: 5px 9px;
-        cursor: pointer;
-        background: transparent;
-        color: inherit;
-        border: 1px solid #8886;
-        border-radius: 4px;
-        white-space: normal;
-      }
-      #ff-clear-data:hover:not([disabled]) {
-        border-color: #b91c1c;
-      }
-      #ff-clear-data[disabled] {
-        cursor: default;
-        opacity: 0.6;
-      }
-      .ff-thread__title {
-        font-size: 16px;
-        margin: 0 0 8px;
+        min-width: 0;
+        margin: 0;
+        color: var(--ff-muted);
         overflow-wrap: anywhere;
       }
+
+      .ff-status-card[data-state="loading"] {
+        border-color: var(--ff-brand);
+      }
+
+      .ff-status-card[data-state="success"] .ff-status-icon {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .ff-status-card[data-state="error"] {
+        border-color: var(--ff-danger);
+        background: var(--ff-danger-soft);
+      }
+
+      .ff-status-card[data-state="error"] .ff-status-icon {
+        background: var(--ff-danger);
+        color: var(--ff-surface);
+      }
+
+      main {
+        display: grid;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      #ff-output {
+        min-width: 0;
+      }
+
+      #ff-output[aria-busy="true"] {
+        opacity: 0.72;
+      }
+
+      .ff-welcome {
+        display: grid;
+        gap: 8px;
+        padding: 18px;
+        border: 1px solid var(--ff-border);
+        border-radius: 16px;
+        background: linear-gradient(145deg, var(--ff-surface), var(--ff-brand-soft));
+        box-shadow: var(--ff-shadow);
+      }
+
+      .ff-welcome__visual {
+        display: grid;
+        width: 74px;
+        gap: 6px;
+        margin-bottom: 4px;
+        padding: 11px;
+        border: 1px solid var(--ff-border);
+        border-radius: 12px;
+        background: var(--ff-surface);
+      }
+
+      .ff-welcome__visual span {
+        display: block;
+        height: 5px;
+        border-radius: 999px;
+        background: var(--ff-brand);
+      }
+
+      .ff-welcome__visual span:nth-child(2) {
+        width: 72%;
+        background: var(--ff-accent);
+      }
+
+      .ff-welcome__visual span:nth-child(3) {
+        width: 86%;
+        opacity: 0.48;
+      }
+
+      .ff-welcome h2 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: -0.025em;
+        line-height: 1.25;
+      }
+
+      .ff-welcome__copy {
+        margin: 0;
+        color: var(--ff-muted);
+      }
+
+      .ff-thread {
+        min-width: 0;
+      }
+
+      .ff-thread__title {
+        margin: 2px 2px 12px;
+        font-size: 20px;
+        letter-spacing: -0.02em;
+        line-height: 1.3;
+        overflow-wrap: anywhere;
+      }
+
       .ff-posts {
-        list-style: none;
+        display: grid;
+        gap: 10px;
         margin: 0;
         padding: 0;
+        list-style: none;
       }
+
       .ff-post {
-        padding: 10px 0;
-        border-top: 1px solid #8883;
+        min-width: 0;
+        padding: 13px;
+        border: 1px solid var(--ff-border);
+        border-radius: 12px;
+        background: var(--ff-surface);
+        box-shadow: 0 2px 8px rgb(23 32 51 / 0.04);
       }
-      /* OP highlighting: posts by an important voice stand out for the whole
-         thread, with a colored edge and a faint tint (not color alone — the
-         badge text carries the same signal). */
+
       .ff-post[data-role="op"],
       .ff-post[data-role="mod"],
-      .ff-post[data-role="admin"] {
-        border-left: 3px solid #8884;
-        padding-left: 10px;
-      }
-      .ff-post[data-role="op"] {
-        border-left-color: #2563eb;
-        background: #2563eb14;
-      }
-      .ff-post[data-role="mod"] {
-        border-left-color: #16a34a;
-        background: #16a34a14;
-      }
-      .ff-post[data-role="admin"] {
-        border-left-color: #9333ea;
-        background: #9333ea14;
-      }
-      .ff-post__meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        align-items: baseline;
-        margin-bottom: 4px;
-      }
-      .ff-post__author {
-        font-weight: 600;
-        min-width: 0;
-        overflow-wrap: anywhere;
-      }
-      .ff-post__role {
-        font-size: 11px;
-        letter-spacing: 0.04em;
-        padding: 1px 6px;
-        border-radius: 999px;
-        background: #8882;
-      }
-      .ff-post[data-role="op"] .ff-post__role {
-        background: #2563eb;
-        color: #fff;
-      }
-      .ff-post[data-role="mod"] .ff-post__role {
-        /* Darker green than the edge so white badge text clears WCAG AA
-           contrast (~5:1) — the badge text is the non-color role signal. */
-        background: #15803d;
-        color: #fff;
-      }
-      .ff-post[data-role="admin"] .ff-post__role {
-        background: #9333ea;
-        color: #fff;
-      }
-      /* New since last visit: an amber "New" badge (text + color, not color
-         alone) plus an edge accent. Posts that already carry a role edge keep
-         it — the badge alone signals "new" there — so the two cues don't fight. */
-      .ff-post__new {
-        font-size: 11px;
-        letter-spacing: 0.04em;
-        padding: 1px 6px;
-        border-radius: 999px;
-        /* amber-700: white text clears WCAG AA contrast (~4.9:1). */
-        background: #b45309;
-        color: #fff;
-      }
+      .ff-post[data-role="admin"],
       .ff-post[data-new="true"]:not([data-role="op"]):not([data-role="mod"]):not(
           [data-role="admin"]
         ) {
-        border-left: 3px solid #b45309;
-        padding-left: 10px;
+        border-left-width: 4px;
       }
-      .ff-post__time {
-        color: #888;
-        font-size: 12px;
+
+      .ff-post[data-role="op"] {
+        border-left-color: #3156c4;
+        background: linear-gradient(90deg, rgb(49 86 196 / 0.1), var(--ff-surface) 32%);
+      }
+
+      .ff-post[data-role="mod"] {
+        border-left-color: #15803d;
+        background: linear-gradient(90deg, rgb(21 128 61 / 0.1), var(--ff-surface) 32%);
+      }
+
+      .ff-post[data-role="admin"] {
+        border-left-color: #7e22ce;
+        background: linear-gradient(90deg, rgb(126 34 206 / 0.1), var(--ff-surface) 32%);
+      }
+
+      .ff-post[data-new="true"]:not([data-role="op"]):not([data-role="mod"]):not(
+          [data-role="admin"]
+        ) {
+        border-left-color: var(--ff-accent);
+      }
+
+      .ff-post__meta,
+      .ff-post__identity,
+      .ff-post__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .ff-post__meta {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px 10px;
+        margin-bottom: 10px;
+      }
+
+      .ff-post__identity {
+        min-width: 0;
+        gap: 5px 7px;
+      }
+
+      .ff-post__actions {
+        gap: 6px;
         margin-left: auto;
       }
-      /* Save toggle: pushed to the row's end (after the timestamp claims the
-         auto margin, this sits beyond it). The label ("Save"/"Saved") carries
-         the state, not color alone; aria-pressed carries it for screen readers. */
-      .ff-post__save {
-        font: inherit;
-        font-size: 12px;
-        padding: 1px 8px;
-        border: 1px solid #8886;
-        border-radius: 999px;
-        background: transparent;
-        color: inherit;
-        cursor: pointer;
-      }
-      .ff-post__save:hover {
-        border-color: #888a;
-      }
-      .ff-post__save[aria-pressed="true"] {
-        border-color: #2563eb;
-        background: #2563eb;
-        color: #fff;
-      }
-      .ff-post__save[disabled] {
-        cursor: default;
-        opacity: 0.6;
-      }
-      /* Note toggle: same pill as Save. A post whose author already has a note
-         gets a small dot before the label — a non-color cue (the dot, not just a
-         tint) that the author is annotated. */
-      .ff-post__note-toggle {
-        font: inherit;
-        font-size: 12px;
-        padding: 1px 8px;
-        border: 1px solid #8886;
-        border-radius: 999px;
-        background: transparent;
-        color: inherit;
-        cursor: pointer;
-      }
-      .ff-post__note-toggle:hover {
-        border-color: #888a;
-      }
-      .ff-post[data-has-note="true"] .ff-post__note-toggle::before {
-        content: "● ";
-        color: #b45309;
-      }
-      /* Note editor: collapsed until the reader opens it (the `hidden` attribute
-         handles that). A textarea plus a Save button stacked under the post. */
-      .ff-post__note {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-top: 8px;
-      }
-      /* A `display` rule beats the `hidden` attribute's default `display: none`,
-         so without this the editor would show even while collapsed. Restore it. */
-      .ff-post__note[hidden] {
-        display: none;
-      }
-      .ff-post__note-input {
-        font: inherit;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 6px 8px;
-        border: 1px solid #8886;
-        border-radius: 4px;
-        background: transparent;
-        color: inherit;
-        resize: vertical;
-      }
-      .ff-post__note-save {
-        font: inherit;
-        font-size: 12px;
-        align-self: flex-start;
-        padding: 2px 10px;
-        border: 1px solid #8886;
-        border-radius: 999px;
-        background: transparent;
-        color: inherit;
-        cursor: pointer;
-      }
-      .ff-post__note-save:hover {
-        border-color: #888a;
-      }
-      .ff-post__note-save[disabled] {
-        cursor: default;
-        opacity: 0.6;
-      }
-      .ff-post__body {
-        margin: 0;
+
+      .ff-post__author {
+        min-width: 0;
+        font-weight: 750;
         overflow-wrap: anywhere;
       }
-      /* Plain-text fallback keeps the original line breaks. */
-      .ff-post__text {
+
+      .ff-post__role,
+      .ff-post__new {
+        padding: 2px 7px;
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        line-height: 1.45;
+        text-transform: uppercase;
+      }
+
+      .ff-post[data-role="op"] .ff-post__role {
+        background: #3156c4;
+      }
+
+      .ff-post[data-role="mod"] .ff-post__role {
+        background: #15803d;
+      }
+
+      .ff-post[data-role="admin"] .ff-post__role {
+        background: #7e22ce;
+      }
+
+      .ff-post__new {
+        background: #b45309;
+      }
+
+      .ff-post__time {
+        color: var(--ff-muted);
+        font-size: 12px;
+      }
+
+      .ff-post__save,
+      .ff-post__note-toggle,
+      .ff-post__note-save {
+        min-height: 32px;
+        padding: 4px 10px;
+        border: 1px solid var(--ff-border-strong);
+        border-radius: 999px;
+        background: var(--ff-surface-muted);
+        color: var(--ff-text);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .ff-post__save:hover:not([disabled]),
+      .ff-post__note-toggle:hover:not([disabled]),
+      .ff-post__note-save:hover:not([disabled]) {
+        border-color: var(--ff-brand);
+        color: var(--ff-brand);
+      }
+
+      .ff-post__save[aria-pressed="true"] {
+        border-color: var(--ff-brand);
+        background: var(--ff-brand);
+        color: var(--ff-surface);
+      }
+
+      .ff-post[data-has-note="true"] .ff-post__note-toggle::before {
+        color: var(--ff-accent);
+        content: "● ";
+      }
+
+      .ff-post__body {
+        min-width: 0;
         margin: 0;
+        color: var(--ff-text);
+        font-size: 14px;
+        line-height: 1.65;
+        overflow-wrap: anywhere;
+      }
+
+      .ff-post__text,
+      .ff-post__body p {
+        margin: 0 0 9px;
+      }
+
+      .ff-post__text {
         white-space: pre-wrap;
       }
-      .ff-post__body p {
-        margin: 0 0 8px;
-      }
+
       .ff-post__body > :last-child {
         margin-bottom: 0;
       }
+
       .ff-post__body a {
-        color: #2563eb;
+        color: var(--ff-link);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
       }
+
       .ff-post__body blockquote {
-        margin: 8px 0;
-        padding: 0 0 0 10px;
-        border-left: 3px solid #8884;
-        color: #555;
+        margin: 10px 0;
+        padding: 7px 10px;
+        border-left: 3px solid var(--ff-border-strong);
+        background: var(--ff-surface-muted);
+        color: var(--ff-muted);
       }
-      .ff-post__body pre {
-        margin: 8px 0;
-        padding: 8px;
-        background: #8881;
-        border-radius: 4px;
+
+      .ff-post__body pre,
+      .ff-post__body table {
+        display: block;
+        max-width: 100%;
+        margin: 10px 0;
         overflow-x: auto;
       }
+
+      .ff-post__body pre {
+        padding: 10px;
+        border: 1px solid var(--ff-border);
+        border-radius: 8px;
+        background: var(--ff-surface-muted);
+      }
+
+      .ff-post__body table {
+        border-collapse: collapse;
+      }
+
+      .ff-post__body th,
+      .ff-post__body td {
+        padding: 5px 7px;
+        border: 1px solid var(--ff-border);
+        text-align: left;
+        white-space: nowrap;
+      }
+
       .ff-post__body code {
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: 0.92em;
       }
+
       .ff-post__body ul,
       .ff-post__body ol {
-        margin: 8px 0;
+        margin: 9px 0;
         padding-left: 22px;
+      }
+
+      .ff-post__note {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-top: 11px;
+        padding-top: 11px;
+        border-top: 1px solid var(--ff-border);
+      }
+
+      .ff-post__note[hidden] {
+        display: none;
+      }
+
+      .ff-post__note-input {
+        width: 100%;
+        min-height: 78px;
+        padding: 8px 9px;
+        resize: vertical;
+        border: 1px solid var(--ff-border-strong);
+        border-radius: 8px;
+        background: var(--ff-surface-muted);
+        color: var(--ff-text);
+      }
+
+      .ff-post__note-save {
+        align-self: flex-start;
+      }
+
+      .ff-empty {
+        display: grid;
+        gap: 5px;
+        padding: 18px;
+        border: 1px dashed var(--ff-border-strong);
+        border-radius: 12px;
+        background: var(--ff-surface-muted);
+        text-align: center;
+      }
+
+      .ff-empty__title {
+        margin: 0;
+        font-size: 17px;
+      }
+
+      .ff-empty__guidance {
+        margin: 0;
+        color: var(--ff-muted);
+      }
+
+      .ff-local-data {
+        padding: 14px;
+        border: 1px solid var(--ff-border);
+        border-radius: 13px;
+        background: var(--ff-surface);
+      }
+
+      .ff-local-data__heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: start;
+        justify-content: space-between;
+        gap: 7px 10px;
+        margin-bottom: 6px;
+      }
+
+      .ff-local-data h2 {
+        margin: 1px 0 0;
+        font-size: 15px;
+      }
+
+      .ff-local-data__badge {
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: var(--ff-brand-soft);
+        color: var(--ff-brand);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .ff-local-data p {
+        margin: 0 0 10px;
+        color: var(--ff-muted);
+      }
+
+      #ff-clear-data {
+        min-height: 36px;
+        max-width: 100%;
+        padding: 6px 10px;
+        border: 1px solid var(--ff-danger);
+        border-radius: 9px;
+        background: transparent;
+        color: var(--ff-danger);
+        font-weight: 700;
+        white-space: normal;
+      }
+
+      #ff-clear-data:hover:not([disabled]) {
+        background: var(--ff-danger-soft);
+      }
+
+      @media (max-width: 240px) {
+        .ff-shell {
+          padding: 8px 7px 16px;
+        }
+
+        .ff-bar,
+        .ff-post,
+        .ff-local-data {
+          padding: 10px;
+          border-radius: 11px;
+        }
+
+        .ff-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .ff-brand {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 7px;
+        }
+
+        #ff-extract,
+        #ff-export {
+          width: 100%;
+          flex-basis: auto;
+        }
+
+        .ff-welcome {
+          padding: 13px;
+          border-radius: 11px;
+        }
+
+        .ff-post__meta {
+          align-items: stretch;
+        }
+
+        .ff-post__actions {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+
+      @media (prefers-contrast: more) {
+        :root {
+          --ff-border: var(--ff-border-strong);
+        }
+      }
+
+      @media (forced-colors: active) {
+        .ff-brand-mark,
+        .ff-post__role,
+        .ff-post__new {
+          border: 1px solid CanvasText;
+        }
       }
     </style>
   </head>
   <body>
-    <header class="ff-bar">
-      <h1 class="ff-app">ForumForge</h1>
-      <button id="ff-export" type="button" disabled>Export saved</button>
-      <button id="ff-extract" type="button">Read this thread</button>
-    </header>
-    <p id="ff-status" role="status" aria-live="polite" aria-atomic="true">
-      Open a forum thread, then “Read this thread”.
-    </p>
-    <div id="ff-output"></div>
-    <section class="ff-local-data" aria-labelledby="ff-local-data-title">
-      <h2 id="ff-local-data-title">Local data</h2>
-      <p id="ff-local-data-description">
-        Read history, saved posts, and private author notes stay in this browser.
-      </p>
-      <button
-        id="ff-clear-data"
-        type="button"
-        aria-describedby="ff-local-data-description"
-      >
-        Clear local user data…
-      </button>
-    </section>
+    <div class="ff-shell">
+      <header class="ff-bar">
+        <div class="ff-brand">
+          <span class="ff-brand-mark" aria-hidden="true">F</span>
+          <div>
+            <p class="ff-kicker">Local thread reader</p>
+            <h1 class="ff-app">ForumForge</h1>
+          </div>
+        </div>
+        <div class="ff-actions">
+          <button id="ff-extract" type="button">Read this thread</button>
+          <button id="ff-export" type="button" disabled>Export saved</button>
+        </div>
+      </header>
+
+      <div class="ff-status-card" data-state="idle">
+        <span class="ff-status-icon" aria-hidden="true">i</span>
+        <p id="ff-status" role="status" aria-live="polite" aria-atomic="true">
+          Open a supported forum thread, then choose Read this thread.
+        </p>
+      </div>
+
+      <main>
+        <div id="ff-output" aria-busy="false">
+          <section class="ff-welcome" aria-labelledby="ff-welcome-title">
+            <div class="ff-welcome__visual" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <p class="ff-kicker">Calm reading mode</p>
+            <h2 id="ff-welcome-title">Make long threads feel manageable</h2>
+            <p class="ff-welcome__copy">
+              ForumForge reads the current page only when you ask and keeps your saves and notes
+              in this browser.
+            </p>
+          </section>
+        </div>
+
+        <section class="ff-local-data" aria-labelledby="ff-local-data-title">
+          <div class="ff-local-data__heading">
+            <div>
+              <p class="ff-kicker">On device</p>
+              <h2 id="ff-local-data-title">Local data</h2>
+            </div>
+            <span class="ff-local-data__badge">Private · on device</span>
+          </div>
+          <p id="ff-local-data-description">
+            Read history, saved posts, and private author notes stay in this browser.
+          </p>
+          <button
+            id="ff-clear-data"
+            type="button"
+            aria-describedby="ff-local-data-description"
+          >
+            Clear local user data…
+          </button>
+        </section>
+      </main>
+    </div>
     <script src="sidepanel.js"></script>
   </body>
 </html>

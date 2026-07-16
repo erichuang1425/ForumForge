@@ -73,6 +73,15 @@ function persistenceIsBlocked(): boolean {
   return isClearingLocalData || isPersistenceBlocked;
 }
 
+type PanelStatusState = "idle" | "loading" | "success" | "error";
+
+/** Keep the live message and its visual state in sync without relying on color alone. */
+function setPanelStatus(message: string, state: PanelStatusState): void {
+  const status = requireElement("#ff-status");
+  status.textContent = message;
+  status.closest<HTMLElement>(".ff-status-card")?.setAttribute("data-state", state);
+}
+
 /**
  * Side panel UI: on the user's click, inject the content script into the active
  * tab, ask it to extract the thread, and render the result into a clean view.
@@ -83,17 +92,17 @@ function persistenceIsBlocked(): boolean {
  */
 async function readActiveThread(): Promise<void> {
   const revision = ++readRevision;
-  const status = requireElement("#ff-status");
   const output = requireElement("#ff-output");
   output.replaceChildren();
+  output.setAttribute("aria-busy", "true");
   currentThread = null;
-  status.textContent = "Reading this thread…";
+  setPanelStatus("Reading this thread…", "loading");
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (revision !== readRevision) return;
     if (tab?.id === undefined) {
-      status.textContent = "No active tab to read.";
+      setPanelStatus("No active tab to read.", "error");
       return;
     }
 
@@ -104,7 +113,10 @@ async function readActiveThread(): Promise<void> {
     if (revision !== readRevision) return;
     const documentId = injectionResults.find((result) => result.frameId === 0)?.documentId;
     if (!documentId) {
-      status.textContent = "Could not confirm which page to read. Return to the thread and try again.";
+      setPanelStatus(
+        "Could not confirm which page to read. Return to the thread and try again.",
+        "error",
+      );
       return;
     }
 
@@ -113,19 +125,21 @@ async function readActiveThread(): Promise<void> {
       response = await chrome.tabs.sendMessage(tab.id, EXTRACT_REQUEST, { documentId });
     } catch (error) {
       if (revision !== readRevision) return;
-      status.textContent =
-        "The page changed or stopped responding while ForumForge was reading it. Return to the thread and try again.";
+      setPanelStatus(
+        "The page changed or stopped responding while ForumForge was reading it. Return to the thread and try again.",
+        "error",
+      );
       console.error("ForumForge: injected page became unavailable:", error);
       return;
     }
     if (revision !== readRevision) return;
 
     if (!isExtractResponse(response)) {
-      status.textContent = "No response from the page.";
+      setPanelStatus("No response from the page.", "error");
       return;
     }
     if (response.type === "forumforge/error") {
-      status.textContent = `Could not read this thread: ${response.message}`;
+      setPanelStatus(`Could not read this thread: ${response.message}`, "error");
       return;
     }
 
@@ -135,8 +149,10 @@ async function readActiveThread(): Promise<void> {
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (revision !== readRevision) return;
     if (activeTab?.id !== tab.id || activeTab.url !== tab.url) {
-      status.textContent =
-        "The active page changed while ForumForge was reading it. Return to the thread and try again.";
+      setPanelStatus(
+        "The active page changed while ForumForge was reading it. Return to the thread and try again.",
+        "error",
+      );
       return;
     }
 
@@ -192,9 +208,10 @@ async function readActiveThread(): Promise<void> {
 
     if (revision !== readRevision) return;
     const counts = describeCounts(count, newPostIds.size);
-    status.textContent = storageError
-      ? `${counts}. ${describeStoragePreparationError(storageError)}`
-      : counts;
+    setPanelStatus(
+      storageError ? `${counts}. ${describeStoragePreparationError(storageError)}` : counts,
+      storageError ? "error" : "success",
+    );
     output.append(
       renderThread(document, response.thread, { newPostIds, savedPostIds, userNotes: notes }),
     );
@@ -209,8 +226,10 @@ async function readActiveThread(): Promise<void> {
     if (revision !== readRevision) return;
     // executeScript rejects on pages extensions may not touch (chrome://, the
     // Web Store, PDF viewer). Surface that plainly rather than failing silently.
-    status.textContent = "Can't read this page — try it on a forum thread.";
+    setPanelStatus("Can't read this page — try it on a forum thread.", "error");
     console.error("ForumForge:", error);
+  } finally {
+    if (revision === readRevision) output.setAttribute("aria-busy", "false");
   }
 }
 
@@ -253,8 +272,10 @@ async function onSaveClick(button: HTMLElement): Promise<void> {
   } catch (error) {
     console.error("ForumForge: could not update saved post:", error);
     if (revision === readRevision && !persistenceIsBlocked()) {
-      requireElement("#ff-status").textContent =
-        "Couldn't update the saved post. Local storage may be unavailable.";
+      setPanelStatus(
+        "Couldn't update the saved post. Local storage may be unavailable.",
+        "error",
+      );
     }
   } finally {
     button.toggleAttribute("disabled", persistenceIsBlocked());
@@ -289,26 +310,28 @@ async function refreshExportButton(): Promise<void> {
  */
 async function exportSavedPosts(): Promise<void> {
   const lifecycleRevision = storageLifecycleRevision;
-  const status = requireElement("#ff-status");
   let saved;
   try {
     saved = await storageCoordinator.run(() => savedPosts.all());
   } catch (error) {
     console.error("ForumForge: could not read saved posts for export:", error);
     if (lifecycleRevision === storageLifecycleRevision && !persistenceIsBlocked()) {
-      status.textContent = "Couldn't read saved posts to export.";
+      setPanelStatus("Couldn't read saved posts to export.", "error");
     }
     return;
   }
   if (lifecycleRevision !== storageLifecycleRevision || persistenceIsBlocked()) return;
   if (saved.length === 0) {
-    status.textContent = "No saved posts to export yet.";
+    setPanelStatus("No saved posts to export yet.", "idle");
     return;
   }
 
   const markdown = savedPostsToMarkdown(saved);
   downloadText(markdown, exportFilename(new Date()), "text/markdown");
-  status.textContent = `Exported ${saved.length === 1 ? "1 saved post" : `${saved.length} saved posts`}.`;
+  setPanelStatus(
+    `Exported ${saved.length === 1 ? "1 saved post" : `${saved.length} saved posts`}.`,
+    "success",
+  );
 }
 
 /** A date-stamped, filesystem-safe export filename, e.g. forumforge-saved-2026-06-23.md. */
@@ -371,8 +394,7 @@ async function onNoteSave(button: HTMLElement): Promise<void> {
   } catch (error) {
     console.error("ForumForge: could not save note:", error);
     if (revision === readRevision && !persistenceIsBlocked()) {
-      requireElement("#ff-status").textContent =
-        "Couldn't save the note. Local storage may be unavailable.";
+      setPanelStatus("Couldn't save the note. Local storage may be unavailable.", "error");
     }
   } finally {
     button.toggleAttribute("disabled", persistenceIsBlocked());
@@ -419,7 +441,6 @@ function syncLocalDataControlsToLifecycle(): void {
  */
 async function clearAllLocalData(): Promise<void> {
   if (isClearingLocalData) return;
-  const status = requireElement("#ff-status");
   const clearButton = requireElement("#ff-clear-data") as HTMLButtonElement;
   await runClearLocalData({
     confirm: (message) => window.confirm(message),
@@ -429,21 +450,22 @@ async function clearAllLocalData(): Promise<void> {
       isPersistenceBlocked = true;
       observedClearStatus = "clearing";
       readRevision += 1;
+      requireElement("#ff-output").setAttribute("aria-busy", "false");
       storageLifecycleRevision += 1;
       setLocalDataControlsDisabled(true);
-      status.textContent = CLEAR_LOCAL_DATA_PROGRESS;
+      setPanelStatus(CLEAR_LOCAL_DATA_PROGRESS, "loading");
     },
     onSuccess: () => {
       resetRenderedLocalData(document);
       const exportButton = document.querySelector<HTMLButtonElement>("#ff-export");
       if (exportButton) exportButton.disabled = true;
-      status.textContent = CLEAR_LOCAL_DATA_SUCCESS;
+      setPanelStatus(CLEAR_LOCAL_DATA_SUCCESS, "success");
     },
     onFailure: (error) => {
       console.error("ForumForge: could not clear all local data:", error);
       isPersistenceBlocked = true;
       observedClearStatus = "failed";
-      status.textContent = CLEAR_LOCAL_DATA_FAILURE;
+      setPanelStatus(CLEAR_LOCAL_DATA_FAILURE, "error");
     },
     onFinish: () => {
       isClearingLocalData = false;
@@ -463,9 +485,9 @@ function onStorageChanged(
   if (!change) return;
 
   readRevision += 1;
+  requireElement("#ff-output").setAttribute("aria-busy", "false");
   storageLifecycleRevision += 1;
   const exportButton = document.querySelector<HTMLButtonElement>("#ff-export");
-  const status = requireElement("#ff-status");
   const clearButton = requireElement("#ff-clear-data");
   const nextState = change.newValue;
 
@@ -480,7 +502,7 @@ function onStorageChanged(
     if (isClearingLocalData) return;
     if (isClearing) {
       setLocalDataControlsDisabled(true);
-      status.textContent = "Local user data is being cleared in another ForumForge panel\u2026";
+      setPanelStatus("Local user data is being cleared in another ForumForge panel\u2026", "loading");
       return;
     }
 
@@ -488,8 +510,10 @@ function onStorageChanged(
     setLocalDataControlsDisabled(false);
     setRenderedPersistenceControlsDisabled(document, true);
     if (exportButton) exportButton.disabled = true;
-    status.textContent =
-      "A local-data clear did not finish. Some data may remain; retry Clear local user data.";
+    setPanelStatus(
+      "A local-data clear did not finish. Some data may remain; retry Clear local user data.",
+      "error",
+    );
     observedClearFocus.restore(clearButton);
     return;
   }
@@ -502,7 +526,7 @@ function onStorageChanged(
   resetRenderedLocalData(document);
   setLocalDataControlsDisabled(false);
   if (exportButton) exportButton.disabled = true;
-  status.textContent = "Cleared read history, saved posts, and private author notes.";
+  setPanelStatus("Cleared read history, saved posts, and private author notes.", "success");
   observedClearFocus.restore(clearButton);
 }
 
@@ -548,7 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .catch((error: unknown) => {
       isPersistenceBlocked = true;
       observedClearStatus = "failed";
-      requireElement("#ff-status").textContent = describeStoragePreparationError(error);
+      setPanelStatus(describeStoragePreparationError(error), "error");
       const exportButton = document.querySelector<HTMLButtonElement>("#ff-export");
       if (exportButton) exportButton.disabled = true;
     });

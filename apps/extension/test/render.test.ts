@@ -20,10 +20,16 @@ describe("renderThread", () => {
     const view = renderThread(freshDocument(), thread);
 
     expect(view.querySelector(".ff-thread__title")?.textContent).toBe("Monitor no signal");
+    expect(view.querySelector(".ff-thread__title")?.tagName).toBe("H2");
     expect(view.querySelectorAll(".ff-post")).toHaveLength(2);
     expect(view.querySelector(".ff-post__author")?.textContent).toBe("ada");
     expect(view.querySelector(".ff-post__role")?.textContent).toBe("OP");
     expect(view.querySelector(".ff-post[data-role='op']")).not.toBeNull();
+    expect(view.querySelector(".ff-post__identity .ff-post__author")).not.toBeNull();
+    const actionGroups = view.querySelectorAll(".ff-post__actions");
+    expect(actionGroups).toHaveLength(2);
+    expect(Array.from(actionGroups).every((group) => group.querySelectorAll("button").length === 2))
+      .toBe(true);
   });
 
   it("shows a readable badge for highlighted roles but none for plain users", () => {
@@ -82,6 +88,10 @@ describe("renderThread", () => {
     expect(buttons).toHaveLength(2);
     expect(Array.from(buttons).map((b) => b.getAttribute("data-post-id"))).toEqual(["1", "2"]);
     expect(Array.from(buttons).map((b) => b.textContent)).toEqual(["Save", "Save"]);
+    expect(Array.from(buttons).map((b) => b.getAttribute("aria-label"))).toEqual([
+      "Save post by ada",
+      "Save post by grace",
+    ]);
     expect(Array.from(buttons).every((b) => b.getAttribute("aria-pressed") === "false")).toBe(true);
     expect(view.querySelector(".ff-post[data-post-id='1']")).not.toBeNull();
   });
@@ -141,6 +151,13 @@ describe("renderThread", () => {
       "false",
       "false",
     ]);
+    expect(Array.from(toggles).map((t) => t.getAttribute("aria-label"))).toEqual([
+      "Private note about ada",
+      "Private note about grace",
+    ]);
+    const editorIds = Array.from(toggles).map((toggle) => toggle.getAttribute("aria-controls"));
+    expect(new Set(editorIds).size).toBe(2);
+    expect(editorIds.every((id) => id !== null && view.querySelector(`#${id}`))).toBe(true);
     const editors = view.querySelectorAll<HTMLElement>(".ff-post__note");
     expect(Array.from(editors).map((e) => e.getAttribute("data-author"))).toEqual(["ada", "grace"]);
     expect(Array.from(editors).every((e) => e.hasAttribute("hidden"))).toBe(true);
@@ -190,7 +207,8 @@ describe("renderThread", () => {
 
   it("shows an empty state when there are no posts", () => {
     const view = renderThread(freshDocument(), { posts: [] });
-    expect(view.querySelector(".ff-empty")?.textContent).toBe("No posts found on this page.");
+    expect(view.querySelector(".ff-empty__title")?.textContent).toBe("No posts found");
+    expect(view.querySelector(".ff-empty__guidance")?.textContent).toContain("full thread");
   });
 
   it("renders sanitized rich contentHtml as real elements", () => {

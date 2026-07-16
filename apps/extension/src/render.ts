@@ -56,16 +56,23 @@ export function renderThread(
   root.className = "ff-thread";
 
   if (thread.title) {
-    const title = doc.createElement("h1");
+    const title = doc.createElement("h2");
     title.className = "ff-thread__title";
     title.textContent = thread.title;
     root.append(title);
   }
 
   if (thread.posts.length === 0) {
-    const empty = doc.createElement("p");
+    const empty = doc.createElement("div");
     empty.className = "ff-empty";
-    empty.textContent = "No posts found on this page.";
+    const emptyTitle = doc.createElement("h2");
+    emptyTitle.className = "ff-empty__title";
+    emptyTitle.textContent = "No posts found";
+    const emptyGuidance = doc.createElement("p");
+    emptyGuidance.className = "ff-empty__guidance";
+    emptyGuidance.textContent =
+      "Load the full thread or its replies in the page, then try reading it again.";
+    empty.append(emptyTitle, emptyGuidance);
     root.append(empty);
     return root;
   }
@@ -75,9 +82,9 @@ export function renderThread(
   const userNotes = options.userNotes;
   const list = doc.createElement("ol");
   list.className = "ff-posts";
-  for (const post of thread.posts) {
+  for (const [index, post] of thread.posts.entries()) {
     list.append(
-      renderPost(doc, post, thread.baseUrl, {
+      renderPost(doc, post, thread.baseUrl, index, {
         isNew: newPostIds?.has(post.id) ?? false,
         isSaved: savedPostIds?.has(post.id) ?? false,
         note: userNotes?.get(post.author) ?? "",
@@ -95,6 +102,7 @@ function renderPost(
   doc: Document,
   post: ForumForgePost,
   baseUrl: string | undefined,
+  index: number,
   flags: PostFlags,
 ): HTMLElement {
   const item = doc.createElement("li");
@@ -108,18 +116,22 @@ function renderPost(
 
   const meta = doc.createElement("header");
   meta.className = "ff-post__meta";
+  const identity = doc.createElement("div");
+  identity.className = "ff-post__identity";
+  const actions = doc.createElement("div");
+  actions.className = "ff-post__actions";
 
   const author = doc.createElement("span");
   author.className = "ff-post__author";
   author.textContent = post.author;
-  meta.append(author);
+  identity.append(author);
 
   const roleLabel = post.role ? ROLE_LABELS[post.role] : "";
   if (roleLabel) {
     const role = doc.createElement("span");
     role.className = "ff-post__role";
     role.textContent = roleLabel;
-    meta.append(role);
+    identity.append(role);
   }
 
   // The "New" signal is text as well as color (like the role badge), so it
@@ -128,20 +140,26 @@ function renderPost(
     const badge = doc.createElement("span");
     badge.className = "ff-post__new";
     badge.textContent = "New";
-    meta.append(badge);
+    identity.append(badge);
   }
 
   if (post.timestamp) {
     const time = doc.createElement("time");
     time.className = "ff-post__time";
     time.textContent = post.timestamp;
-    meta.append(time);
+    identity.append(time);
   }
 
-  meta.append(renderSaveButton(doc, post.id, flags.isSaved));
-  meta.append(renderNoteToggle(doc));
+  const noteEditorId = `ff-note-${index + 1}`;
+  actions.append(renderSaveButton(doc, post.id, post.author, flags.isSaved));
+  actions.append(renderNoteToggle(doc, post.author, noteEditorId));
+  meta.append(identity, actions);
 
-  item.append(meta, renderBody(doc, post, baseUrl), renderNoteEditor(doc, post.author));
+  item.append(
+    meta,
+    renderBody(doc, post, baseUrl),
+    renderNoteEditor(doc, post.author, noteEditorId),
+  );
   setNoteState(item, flags.note);
   return item;
 }
@@ -150,12 +168,14 @@ function renderPost(
  * The "Note" toggle for a post. It only shows/hides the post's note editor (the
  * panel wires that), so it carries `aria-expanded`, starting collapsed.
  */
-function renderNoteToggle(doc: Document): HTMLElement {
+function renderNoteToggle(doc: Document, author: string, editorId: string): HTMLElement {
   const button = doc.createElement("button");
   button.type = "button";
   button.className = "ff-post__note-toggle";
   button.textContent = "Note";
   button.setAttribute("aria-expanded", "false");
+  button.setAttribute("aria-controls", editorId);
+  button.setAttribute("aria-label", `Private note about ${author}`);
   return button;
 }
 
@@ -165,9 +185,10 @@ function renderNoteToggle(doc: Document): HTMLElement {
  * the panel can find every post by the same author and keep their notes in sync.
  * The author is written via `value`/attributes, never parsed as markup.
  */
-function renderNoteEditor(doc: Document, author: string): HTMLElement {
+function renderNoteEditor(doc: Document, author: string, editorId: string): HTMLElement {
   const region = doc.createElement("div");
   region.className = "ff-post__note";
+  region.id = editorId;
   region.setAttribute("data-author", author);
   region.hidden = true;
 
@@ -181,6 +202,7 @@ function renderNoteEditor(doc: Document, author: string): HTMLElement {
   save.type = "button";
   save.className = "ff-post__note-save";
   save.textContent = "Save note";
+  save.setAttribute("aria-label", `Save private note about ${author}`);
 
   region.append(input, save);
   return region;
@@ -204,11 +226,17 @@ export function setNoteState(post: HTMLElement, note: string): void {
  * readers, and the label ("Save" / "Saved") carries it visually — not color
  * alone. The panel handles the click; this only reflects the current state.
  */
-function renderSaveButton(doc: Document, postId: string, isSaved: boolean): HTMLElement {
+function renderSaveButton(
+  doc: Document,
+  postId: string,
+  author: string,
+  isSaved: boolean,
+): HTMLElement {
   const button = doc.createElement("button");
   button.type = "button";
   button.className = "ff-post__save";
   button.setAttribute("data-post-id", postId);
+  button.setAttribute("data-author", author);
   setSaveButtonState(button, isSaved);
   return button;
 }
@@ -221,6 +249,13 @@ function renderSaveButton(doc: Document, postId: string, isSaved: boolean): HTML
 export function setSaveButtonState(button: HTMLElement, isSaved: boolean): void {
   button.textContent = isSaved ? "Saved" : "Save";
   button.setAttribute("aria-pressed", String(isSaved));
+  const author = button.getAttribute("data-author");
+  if (author) {
+    button.setAttribute(
+      "aria-label",
+      isSaved ? `Remove saved post by ${author}` : `Save post by ${author}`,
+    );
+  }
   const post = button.closest<HTMLElement>(".ff-post");
   if (post) {
     if (isSaved) post.setAttribute("data-saved", "true");

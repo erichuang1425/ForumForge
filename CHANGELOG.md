@@ -51,6 +51,9 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   reject any duplicate-id extraction payload that crosses the message boundary.
 - Reflow primary controls, post metadata, and long labels without horizontal
   overflow in narrow side panels at 200% browser scaling.
+- Refresh the side panel with clearer action hierarchy, card-based reading,
+  explicit light/dark colors, visible keyboard focus, and structured empty and
+  status states.
 - Build release ZIPs without source maps or source-map references and verify
   every manifest icon is present in the deterministic package.
 

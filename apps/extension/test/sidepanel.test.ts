@@ -170,6 +170,8 @@ describe("active-tab extraction provenance", () => {
     await vi.waitFor(() => {
       expect(status.textContent).toContain("page changed");
     });
+    expect(status.closest(".ff-status-card")?.getAttribute("data-state")).toBe("error");
+    expect(output.getAttribute("aria-busy")).toBe("false");
     expect(sendMessage).toHaveBeenCalledWith(
       7,
       { type: "forumforge/extract" },
@@ -184,11 +186,14 @@ describe("cross-panel storage lifecycle focus", () => {
   const clearing: StorageClearState = { generation: 1, status: "clearing" };
 
   it("restores focus after another panel finishes clearing", async () => {
-    const { clearButton, focusClearButton, input, listener, status } = await setupSidepanel();
+    const { clearButton, focusClearButton, input, listener, output, status } =
+      await setupSidepanel();
+    output.setAttribute("aria-busy", "true");
 
     listener({ [STORAGE_CLEAR_STATE_KEY]: { newValue: clearing } }, "local");
     expect(input.disabled).toBe(true);
     expect(clearButton.disabled).toBe(true);
+    expect(output.getAttribute("aria-busy")).toBe("false");
     expect(focusClearButton).not.toHaveBeenCalled();
 
     listener({ [STORAGE_CLEAR_STATE_KEY]: { oldValue: clearing } }, "local");

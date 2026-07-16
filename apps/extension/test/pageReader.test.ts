@@ -50,10 +50,12 @@ describe("on-page reading studio", () => {
 
     view.open();
     expect(view.shadow.querySelector(".ff-reader")?.hasAttribute("hidden")).toBe(false);
+    expect(view.shadow.querySelector(".ff-launcher")?.hasAttribute("hidden")).toBe(true);
     expect(view.shadow.querySelector(".ff-launcher")?.getAttribute("aria-expanded")).toBe("true");
 
     view.close();
     expect(view.shadow.querySelector(".ff-reader")?.hasAttribute("hidden")).toBe(true);
+    expect(view.shadow.querySelector(".ff-launcher")?.hasAttribute("hidden")).toBe(false);
     expect(view.shadow.querySelector(".ff-launcher")?.getAttribute("aria-expanded")).toBe("false");
   });
 
@@ -169,5 +171,11 @@ describe("on-page reading studio", () => {
     expect(PAGE_READER_STYLES).toContain(":host");
     expect(PAGE_READER_STYLES).toContain("prefers-color-scheme: dark");
     expect(PAGE_READER_STYLES).toContain("@media (max-width: 760px)");
+    expect(PAGE_READER_STYLES).toMatch(
+      /\.ff-reader__top-actions\s*\{[^}]*flex-wrap:\s*nowrap;/u,
+    );
+    expect(PAGE_READER_STYLES).toMatch(
+      /\.ff-reader__top-library\s*\{[^}]*width:\s*auto;/u,
+    );
   });
 });

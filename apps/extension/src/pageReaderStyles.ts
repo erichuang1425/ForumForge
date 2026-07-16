@@ -109,6 +109,10 @@ export const PAGE_READER_STYLES = String.raw`
     content: "";
   }
 
+  .ff-launcher[hidden] {
+    display: none;
+  }
+
   .ff-launcher:hover,
   .ff-launcher:focus-visible,
   .ff-launcher[aria-expanded="true"] {
@@ -260,7 +264,7 @@ export const PAGE_READER_STYLES = String.raw`
   .ff-reader__top-actions {
     display: flex;
     min-width: 0;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
     gap: 8px;
   }
@@ -828,6 +832,10 @@ export const PAGE_READER_STYLES = String.raw`
   .ff-reader__library {
     width: 100%;
     padding: 8px 12px;
+  }
+
+  .ff-reader__top-library {
+    width: auto;
   }
 
   button[disabled],

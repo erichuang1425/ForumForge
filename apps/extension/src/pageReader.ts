@@ -327,6 +327,7 @@ export function createPageReaderView(
     doc.documentElement.style.overflow = "hidden";
     doc.body.inert = true;
     reader.hidden = false;
+    launcher.hidden = true;
     launcher.setAttribute("aria-expanded", "true");
     launcher.setAttribute("aria-label", "Close ForumForge reader");
     close.focus();
@@ -336,6 +337,7 @@ export function createPageReaderView(
     if (!open) return;
     open = false;
     reader.hidden = true;
+    launcher.hidden = false;
     launcher.setAttribute("aria-expanded", "false");
     launcher.setAttribute("aria-label", "Open ForumForge reader");
     doc.documentElement.style.overflow = previousOverflow;

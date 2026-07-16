@@ -1,9 +1,11 @@
 import { access, readFile, readdir, stat } from "node:fs/promises";
 import { dirname, extname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { build as buildWithEsbuild } from "esbuild";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const failures = [];
+let adapterParserPromise;
 
 function fail(message) {
   failures.push(message);
@@ -21,6 +23,35 @@ async function filesUnder(directory, predicate = () => true) {
   }
   await visit(directory);
   return files;
+}
+
+async function pathExists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function loadAdapterParser() {
+  adapterParserPromise ??= (async () => {
+    const result = await buildWithEsbuild({
+      entryPoints: [join(root, "packages", "adapter-schema", "src", "index.ts")],
+      bundle: true,
+      format: "esm",
+      logLevel: "silent",
+      platform: "node",
+      target: "node22",
+      write: false,
+    });
+    const output = result.outputFiles[0];
+    if (output === undefined) throw new Error("adapter validator bundle produced no output");
+    const moduleUrl = `data:text/javascript;base64,${Buffer.from(output.contents).toString("base64")}`;
+    const module = await import(moduleUrl);
+    return module.parseAdapterJson;
+  })();
+  return adapterParserPromise;
 }
 
 async function checkManifestBoundary() {
@@ -49,6 +80,7 @@ async function checkNetworkBoundary() {
     join(root, "apps", "extension", "src"),
     join(root, "apps", "extension", "preview"),
     join(root, "packages", "core", "src"),
+    join(root, "packages", "adapter-schema", "src"),
     join(root, "packages", "parser", "src"),
     join(root, "packages", "storage", "src"),
   ];
@@ -73,6 +105,78 @@ async function checkNetworkBoundary() {
   }
 }
 
+async function checkAdapterSchemaBoundary() {
+  const packageRoot = join(root, "packages", "adapter-schema");
+  const sourceRoot = join(packageRoot, "src");
+  const schemaPath = join(packageRoot, "schema", "adapter-v1.schema.json");
+  const schema = JSON.parse(await readFile(schemaPath, "utf8"));
+  const forbiddenProperties = new Set([
+    "actions",
+    "code",
+    "expression",
+    "function",
+    "headers",
+    "module",
+    "observer",
+    "pagination",
+    "regex",
+    "remote",
+    "request",
+    "script",
+    "template",
+    "transform",
+    "url",
+  ]);
+
+  function inspectSchema(value, path = "$") {
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => inspectSchema(item, `${path}[${index}]`));
+      return;
+    }
+    if (typeof value !== "object" || value === null) return;
+    if (value.type === "object" && value.additionalProperties !== false) {
+      fail(`adapter schema object ${path} must set additionalProperties to false`);
+    }
+    if (typeof value.properties === "object" && value.properties !== null) {
+      for (const property of Object.keys(value.properties)) {
+        if (forbiddenProperties.has(property)) {
+          fail(`adapter schema exposes forbidden executable/network property '${property}' at ${path}`);
+        }
+      }
+    }
+    for (const [key, nested] of Object.entries(value)) inspectSchema(nested, `${path}.${key}`);
+  }
+  inspectSchema(schema);
+
+  if (schema.$schema !== "https://json-schema.org/draft/2020-12/schema") {
+    fail("adapter schema must remain explicit Draft 2020-12 JSON Schema");
+  }
+  if (schema.$id !== "urn:forumforge:adapter:1") {
+    fail("adapter schema ID or version changed without updating the repository boundary");
+  }
+
+  const forbiddenRuntime = [
+    { name: "Chrome API", pattern: /\bchrome\s*\./ },
+    { name: "browser extension API", pattern: /\bbrowser\s*\./ },
+    { name: "global document", pattern: /\bdocument\b/ },
+    { name: "global window", pattern: /\bwindow\b/ },
+    { name: "global location", pattern: /\blocation\b/ },
+    { name: "global navigator", pattern: /\bnavigator\b/ },
+    { name: "localStorage", pattern: /\blocalStorage\b/ },
+    { name: "sessionStorage", pattern: /\bsessionStorage\b/ },
+    { name: "IndexedDB", pattern: /\bindexedDB\b/ },
+    { name: "dynamic import", pattern: /\bimport\s*\(/ },
+  ];
+  for (const path of await filesUnder(sourceRoot, (file) => extname(file) === ".ts")) {
+    const source = await readFile(path, "utf8");
+    for (const rule of forbiddenRuntime) {
+      if (rule.pattern.test(source)) {
+        fail(`${relative(root, path)} uses ${rule.name}; adapter foundations must receive bounded data explicitly`);
+      }
+    }
+  }
+}
+
 async function checkPreviewBoundary() {
   const path = join(root, "apps", "extension", "preview", "index.html");
   const html = await readFile(path, "utf8");
@@ -86,14 +190,78 @@ async function checkPreviewBoundary() {
 }
 
 async function checkFixtures() {
-  const fixtureRoot = join(root, "packages", "parser", "test", "fixtures");
+  const fixtureRoots = [
+    join(root, "packages", "parser", "test", "fixtures"),
+    join(root, "packages", "adapter-schema", "test", "fixtures"),
+    join(root, "adapters"),
+    join(root, "examples"),
+  ];
   const activeElement = /<(?:script|iframe|frame|object|embed|applet)\b/i;
   const remoteResource =
     /<(?:img|script|iframe|link|source|audio|video)\b[^>]*(?:src|srcset|href)\s*=\s*["']?\s*https?:/i;
-  for (const path of await filesUnder(fixtureRoot, (file) => extname(file) === ".html")) {
-    const html = await readFile(path, "utf8");
-    if (activeElement.test(html)) fail(`${relative(root, path)} contains active embedded content`);
-    if (remoteResource.test(html)) fail(`${relative(root, path)} can load a remote resource`);
+  const forbiddenAdapterKeys = new Set([
+    "actions",
+    "code",
+    "expression",
+    "function",
+    "headers",
+    "module",
+    "observer",
+    "pagination",
+    "regex",
+    "remote",
+    "request",
+    "script",
+    "template",
+    "transform",
+    "url",
+  ]);
+
+  function inspectAdapterJson(value, path, jsonPath = "$") {
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => inspectAdapterJson(item, path, `${jsonPath}[${index}]`));
+      return;
+    }
+    if (typeof value !== "object" || value === null) return;
+    for (const [key, nested] of Object.entries(value)) {
+      if (forbiddenAdapterKeys.has(key)) {
+        fail(`${relative(root, path)} contains forbidden adapter key '${key}' at ${jsonPath}`);
+      }
+      inspectAdapterJson(nested, path, `${jsonPath}.${key}`);
+    }
+  }
+
+  for (const fixtureRoot of fixtureRoots) {
+    if (!(await pathExists(fixtureRoot))) continue;
+    for (const path of await filesUnder(fixtureRoot, (file) => (
+      extname(file) === ".html" ||
+      file.endsWith(".adapter.json")
+    ))) {
+      if (extname(path) === ".html") {
+        const html = await readFile(path, "utf8");
+        if (activeElement.test(html)) fail(`${relative(root, path)} contains active embedded content`);
+        if (remoteResource.test(html)) fail(`${relative(root, path)} can load a remote resource`);
+      } else {
+        const source = await readFile(path, "utf8");
+        let result;
+        try {
+          const parseAdapterJson = await loadAdapterParser();
+          result = parseAdapterJson(source);
+        } catch {
+          fail(`${relative(root, path)} could not run production adapter validation`);
+          continue;
+        }
+        if (!result.ok) {
+          const details = result.errors
+            .slice(0, 3)
+            .map((error) => `${error.path} (${error.code})`)
+            .join(", ");
+          fail(`${relative(root, path)} fails production adapter validation: ${details}`);
+          continue;
+        }
+        inspectAdapterJson(JSON.parse(source), path);
+      }
+    }
   }
 }
 
@@ -161,6 +329,7 @@ async function checkMarkdownLinks() {
 
 await checkManifestBoundary();
 await checkNetworkBoundary();
+await checkAdapterSchemaBoundary();
 await checkStorageBoundary();
 await checkFixtures();
 await checkPreviewBoundary();

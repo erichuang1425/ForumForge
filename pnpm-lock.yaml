@@ -36,6 +36,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/storage
 
+  packages/adapter-schema: {}
+
   packages/core: {}
 
   packages/parser:

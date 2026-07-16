@@ -58,6 +58,12 @@ will be shared with the reporter.
 - **Declarative adapters first:** the planned JSON adapter tier cannot execute
   arbitrary code. Any future code adapter requires explicit trust and review.
 
+The Phase 2 JSON boundary and its processing budgets are specified in the
+[declarative adapter threat model](docs/ADAPTER_THREAT_MODEL.md). Its isolated
+schema package rejects unsafe structure with bounded path-based errors, but it
+is not connected to the v0.1 extension runtime. Adapter files must pass through
+its production parser; the exported JSON Schema alone is not an acceptance gate.
+
 Automated tests and `pnpm repo:check` enforce several of these invariants.
 Changing an enforced boundary requires a documented product and threat-model
 decision, matching tests, and maintainer approval.

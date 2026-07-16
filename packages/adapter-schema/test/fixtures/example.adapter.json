@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "example-forum",
+  "name": "Example Forum",
+  "matches": [
+    {
+      "origin": "https://forum.example.test",
+      "pathname": "/threads/*"
+    }
+  ],
+  "detect": [
+    "h1.thread-title",
+    ".post[data-post-id]"
+  ],
+  "layout": "linear",
+  "thread": {
+    "title": {
+      "selector": "h1.thread-title",
+      "source": "text"
+    }
+  },
+  "posts": {
+    "selector": ".post[data-post-id]",
+    "fields": {
+      "id": {
+        "source": "attribute",
+        "attribute": "data-post-id"
+      },
+      "author": {
+        "selector": ".username",
+        "source": "text"
+      },
+      "content": {
+        "selector": ".post-body",
+        "source": "html"
+      },
+      "timestamp": {
+        "selector": "time",
+        "source": "attribute",
+        "attribute": "datetime"
+      },
+      "permalink": {
+        "selector": ".post-number > a",
+        "source": "attribute",
+        "attribute": "href"
+      }
+    }
+  }
+}

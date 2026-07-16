@@ -39,9 +39,11 @@ The core idea is simple:
 > Every forum is different, so ForumForge should be easy to adapt.
 
 The current source build includes dedicated extractors plus a generic fallback.
-Phase 2 plans a declarative JSON adapter tier so users and communities can add
-site support without changing extension internals. Advanced code adapters remain
-a future, explicitly reviewed trust tier.
+Phase 2 now has an isolated declarative JSON schema and validator foundation so
+users and communities can eventually add site support without changing
+extension internals. Matching, extraction, import/export, and extension
+integration remain planned. Advanced code adapters remain a future, explicitly
+reviewed trust tier.
 
 ---
 
@@ -238,31 +240,49 @@ Adapters define things like:
 
 ## Adapter types
 
-### 1. Planned JSON selector adapters
+### 1. JSON selector adapters
 
-The planned safest and simplest adapter type.
+The safest and simplest adapter tier. Its versioned data contract and bounded
+validator exist; matching, extraction, persistence, and product integration are
+still planned.
 
 Example:
 
 ```json
 {
+  "schemaVersion": 1,
   "id": "example-forum",
   "name": "Example Forum",
-  "match": ["https://forum.example.com/thread/*"],
-  "selectors": {
-    "threadTitle": "h1.thread-title",
-    "post": ".post",
-    "postId": "data-post-id",
-    "author": ".username",
-    "timestamp": "time",
-    "content": ".post-body",
-    "permalink": ".post-number a",
-    "nextPage": "a.next"
+  "matches": [
+    {
+      "origin": "https://forum.example.com",
+      "pathname": "/thread/*"
+    }
+  ],
+  "detect": ["h1.thread-title", ".post[data-post-id]"],
+  "layout": "linear",
+  "thread": {
+    "title": {
+      "selector": "h1.thread-title",
+      "source": "text"
+    }
   },
-  "features": {
-    "supportsNestedReplies": false,
-    "supportsScores": false,
-    "supportsRoles": true
+  "posts": {
+    "selector": ".post[data-post-id]",
+    "fields": {
+      "id": {
+        "source": "attribute",
+        "attribute": "data-post-id"
+      },
+      "author": {
+        "selector": ".username",
+        "source": "text"
+      },
+      "content": {
+        "selector": ".post-body",
+        "source": "html"
+      }
+    }
   }
 }
 ```
@@ -409,10 +429,10 @@ ForumForge should treat custom adapters carefully.
 
 Safe JSON adapters should support:
 
-* CSS selectors
-* attribute extraction
-* text cleanup rules
-* URL match patterns
+* a constrained, complexity-bounded selector grammar
+* destination-specific reviewed attribute extraction
+* text or sanitized-rich-HTML source selection
+* exact origins with bounded pathname globs
 
 They should not support:
 
@@ -450,8 +470,8 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 
 ### Phase 2 — Adapter ecosystem
 
-* [ ] JSON adapter format
-* [ ] Adapter validator
+* [x] Versioned JSON adapter format and threat model
+* [x] Bounded adapter validator with path-based errors
 * [ ] Adapter import/export
 * [ ] Adapter examples
 * [ ] phpBB adapter

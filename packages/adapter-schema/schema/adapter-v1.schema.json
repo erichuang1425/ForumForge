@@ -1,0 +1,389 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:forumforge:adapter:1",
+  "title": "ForumForge data-only adapter version 1",
+  "description": "A bounded declarative adapter for extracting the current forum thread without code or network actions.",
+  "$comment": "Structural interoperability metadata only. Security-sensitive consumers MUST accept adapters through parseAdapterJson(); schema-only acceptance is unsupported because canonical origins/paths, the complete selector grammar, normalized duplicates, and import budgets require runtime validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "name",
+    "matches",
+    "detect",
+    "thread",
+    "posts"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "matches": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/urlMatch"
+      }
+    },
+    "detect": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/selector"
+      }
+    },
+    "layout": {
+      "enum": [
+        "linear",
+        "article-comments",
+        "nested",
+        "ptt",
+        "imageboard",
+        "qa"
+      ]
+    },
+    "thread": {
+      "$ref": "#/$defs/threadRules"
+    },
+    "posts": {
+      "$ref": "#/$defs/postRules"
+    }
+  },
+  "$defs": {
+    "selector": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?!.*[,\\\\:(){}])[^\\u0000-\\u001f\\u007f]+$"
+    },
+    "attributeName": {
+      "type": "string",
+      "enum": [
+        "aria-label",
+        "data-author",
+        "data-id",
+        "data-parent",
+        "data-parent-id",
+        "data-post-id",
+        "data-time",
+        "data-timestamp",
+        "data-username",
+        "datetime",
+        "href",
+        "id",
+        "name",
+        "title"
+      ]
+    },
+    "urlMatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "pathname"],
+      "properties": {
+        "origin": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 255,
+          "description": "The validator requires URL().origin to equal this string and rejects credentials, paths, queries, and fragments.",
+          "pattern": "^https?://[^/?#\\s]+$"
+        },
+        "pathname": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^(?!.*\\*\\*)(?=(?:[^*]*\\*){0,8}[^*]*$)/[^?#\\\\\\u0000-\\u001f\\u007f]*$"
+        }
+      }
+    },
+    "textRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source"],
+      "properties": {
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "source": {
+          "const": "text"
+        }
+      }
+    },
+    "attributeRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "attribute"],
+      "properties": {
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "source": {
+          "const": "attribute"
+        },
+        "attribute": {
+          "$ref": "#/$defs/attributeName"
+        }
+      }
+    },
+    "htmlRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source"],
+      "properties": {
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "source": {
+          "const": "html"
+        }
+      }
+    },
+    "contentRead": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textRead"
+        },
+        {
+          "$ref": "#/$defs/htmlRead"
+        }
+      ]
+    },
+    "selectedTextRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "source"],
+      "properties": {
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "source": {
+          "const": "text"
+        }
+      }
+    },
+    "selectedAttributeRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "source", "attribute"],
+      "properties": {
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "source": {
+          "const": "attribute"
+        },
+        "attribute": {
+          "$ref": "#/$defs/attributeName"
+        }
+      }
+    },
+    "threadTitleAttributeRead": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/selectedAttributeRead"
+        },
+        {
+          "properties": {
+            "attribute": {
+              "enum": ["aria-label", "title"]
+            }
+          }
+        }
+      ]
+    },
+    "threadTitleRead": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/selectedTextRead"
+        },
+        {
+          "$ref": "#/$defs/threadTitleAttributeRead"
+        }
+      ]
+    },
+    "idAttributeRead": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/attributeRead"
+        },
+        {
+          "properties": {
+            "attribute": {
+              "enum": ["data-id", "data-post-id", "id", "name"]
+            }
+          }
+        }
+      ]
+    },
+    "authorAttributeRead": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/attributeRead"
+        },
+        {
+          "properties": {
+            "attribute": {
+              "enum": ["aria-label", "data-author", "data-username", "title"]
+            }
+          }
+        }
+      ]
+    },
+    "timestampAttributeRead": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/attributeRead"
+        },
+        {
+          "properties": {
+            "attribute": {
+              "enum": ["data-time", "data-timestamp", "datetime", "title"]
+            }
+          }
+        }
+      ]
+    },
+    "permalinkAttributeRead": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/attributeRead"
+        },
+        {
+          "properties": {
+            "attribute": {
+              "const": "href"
+            }
+          }
+        }
+      ]
+    },
+    "parentIdAttributeRead": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/attributeRead"
+        },
+        {
+          "properties": {
+            "attribute": {
+              "enum": ["data-parent", "data-parent-id"]
+            }
+          }
+        }
+      ]
+    },
+    "idRead": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textRead"
+        },
+        {
+          "$ref": "#/$defs/idAttributeRead"
+        }
+      ]
+    },
+    "authorRead": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textRead"
+        },
+        {
+          "$ref": "#/$defs/authorAttributeRead"
+        }
+      ]
+    },
+    "timestampRead": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textRead"
+        },
+        {
+          "$ref": "#/$defs/timestampAttributeRead"
+        }
+      ]
+    },
+    "permalinkRead": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textRead"
+        },
+        {
+          "$ref": "#/$defs/permalinkAttributeRead"
+        }
+      ]
+    },
+    "parentIdRead": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textRead"
+        },
+        {
+          "$ref": "#/$defs/parentIdAttributeRead"
+        }
+      ]
+    },
+    "threadRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/threadTitleRead"
+        }
+      }
+    },
+    "postFields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "author", "content"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/idRead"
+        },
+        "author": {
+          "$ref": "#/$defs/authorRead"
+        },
+        "content": {
+          "$ref": "#/$defs/contentRead"
+        },
+        "timestamp": {
+          "$ref": "#/$defs/timestampRead"
+        },
+        "permalink": {
+          "$ref": "#/$defs/permalinkRead"
+        },
+        "parentId": {
+          "$ref": "#/$defs/parentIdRead"
+        }
+      }
+    },
+    "postRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "fields"],
+      "properties": {
+        "selector": {
+          "$ref": "#/$defs/selector"
+        },
+        "fields": {
+          "$ref": "#/$defs/postFields"
+        }
+      }
+    }
+  }
+}

@@ -76,8 +76,8 @@ declarative adapter without modifying extension internals.
 The implementation epic is
 [#15](https://github.com/erichuang1425/ForumForge/issues/15).
 
-- [ ] Stabilize the JSON adapter schema and threat model
-- [ ] Implement schema validation with actionable errors
+- [x] Define the versioned JSON adapter schema, threat model, and hard budgets
+- [x] Implement bounded schema validation with actionable path-based errors
 - [ ] Add adapter matching, extraction, and generic fallback orchestration
 - [ ] Add safe local import/export
 - [ ] Publish minimal JSON and TypeScript examples

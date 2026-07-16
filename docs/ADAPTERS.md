@@ -9,10 +9,12 @@ This guide is the how-to. For the security model behind adapters, see
 **[../SECURITY.md](../SECURITY.md)**. For the product context, see
 **[../Initial Plan.md](../Initial%20Plan.md)**.
 
-> **Status:** The JSON/TypeScript adapter *formats* below are the planned design.
-> The runtime that loads and validates them is not built yet (see
-> **[../ROADMAP.md](../ROADMAP.md)**, Phase 2), and formats may evolve before the
-> first release. **Discourse, Hacker News, phpBB 3.3 stock prosilver, XenForo
+> **Status:** The versioned, data-only JSON v1 schema and bounded validator now
+> exist as an isolated Phase 2 foundation in
+> [`packages/adapter-schema`](../packages/adapter-schema). Matching, extraction,
+> persistence, import/export UI, and extension integration are not built yet (see
+> **[../ROADMAP.md](../ROADMAP.md)**, Phase 2). **Discourse, Hacker News, phpBB
+> 3.3 stock prosilver, XenForo
 > 2.3 default public threads, stock/classic vBulletin 4.x, Nairaland, PTT,
 > 4chan, Arca, DC Inside, FMKorea, and Stack Overflow have hand-written
 > extractors today** in [`packages/parser`](../packages/parser), not yet JSON or
@@ -37,7 +39,7 @@ This guide is the how-to. For the security model behind adapters, see
 Only reach for a TypeScript adapter when a JSON adapter genuinely cannot describe
 the page.
 
-## What every adapter must locate
+## Long-term adapter model
 
 | Concept            | Meaning                                              |
 | ------------------ | ---------------------------------------------------- |
@@ -52,54 +54,96 @@ the page.
 | moderator/admin    | role labels (mod, admin, staff)                      |
 | OP detection       | which posts are by the original poster               |
 
+Version 1 currently describes the title, repeating post container, author,
+body, timestamp, permalink, and optional parent ID. Pagination, roles, OP
+detection, reactions, and score parsing remain deferred capabilities rather
+than hidden conventions.
+
 ## JSON selector adapter
 
 The safest, simplest adapter. CSS selectors with a few extraction hints.
 
 ```json
 {
+  "schemaVersion": 1,
   "id": "example-forum",
   "name": "Example Forum",
-  "match": ["https://forum.example.com/thread/*"],
-  "selectors": {
-    "threadTitle": "h1.thread-title",
-    "post": ".post",
-    "postId": "data-post-id",
-    "author": ".username",
-    "timestamp": "time",
-    "content": ".post-body",
-    "permalink": ".post-number a",
-    "nextPage": "a.next"
+  "matches": [
+    {
+      "origin": "https://forum.example.com",
+      "pathname": "/thread/*"
+    }
+  ],
+  "detect": ["h1.thread-title", ".post[data-post-id]"],
+  "layout": "linear",
+  "thread": {
+    "title": {
+      "selector": "h1.thread-title",
+      "source": "text"
+    }
   },
-  "features": {
-    "supportsNestedReplies": false,
-    "supportsScores": false,
-    "supportsRoles": true
+  "posts": {
+    "selector": ".post[data-post-id]",
+    "fields": {
+      "id": {
+        "source": "attribute",
+        "attribute": "data-post-id"
+      },
+      "author": {
+        "selector": ".username",
+        "source": "text"
+      },
+      "timestamp": {
+        "selector": "time",
+        "source": "attribute",
+        "attribute": "datetime"
+      },
+      "content": {
+        "selector": ".post-body",
+        "source": "html"
+      },
+      "permalink": {
+        "selector": ".post-number a",
+        "source": "attribute",
+        "attribute": "href"
+      }
+    }
   }
 }
 ```
 
 Field reference:
 
+- **`schemaVersion`** — the exact data contract; version 1 is the only accepted
+  value.
 - **`id`** — unique, stable, kebab-case identifier.
 - **`name`** — human-readable forum name.
-- **`match`** — one or more URL match patterns (`*` wildcards). The adapter is only
-  considered on pages whose URL matches.
-- **`selectors.threadTitle`** — element containing the thread title.
-- **`selectors.post`** — selector for the repeating post container. Everything below
-  is resolved *within* each matched post.
-- **`selectors.postId`** — an **attribute name** on the post element (e.g.
-  `data-post-id`) used as the post's stable id.
-- **`selectors.author`** — element containing the author's name.
-- **`selectors.timestamp`** — element containing the post time (often a `<time>`).
-- **`selectors.content`** — element containing the post body.
-- **`selectors.permalink`** — link to the individual post.
-- **`selectors.nextPage`** — link/button to the next page, for paginated threads.
-- **`features`** — capability hints so the UI knows what to show
-  (`supportsNestedReplies`, `supportsScores`, `supportsRoles`, …).
+- **`matches`** — one or more exact HTTP(S) origins with bounded pathname globs.
+- **`detect`** — a small list of selectors that must all exist before extraction.
+- **`layout`** — an optional closed reader layout; missing values use `linear`.
+- **`thread.title`** — a selected text or reviewed attribute read for the thread
+  title; its selector is required.
+- **`posts.selector`** — the repeating post container. Post field selectors are
+  resolved only within each matched post.
+- **`posts.fields`** — required `id`, `author`, and `content` reads, with optional
+  `timestamp`, `permalink`, and `parentId` reads.
+- **`source`** — `text`, `attribute`, or `html`; `attribute` also requires a
+  destination-specific reviewed attribute name, and `html` is accepted only
+  for post content.
+
+Selectors use a constrained version 1 grammar rather than arbitrary CSS:
+type/class/ID selectors, reviewed attributes, and descendant or child
+combinators. Lists, escapes, pseudo-selectors, sibling combinators, and
+universal selectors fail validation with a path to the affected field.
+
+Use `parseAdapterJson()` for every imported file. The exported JSON Schema is
+useful for editor hints and structural interoperability, but schema-only
+acceptance is not a security boundary and is unsupported.
 
 JSON adapters are **declarative only**. They cannot run arbitrary JavaScript, call
-`eval`, make network requests, or track across sites.
+`eval`, make network requests, crawl pagination, mutate the DOM, or track across
+sites. The exact limits and failure behavior are in the
+[adapter threat model](ADAPTER_THREAT_MODEL.md).
 
 ## The post model
 

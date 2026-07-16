@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ForumForge visual preview</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #e8e5dc;
+        color: #24221e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background:
+          repeating-linear-gradient(0deg, rgb(39 35 28 / 0.025) 0 1px, transparent 1px 4px),
+          #e8e5dc;
+      }
+
+      .preview-bar {
+        display: grid;
+        gap: 10px;
+        padding: 12px 18px;
+        border-bottom: 1px solid #777166;
+        background: #292721;
+        color: #fffdf5;
+      }
+
+      .preview-bar__copy {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        align-items: baseline;
+      }
+
+      .preview-bar strong {
+        font-size: 14px;
+      }
+
+      .preview-bar p {
+        margin: 0;
+        color: #d9d4c9;
+        font-size: 12px;
+      }
+
+      .preview-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .preview-links a,
+      .preview-state {
+        padding: 5px 8px;
+        border: 1px solid #706b61;
+        color: #fffdf5;
+        font-size: 11px;
+        text-decoration: none;
+      }
+
+      .preview-links a[aria-current="page"],
+      .preview-links a:hover,
+      .preview-links a:focus-visible,
+      .preview-state:hover,
+      .preview-state:focus-visible {
+        border-color: #f4a04b;
+        background: #49341e;
+      }
+
+      .legacy-shell {
+        width: min(920px, calc(100% - 28px));
+        margin: 18px auto 72px;
+        border: 1px solid #8f897d;
+        background: #f7f4ec;
+        box-shadow: 0 2px 7px rgb(43 39 31 / 0.15);
+      }
+
+      .legacy-shell__header {
+        padding: 12px 14px;
+        border-bottom: 4px solid #715f3c;
+        background: #d5c89f;
+      }
+
+      .legacy-shell__header p,
+      .legacy-shell__header h1 {
+        margin: 0;
+      }
+
+      .legacy-shell__header p {
+        margin-bottom: 5px;
+        color: #635b4e;
+        font-size: 11px;
+      }
+
+      .legacy-shell__header h1 {
+        font-size: 18px;
+      }
+
+      .legacy-post {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        min-height: 96px;
+        border-bottom: 1px solid #c4beb2;
+      }
+
+      .legacy-post:last-child {
+        border-bottom: 0;
+      }
+
+      .legacy-post p {
+        margin: 0;
+        padding: 13px;
+        font: 13px/1.45 Verdana, Arial, sans-serif;
+      }
+
+      .legacy-post__meta {
+        border-right: 1px solid #c4beb2;
+        background: #ebe5d8;
+        color: #514b40;
+        font-size: 11px !important;
+      }
+
+      @media (max-width: 620px) {
+        .legacy-post {
+          grid-template-columns: 1fr;
+        }
+
+        .legacy-post__meta {
+          border-right: 0;
+          border-bottom: 1px solid #d4cec2;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="preview-bar">
+      <div class="preview-bar__copy">
+        <strong data-preview-label>ForumForge visual preview</strong>
+        <p data-preview-description>Offline synthetic discussion</p>
+        <a class="preview-state" data-preview-state-link href="?state=launcher">Inspect launcher</a>
+      </div>
+      <nav class="preview-links" data-preview-stories aria-label="Preview stories"></nav>
+    </header>
+    <main class="legacy-shell">
+      <header class="legacy-shell__header">
+        <p data-forum-source>forum.example</p>
+        <h1 data-forum-title>Synthetic forum thread</h1>
+      </header>
+      <section data-forum-posts aria-label="Original forum posts"></section>
+    </main>
+    <script src="./preview.js"></script>
+  </body>
+</html>
+

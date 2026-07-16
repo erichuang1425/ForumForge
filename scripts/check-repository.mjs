@@ -47,6 +47,7 @@ async function checkManifestBoundary() {
 async function checkNetworkBoundary() {
   const sourceRoots = [
     join(root, "apps", "extension", "src"),
+    join(root, "apps", "extension", "preview"),
     join(root, "packages", "core", "src"),
     join(root, "packages", "parser", "src"),
     join(root, "packages", "storage", "src"),
@@ -70,6 +71,18 @@ async function checkNetworkBoundary() {
       }
     }
   }
+}
+
+async function checkPreviewBoundary() {
+  const path = join(root, "apps", "extension", "preview", "index.html");
+  const html = await readFile(path, "utf8");
+  const remoteResource =
+    /<(?:img|script|iframe|link|source|audio|video)\b[^>]*(?:src|srcset|href)\s*=\s*["']?\s*(?:https?:)?\/\//i;
+  const inlineHandler = /\son[a-z]+\s*=/i;
+  const activeEmbed = /<(?:iframe|frame|object|embed|applet)\b/i;
+  if (remoteResource.test(html)) fail("reader preview can load a remote resource");
+  if (inlineHandler.test(html)) fail("reader preview must not use inline event handlers");
+  if (activeEmbed.test(html)) fail("reader preview must not contain active embeds");
 }
 
 async function checkFixtures() {
@@ -150,6 +163,7 @@ await checkManifestBoundary();
 await checkNetworkBoundary();
 await checkStorageBoundary();
 await checkFixtures();
+await checkPreviewBoundary();
 await checkMarkdownLinks();
 
 if (failures.length > 0) {

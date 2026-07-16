@@ -132,6 +132,27 @@ From the repo root:
   messaging, read history, saved posts, user notes, Markdown export, and the
   chrome.storage backend).
 
+### Review the reader layouts offline
+
+The deterministic visual gallery mounts the real `createPageReaderView`
+component around small synthetic stories. It covers all six layouts and the
+reviewed Nairaland, Hacker News, PTT, 4chan, Arca, DC Inside, FMKorea, and Stack
+Overflow renderer variants without contacting those sites.
+
+```bash
+pnpm preview:build
+pnpm preview:serve
+```
+
+Open `http://127.0.0.1:47831/`. The story links preserve either the open-reader
+or launcher-only state; `?story=stack-overflow&state=open&focus=accepted-answer`
+opens the Q&A story at its accepted-answer treatment. Generated files stay
+under ignored `tmp/reader-preview/`, and the preview is excluded from the
+extension package.
+
+This gallery is deterministic visual-development evidence, not packaged
+extension, live-site, permission, persistence, or compatibility evidence.
+
 ### Load it in a browser
 
 1. `pnpm --filter @forumforge/extension build`

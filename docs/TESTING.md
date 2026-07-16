@@ -49,6 +49,27 @@ pnpm package:extension
 This creates a deterministic, source-map-free ZIP and SHA-256 file in
 `artifacts/`. Test that ZIP after extracting it to a clean directory.
 
+## Local visual preview
+
+For repeatable layout review before packaging:
+
+```bash
+pnpm preview:build
+pnpm preview:serve
+```
+
+The loopback-only page at `http://127.0.0.1:47831/` uses the real on-page reader
+with bounded synthetic stories for eight reviewed site renderers and all six
+discussion layouts. It writes no extension storage, loads no remote assets, and
+is kept under ignored `tmp/reader-preview/`. The repository checker scans its
+TypeScript for prohibited network/code-execution APIs and its HTML for remote
+resources, active embeds, and inline handlers.
+
+Record preview findings as component-level visual evidence only. A preview pass
+does not satisfy any exact-ZIP, extension installation, active-tab injection,
+live-site compatibility, Chrome persistence, network-panel, zoom, or assistive-
+technology row below.
+
 ## Manual browser matrix
 
 Use Chrome stable 116 or newer. Record the browser version, operating system,

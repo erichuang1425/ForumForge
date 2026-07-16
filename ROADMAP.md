@@ -21,7 +21,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] Add an adapter-proven semantic contract and discussion-aware immersive
       layouts for linear, article/comment, nested, PTT, imageboard, and Q&A
       threads, with deterministic component tests
-- [ ] Build and inspect the deterministic six-layout visual preview gallery
+- [x] Build and inspect a deterministic offline visual gallery using the real
+      reader component across all six layouts and eight reviewed target sites
 - [ ] Repeat launcher, archetype, CJK, reduced-motion, narrow-panel, and 200%
       zoom checks against the exact candidate artifact in isolated Chrome
 - [x] OP/staff highlighting

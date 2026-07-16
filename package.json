@@ -14,6 +14,8 @@
     "test:watch": "vitest",
     "typecheck": "pnpm -r typecheck",
     "build": "pnpm -r build",
+    "preview:build": "node apps/extension/preview/build.mjs",
+    "preview:serve": "node apps/extension/preview/serve.mjs",
     "icons:generate": "node scripts/generate-icons.mjs",
     "icons:check": "node scripts/generate-icons.mjs --check",
     "repo:check": "node scripts/check-repository.mjs && node scripts/generate-icons.mjs --check && node scripts/version.mjs check",

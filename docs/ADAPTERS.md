@@ -12,22 +12,17 @@ This guide is the how-to. For the security model behind adapters, see
 > **Status:** The JSON/TypeScript adapter *formats* below are the planned design.
 > The runtime that loads and validates them is not built yet (see
 > **[../ROADMAP.md](../ROADMAP.md)**, Phase 2), and formats may evolve before the
-> first release. **Discourse, Hacker News, phpBB 3.3 stock prosilver topic
-> pages, XenForo 2.3 default public thread views, and stock/classic vBulletin
-> 4.x showthread pages have hand-written extractors today** in
-> [`packages/parser`](../packages/parser), not yet JSON or `ForumForgeAdapter`
-> adapters. The phpBB claim is limited to synthetic fixture evidence; live-site,
-> packaged-browser, custom-theme, and other-version verification remains
-> pending. XenForo evidence is limited to synthetic offline fixture tests and a
-> 2026-07-16 read-only structural comparison against normal, question, and
-> article thread pages on the official `xenforo.com/community` forum; the
-> extractor was not run there. Packaged-extension and live extraction success,
-> custom themes, localized or custom roles, non-2.3 versions, pagination, and
-> lazy loading remain pending. vBulletin evidence is limited to synthetic
-> offline 4.2.5 fixture tests for legacy/EOL compatibility. OP is not inferred;
-> branding-free installs, customized templates, localized roles, other major
-> versions, and packaged-extension or live browser behavior remain pending.
-> Migration to declarative adapters happens once the Phase 2 runtime exists.
+> first release. **Discourse, Hacker News, phpBB 3.3 stock prosilver, XenForo
+> 2.3 default public threads, stock/classic vBulletin 4.x, Nairaland, PTT,
+> 4chan, Arca, DC Inside, FMKorea, and Stack Overflow have hand-written
+> extractors today** in [`packages/parser`](../packages/parser), not yet JSON or
+> `ForumForgeAdapter` adapters. Each has deterministic offline fixture evidence,
+> but live-site, theme/version, pagination, lazy-content, and exact-package
+> browser coverage varies. The authoritative evidence and limits are recorded
+> in [COMPATIBILITY.md](COMPATIBILITY.md). F95Zone is not claimed: it still needs
+> a sanitized representative fixture and real-browser evidence rather than an
+> assumed XenForo match. Migration to declarative adapters happens once the
+> Phase 2 runtime exists.
 
 ## Choose the safest tier that works
 

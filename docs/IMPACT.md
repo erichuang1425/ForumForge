@@ -10,7 +10,7 @@ instead of estimates.
 | --- | --- | --- |
 | Tagged releases | 0 | GitHub Releases/tags |
 | Published extension installs | 0; not published | Browser-store dashboard after launch |
-| Supported dedicated forum engines/sites | 2 extractors in source | Discourse and Hacker News fixture suites |
+| Dedicated extraction coverage | 12 fixture-backed extractors in source; exact-package browser claims remain pending | [Compatibility matrix](COMPATIBILITY.md) and deterministic fixture suites |
 | External pilot users | Not measured | Future pilot issue/check-ins |
 | External contributors | Not yet recorded | GitHub contributors/merged PRs |
 | Community issues closed | Not yet measured | GitHub issue search |

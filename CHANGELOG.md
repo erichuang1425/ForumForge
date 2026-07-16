@@ -5,7 +5,12 @@ All notable user-visible changes are recorded here. The project follows
 
 ## [Unreleased]
 
-No changes yet.
+### Added
+
+- An isolated Phase 2 declarative-adapter foundation with a versioned data-only
+  schema, bounded hostile-input validation, deterministic matching, and bounded
+  offline extraction. It is not connected to the extension, storage, imports,
+  or the existing generic parser yet.
 
 ## [0.1.0] - 2026-07-16
 

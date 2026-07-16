@@ -74,7 +74,7 @@ an adapter deserves inclusion in a bundled or public registry.
 ## Required budgets
 
 The schema bounds IDs, names, match arrays, detector arrays, paths, attributes,
-and selectors. The validator and future runtime must also enforce these limits:
+and selectors. Validation, matching, and extraction enforce these limits:
 
 | Resource | Limit |
 | --- | ---: |
@@ -96,6 +96,12 @@ and selectors. The validator and future runtime must also enforce these limits:
 | Validation errors returned | 64, including truncation notice |
 | Properties/items in structured input | 512 |
 | Extracted posts from one loaded document | 500 |
+| Selector queries during one extraction | 3,002 |
+| Nodes selected during one extraction | 3,501 |
+| Field reads during one extraction | 3,001 |
+| Descendant DOM nodes walked during one extraction | 50,000 |
+| HTML attributes serialized during one extraction | 50,000 |
+| Raw text/attribute/tag code units read during one extraction | 16,777,216 |
 | Thread title | 16,384 code units |
 | Post ID / parent ID | 512 code units each |
 | Author | 4,096 code units |
@@ -113,7 +119,8 @@ parentheses are excluded. Runtime selector calls must be wrapped for syntax
 errors, execute only against the supplied current document or post container,
 stop consuming results at both the post and aggregate-content budgets, and
 never trigger a live-site request. These bounds limit ForumForge's work;
-browser matching still depends on the size of the page the user opened.
+native selector evaluation still depends on the size of the page the user
+opened, so the runtime additionally caps calls and returned-node processing.
 
 ## Deterministic matching and precedence
 
@@ -142,11 +149,56 @@ budget before any detector queries run.
 
 Detection runs in that order. Every detector for a candidate must match; a
 syntax error or missing detector rejects that candidate and continues to the
-next ranked candidate. Only after all candidates fail does orchestration use
-the generic parser; the current foundation returns that fallback decision but
-does not yet invoke a parser. The same input registry, URL, and page root must
-always select the same adapter regardless of insertion order. A tie never
-combines selectors from multiple adapters.
+next ranked candidate. The current foundation returns a generic decision after
+selection or extraction failure but does not invoke the existing generic parser,
+whose work is not yet governed by these budgets. Later orchestration must share
+equivalent limits; budget exhaustion must never launch an unbounded second pass.
+The same input registry, URL, and page root must always select the same adapter
+regardless of insertion order. A tie never combines selectors from multiple
+adapters.
+
+## Bounded extraction
+
+`extractThreadWithAdapter()` accepts only validator-produced values and rechecks
+the exact page URL plus every detector against the supplied page root. It then
+returns either one complete adapter result or a stable generic decision. It
+never skips a malformed required post, returns a truncated post list, combines
+adapter and generic output, mutates the page, or invokes a parser fallback.
+
+Extraction does not materialize a post selector's complete result or an
+element's aggregate `textContent` or `innerHTML`. Post discovery walks at most
+50,000 descendants and applies `Element.matches()` one node at a time, stopping
+on the 501st match without indexing the rest of the document. Content walkers
+cap child collections before indexing them, check each `CharacterData.length`
+before reading text in 4,096-code-unit chunks, and serialize HTML through a
+read-only bounded walker. Attribute collections are capped before indexing.
+Comments and non-content node types are omitted. The serializer performs no DOM
+writes and does not attach, preload, or render captured markup.
+
+The result marks serialized rich HTML as `untrusted-page-html`. Event handlers,
+unsafe links, remote resources, and active elements may still be present as
+inert strings; extension integration must pass that field through the existing
+build-up sanitizer before rendering. The extractor itself does not weaken or
+duplicate the sanitizer boundary.
+
+Post IDs must be present, non-empty, bounded, control-free, and unique after
+trimming. A violation fails the whole adapter; IDs are never generated,
+suffixed, or truncated. A missing author target fails, while a present empty
+author becomes `Unknown` to match the core contract. Empty post content is
+allowed. Missing optional values are omitted. Parent IDs are retained only when
+they name a unique preceding loaded post; unknown, self, forward, and therefore
+cyclic edges flatten safely.
+
+Permalinks are read only from the declared text or `getAttribute()` source and
+resolved against the explicitly supplied page URL, never page-controlled base
+state or an element URL property. Only bounded, credential-free, same-origin
+HTTP(S) results survive; malformed, cross-origin, and unsafe optional values are
+omitted. HTML-contained URLs remain hostile sanitizer input.
+
+Version 1 has no per-post rules for question/answer kinds, PTT reactions,
+scores, accepted answers, or other semantic roles. Extraction therefore emits
+`linear` unless validated preceding parent edges support `nested`; it never
+infers semantics from post position or the adapter's declared site layout.
 
 ## Validation and failure behavior
 
@@ -164,9 +216,10 @@ hostile files must use `parseAdapterJson()` so executable proxy traps never
 enter the boundary.
 
 Validation, matching, and extraction fail without mutating the installed
-adapter set. Storage writes commit a complete validated record atomically; a
-failed update leaves the previous valid record intact. Future schema migrations
-must be deterministic, idempotent, marker-last, and reject newer versions.
+adapter set or returning partial extracted posts. Storage writes commit a
+complete validated record atomically; a failed update leaves the previous valid
+record intact. Future schema migrations must be deterministic, idempotent,
+marker-last, and reject newer versions.
 
 ## Test requirements
 

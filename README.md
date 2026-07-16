@@ -76,10 +76,11 @@ library holds compact reading, exports, and privacy controls.
 
 ## Planned, not shipped
 
-- User-authored JSON-adapter extraction, persistence, import/export, an adapter
-  SDK, and declarative migration of the bundled hand-written extractors. The
-  isolated schema, validator, and deterministic matcher foundation exists but
-  is not connected to the extension.
+- User-authored JSON-adapter persistence, import/export, an adapter SDK,
+  generic-parser orchestration, extension integration, and declarative
+  migration of the bundled hand-written extractors. The isolated schema,
+  validator, deterministic matcher, and bounded extractor foundation exists
+  but is not connected to the extension.
 - Wider phpBB and vBulletin version/theme coverage.
 - Adapter Studio, thread maps, best-answer/unanswered detection, and an adapter
   registry.
@@ -146,8 +147,9 @@ evidence standard.
 Forums use many different DOM structures. An adapter teaches ForumForge how to
 find a thread title, post containers, authors, timestamps, bodies, permalinks,
 nesting, and roles. Dedicated extractors currently live in
-[`packages/parser`](packages/parser); the declarative JSON adapter runtime is
-the next product phase.
+[`packages/parser`](packages/parser). The declarative JSON adapter foundation is
+isolated from the extension until persistence, bounded generic orchestration,
+and product integration are complete.
 
 Adapter work must be deterministic and respectful: tests use small, anonymized,
 offline-safe HTML fixtures rather than repeated live-site requests. See
@@ -158,7 +160,7 @@ offline-safe HTML fixtures rather than repeated live-site requests. See
 
 ```text
 apps/extension     Manifest V3 extension, on-page reader, and local-library panel
-packages/adapter-schema  Data-only adapter schema, validator, and matcher
+packages/adapter-schema  Data-only adapter validation, matching, and extraction
 packages/core      Shared ForumForgePost model and helpers
 packages/parser    Generic and dedicated forum/site extraction
 packages/storage   Local-first storage contracts

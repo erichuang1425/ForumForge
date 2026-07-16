@@ -43,6 +43,10 @@
         "selector": ".post-number > a",
         "source": "attribute",
         "attribute": "href"
+      },
+      "parentId": {
+        "source": "attribute",
+        "attribute": "data-parent-id"
       }
     }
   }

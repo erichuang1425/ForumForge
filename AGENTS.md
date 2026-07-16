@@ -14,7 +14,8 @@ Keep it short, factual, and updated when the repository changes.
 ## Repository map
 
 - `apps/extension`: Manifest V3 extension, side panel, browser storage, and UI.
-- `packages/adapter-schema`: data-only adapter contracts, validator, and matcher.
+- `packages/adapter-schema`: data-only adapter contracts, validation, matching,
+  and bounded extraction.
 - `packages/core`: shared post model and pure helpers.
 - `packages/parser`: generic, Discourse, and Hacker News extraction.
 - `packages/storage`: local-first storage contracts and implementations.

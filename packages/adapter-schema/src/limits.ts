@@ -15,6 +15,12 @@ export const ADAPTER_VALIDATION_LIMITS = {
 
 export const ADAPTER_EXTRACTION_LIMITS = {
   posts: 500,
+  selectorQueries: 3_002,
+  selectedNodes: 3_501,
+  fieldReads: 3_001,
+  domNodes: 50_000,
+  htmlAttributes: 50_000,
+  rawCodeUnits: 16_777_216,
   threadTitleCodeUnits: 16_384,
   postIdCodeUnits: 512,
   authorCodeUnits: 4_096,

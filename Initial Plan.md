@@ -39,11 +39,12 @@ The core idea is simple:
 > Every forum is different, so ForumForge should be easy to adapt.
 
 The current source build includes dedicated extractors plus a generic fallback.
-Phase 2 now has an isolated declarative JSON schema and validator foundation so
-users and communities can eventually add site support without changing
-extension internals. Matching, extraction, import/export, and extension
-integration remain planned. Advanced code adapters remain a future, explicitly
-reviewed trust tier.
+Phase 2 now has an isolated declarative JSON schema, validator, deterministic
+matcher, and bounded extractor foundation so users and communities can
+eventually add site support without changing extension internals. Persistence,
+import/export, generic-parser orchestration, and extension integration remain
+planned. Advanced code adapters remain a future, explicitly reviewed trust
+tier.
 
 ---
 
@@ -242,9 +243,10 @@ Adapters define things like:
 
 ### 1. JSON selector adapters
 
-The safest and simplest adapter tier. Its versioned data contract and bounded
-validator exist; matching, extraction, persistence, and product integration are
-still planned.
+The safest and simplest adapter tier. Its versioned data contract, bounded
+validator, deterministic matcher, and bounded extractor exist as an isolated
+foundation; persistence, generic-parser orchestration, and product integration
+are still planned.
 
 Example:
 
@@ -473,6 +475,7 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 * [x] Versioned JSON adapter format and threat model
 * [x] Bounded adapter validator with path-based errors
 * [x] Deterministic URL/detector matcher with safe generic fallback
+* [x] Bounded data-only extractor with offline synthetic coverage
 * [ ] Adapter import/export
 * [ ] Adapter examples
 * [ ] phpBB adapter

@@ -72,7 +72,10 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > not relabel the generic XenForo fixture as F95Zone evidence; a maintainer with
 > access should contribute a small sanitized harmless-thread fixture first.
 > Phase 2 extends the same pattern to contributor-made declarative adapters;
-> Phase 5 adds registry-wide quality reporting.
+> `packages/adapter-schema/test/fixtures` now contains one small, fully
+> synthetic adapter-and-thread pair for the isolated bounded extractor. It is
+> runtime-contract evidence, not evidence for any public site. Phase 5 adds
+> registry-wide quality reporting.
 
 ## What makes a good fixture
 

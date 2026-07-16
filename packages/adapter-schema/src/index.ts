@@ -5,6 +5,13 @@ export {
   ADAPTER_VALIDATION_LIMITS,
 } from "./limits";
 export {
+  extractThreadWithAdapter,
+  type AdapterExtractedPostV1,
+  type AdapterExtractedThreadV1,
+  type AdapterExtractionFallbackReason,
+  type AdapterExtractionResult,
+} from "./extract";
+export {
   matchesPathnameGlob,
   selectAdapterForPage,
   type AdapterDetectionRoot,

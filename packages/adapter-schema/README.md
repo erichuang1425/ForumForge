@@ -1,8 +1,8 @@
 # `@forumforge/adapter-schema`
 
 This private workspace package defines ForumForge's versioned, data-only JSON
-adapter contract and bounded runtime validator. It is a Phase 2 foundation and
-is not imported by the extension yet.
+adapter contract, bounded runtime validator, deterministic matcher, and bounded
+extractor. It is a Phase 2 foundation and is not imported by the extension yet.
 
 `parseAdapterJson()` is the authoritative entry point for hostile adapter files:
 it enforces raw byte, nesting, duplicate-key, structure, and semantic limits.
@@ -32,6 +32,19 @@ Bundled provenance is represented by a package-owned opaque catalog, so local
 data cannot claim that tier. Selection also has an aggregate URL-match work
 budget, examines at most 16 URL candidates, and makes at most 64 selector
 queries. It does not extract, combine selectors, or invoke the generic parser.
+
+`extractThreadWithAdapter()` rechecks a validated adapter against the supplied
+page URL and root, then reads one complete thread under independent query,
+selected-node, field-read, DOM-node, attribute, raw-input, and retained-output
+budgets. Post discovery walks descendants lazily with `Element.matches()` and
+stops on the 501st match without materializing the remainder. It never calls
+native `textContent` or `innerHTML`: text is read in bounded `CharacterData`
+chunks, while rich HTML is produced by a bounded, read-only serializer and
+returned with the explicit
+`untrusted-page-html` marker. The extractor retains only same-origin HTTP(S)
+permalinks, requires unique non-empty IDs, and never returns partial posts or
+invokes the current generic parser. Semantic layouts that version 1 cannot map
+degrade to `linear`; validated preceding parent edges can retain `nested`.
 
 See [the adapter threat model](../../docs/ADAPTER_THREAT_MODEL.md) before
 changing this package. Adding a capability requires a schema-version decision,

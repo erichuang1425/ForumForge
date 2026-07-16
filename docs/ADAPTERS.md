@@ -12,8 +12,9 @@ This guide is the how-to. For the security model behind adapters, see
 > **Status:** The versioned, data-only JSON v1 schema and bounded validator now
 > exist as an isolated Phase 2 foundation in
 > [`packages/adapter-schema`](../packages/adapter-schema). Deterministic URL and
-> detector selection also exists in that isolated package. Extraction,
-> persistence, import/export UI, and extension integration are not built yet (see
+> detector selection plus bounded data-only extraction also exist in that
+> isolated package. Persistence, bounded generic-parser orchestration,
+> import/export UI, and extension integration are not built yet (see
 > **[../ROADMAP.md](../ROADMAP.md)**, Phase 2). **Discourse, Hacker News, phpBB
 > 3.3 stock prosilver, XenForo
 > 2.3 default public threads, stock/classic vBulletin 4.x, Nairaland, PTT,
@@ -150,6 +151,20 @@ decide. A failed detector continues to the next candidate; exhausted budgets or
 no qualifying candidate return an explicit generic fallback. Bundled priority
 comes from a package-owned opaque catalog; imported data cannot label itself as
 bundled.
+
+The isolated extractor rechecks that match and detector evidence against the
+same supplied page root. It returns either a complete thread or a stable generic
+decision; it never merges partial adapter output with the current generic
+parser. Missing or duplicate identities, query failures, and exhausted budgets
+fail the whole adapter. Unsafe optional permalinks are omitted, and only
+same-origin HTTP(S) permalinks resolved against the explicitly supplied page URL
+are retained. Raw post HTML is marked `untrusted-page-html` and remains subject
+to the established sanitizer when extension integration is built.
+
+Version 1 cannot map question/answer kinds, reactions, scores, accepted answers,
+or other per-post semantics. The isolated extractor therefore uses `linear`
+presentation unless validated preceding parent IDs prove a `nested` structure;
+it never guesses semantic roles from DOM order or a declared site layout.
 
 JSON adapters are **declarative only**. They cannot run arbitrary JavaScript, call
 `eval`, make network requests, crawl pagination, mutate the DOM, or track across

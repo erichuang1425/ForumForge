@@ -134,7 +134,7 @@ describe("on-page reading studio", () => {
     expect(closeFocus).toHaveBeenCalledOnce();
   });
 
-  it("reframes the thread as a publication-like conversation without trusting page HTML", () => {
+  it("reframes the thread as a discussion-aware conversation without trusting page HTML", () => {
     const view = createPageReaderView(fixtureDocument(), thread, {
       sourceUrl: "https://forum.example/threads/cameras.42/",
       newPostIds: new Set(["102"]),

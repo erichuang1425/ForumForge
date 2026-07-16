@@ -17,7 +17,7 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] MV3 shell, on-demand content script, compact page launcher, immersive
       reader, and local-library side panel
 - [x] Core post model, generic parser, and local storage seam
-- [x] Publication-like reading mode and allowlist HTML sanitizer
+- [x] Discussion-aware reading mode and allowlist HTML sanitizer
 - [x] Add an adapter-proven semantic contract and discussion-aware immersive
       layouts for linear, article/comment, nested, PTT, imageboard, and Q&A
       threads, with deterministic component tests

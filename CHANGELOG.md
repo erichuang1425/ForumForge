@@ -24,7 +24,7 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   rich content on the established sanitizer path.
 - Manifest V3 extension shell with an on-demand content script, compact
   on-page launcher, immersive reader, and secondary local-library side panel.
-- Publication-like reading mode with allowlist sanitization of untrusted forum
+- Discussion-aware reading mode with allowlist sanitization of untrusted forum
   HTML.
 - OP/staff highlighting, local read history, saved posts, private author notes,
   and Markdown export.

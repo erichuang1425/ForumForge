@@ -47,6 +47,13 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   comments, media-only placeholders, and false-positive rejection. A
   2026-07-16 read-only command-line extraction succeeded on one public article;
   packaged-browser behavior remains unverified.
+- A narrowly detected DC Inside gallery-article extractor with synthetic
+  offline tests for Korean metadata, coherent numeric IDs, anonymous identity,
+  already-rendered comments and replies, deleted comments, media-only
+  placeholders, and false-positive rejection. A 2026-07-16 read-only
+  command-line extraction succeeded on one public article; its static response
+  contained no rendered comments, so rendered-comment and packaged-browser
+  behavior remain unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

@@ -44,4 +44,9 @@ export {
   isArcaPage,
   type ArcaExtractOptions,
 } from "./arca";
+export {
+  extractThreadDcInside,
+  isDcInsidePage,
+  type DcInsideExtractOptions,
+} from "./dcinside";
 export type { ExtractedThread, ExtractOptions } from "./types";

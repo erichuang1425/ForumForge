@@ -37,6 +37,9 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
       imageboard fixture and inert attachment links
 - [x] Add narrowly detected Arca article extraction with nested comments, a
       synthetic offline fixture, and dated read-only public-page evidence
+- [x] Add narrowly detected DC Inside article extraction with a synthetic
+      offline fixture, dated read-only article evidence, and a first-party
+      rendered-comment template comparison
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract

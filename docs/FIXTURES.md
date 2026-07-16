@@ -16,9 +16,11 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > by a synthetic 4.2.5 fixture, Nairaland topic extraction represented by a
 > synthetic paired-row fixture, PTT article extraction represented by a
 > synthetic article-and-push fixture, and 4chan thread extraction represented by
-> a synthetic imageboard fixture, and Arca article extraction represented by a
-> synthetic nested-comment fixture. The phpBB, XenForo, vBulletin, Nairaland,
-> PTT, 4chan, and Arca fixtures are synthetic and offline-safe. On 2026-07-16,
+> a synthetic imageboard fixture, Arca article extraction represented by a
+> synthetic nested-comment fixture, and DC Inside extraction represented by a
+> synthetic gallery-article and rendered-comment fixture. The phpBB, XenForo,
+> vBulletin, Nairaland, PTT, 4chan, Arca, and DC Inside fixtures are synthetic
+> and offline-safe. On 2026-07-16,
 > the XenForo fixture selectors
 > received a read-only structural comparison against normal, question, and
 > article thread pages on the official `xenforo.com/community` forum; ForumForge
@@ -43,9 +45,15 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 > command-line extraction against one public article. The adapter detected the
 > page and extracted five numeric posts through depth 2; no page content was
 > printed or retained. This is not packaged-extension or browser evidence.
-> None of these synthetic fixtures is packaged-extension or live extraction
-> evidence. Phase 2 extends the same pattern to contributor-made declarative
-> adapters; Phase 5 adds registry-wide quality reporting.
+> The DC Inside fixture follows the current gallery-view article structure and
+> the site's first-party `comment.js` rendering template. A 2026-07-16 read-only
+> command-line extraction detected and extracted one public article, but its
+> static response contained no rendered comments. No page content was printed
+> or retained. This is not rendered-comment, packaged-extension, or browser
+> evidence. Synthetic fixtures are deterministic DOM-contract evidence, not by
+> themselves live or packaged-extension evidence. Phase 2 extends the same
+> pattern to contributor-made declarative adapters; Phase 5 adds registry-wide
+> quality reporting.
 
 ## What makes a good fixture
 

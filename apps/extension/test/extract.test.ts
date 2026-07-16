@@ -222,4 +222,26 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts[0]).toMatchObject({ id: "900", author: "ivy", role: "op" });
     expect(thread.posts[1]).toMatchObject({ id: "901", author: "mira", parentId: "900" });
   });
+
+  it("picks the DC Inside adapter only for a numeric gallery article", () => {
+    const html = `<!doctype html><html><body><div class="view_content_wrap">
+      <header><div class="gallview_head ub-content">
+        <h3><span class="title_subject">합성 디시인사이드 글</span></h3>
+        <div class="gall_writer ub-writer" data-nick="ivy" data-uid="ivy01">
+          <span class="gall_date">2026.07.16 13:00:00</span>
+        </div>
+      </div></header>
+      <div class="gallview_contents"><div class="writing_view_box">
+        <div class="write_div">본문입니다.</div>
+      </div></div>
+      <div class="btn_recommend_box"><button data-no="950"></button></div>
+    </div>
+    <div class="view_comment"><div class="comment_wrap" id="comment_wrap_950"></div></div>
+    </body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("합성 디시인사이드 글");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]).toMatchObject({ id: "950", author: "ivy", role: "op" });
+  });
 });

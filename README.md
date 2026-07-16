@@ -53,6 +53,11 @@ library holds compact reading, exports, and privacy controls.
 - Narrowly detected Arca article extraction with nested comments and local
   media-only placeholders. It is backed by a synthetic fixture and a dated
   read-only command-line extraction; packaged-browser evidence is pending.
+- Narrowly detected DC Inside article extraction with support for comments
+  already rendered by the site. It is backed by a synthetic fixture, a dated
+  read-only article extraction, and a structural comparison with the site's
+  first-party comment template; rendered-comment and packaged-browser evidence
+  is pending.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
@@ -112,6 +117,7 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | PTT article pages | Synthetic article-and-push fixture tests | No packaged-extension or live-site evidence |
 | 4chan thread pages | Synthetic imageboard fixture tests | No packaged-extension or live-site evidence; media is link-only |
 | Arca article pages | Synthetic nested-comment fixture tests | 2026-07-16 read-only command-line extraction succeeded on one public article; no packaged-extension/browser evidence |
+| DC Inside gallery articles | Synthetic article-and-comment fixture tests | 2026-07-16 read-only command-line extraction succeeded on one public article; static markup contained no loaded comments; no packaged-extension/browser evidence |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 

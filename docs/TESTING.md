@@ -122,6 +122,15 @@ a clean profile for install testing and an existing profile for upgrade testing.
       the dedicated extractor. Confirm remote images, video, emoticons, embeds,
       and avatars are not loaded by ForumForge; record dynamically appended
       comments and channel/authentication variants as pending unless observed.
+- [ ] DC Inside gallery article: Korean title/author metadata, coherent numeric
+      article ID, timestamp, body links, OP, named and IP-qualified anonymous
+      identities, already-rendered comments/replies, deleted comments,
+      media-only placeholders, and comment permalinks.
+- [ ] DC Inside gallery lists, missing/nonnumeric/conflicting article IDs, and
+      mismatched rendered-comment IDs do not select or contaminate the dedicated
+      extractor. Confirm ForumForge makes no comment endpoint request and loads
+      no remote media; record comments absent from the loaded DOM, gallery
+      variants, and authentication states as pending unless observed.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

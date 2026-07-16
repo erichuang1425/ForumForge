@@ -3,7 +3,7 @@
 The ForumForge **extraction engine**. It turns forum-page DOM into
 [`ForumForgePost`](../core/README.md) values that the rest of ForumForge consumes.
 
-This package ships ten extractors:
+This package ships eleven extractors:
 
 - **`extractThreadGeneric`** — the best-effort fallback for pages with no
   site-specific adapter. It walks a prioritized set of common forum/comment
@@ -87,6 +87,16 @@ This package ships ten extractors:
   synthetic offline fixture and a 2026-07-16 read-only command-line extraction
   on one public article; packaged-browser behavior and broader channel/auth/media
   variants remain unverified.
+- **`extractThreadDcInside`** targets DC Inside gallery articles with the
+  current gallery-view shell and coherent numeric recommendation-control ID. It
+  preserves the article plus comments and replies already rendered by the
+  site's own script, qualifies anonymous identities with their displayed IP,
+  and uses local text for otherwise unreadable media-only bodies. Evidence
+  includes a synthetic offline fixture, a 2026-07-16 read-only command-line
+  extraction of one public article, and a structural comparison with the site's
+  first-party comment rendering template. The static public response contained
+  no rendered comments; packaged-browser behavior, loaded-comment extraction,
+  and broader gallery/auth/media variants remain unverified.
 
 `apps/extension/src/extract.ts` is the one place that chooses between them —
 each extractor here is independent and adapter selection isn't this package's
@@ -98,19 +108,21 @@ concern.
   `extractThreadHackerNews(root, options?)`,
   `extractThreadPhpBB(root, options?)`, `extractThreadXenForo(root, options?)`,
   `extractThreadVBulletin(root, options?)`, `extractThreadNairaland(root, options?)`,
-  `extractThreadPtt(root, options?)`, `extractThreadFourChan(root, options?)`, and
-  `extractThreadArca(root, options?)` extract a thread from a `Document`
+  `extractThreadPtt(root, options?)`, `extractThreadFourChan(root, options?)`,
+  `extractThreadArca(root, options?)`, and `extractThreadDcInside(root, options?)`
+  extract a thread from a `Document`
   or any element containing it. Each returns `{ title?, baseUrl?, posts }`
   (`ExtractedThread`).
 - `isDiscoursePage(root)`, `isHackerNewsPage(root)`, `isPhpBBPage(root)`,
   `isXenForoPage(root)`, `isVBulletinPage(root)`, `isNairalandPage(root)`, and
-  `isPttPage(root)`, `isFourChanPage(root)`, and `isArcaPage(root)`
+  `isPttPage(root)`, `isFourChanPage(root)`, `isArcaPage(root)`, and
+  `isDcInsidePage(root)`
   detect whether a document matches that extractor.
 - `ExtractedThread`, `ExtractOptions`, `GenericExtractOptions`,
   `DiscourseExtractOptions`, `HackerNewsExtractOptions`,
   `PhpBBExtractOptions`, `XenForoExtractOptions`, `VBulletinExtractOptions`, and
   `NairalandExtractOptions`, `PttExtractOptions`, `FourChanExtractOptions`, and
-  `ArcaExtractOptions` are result and option types.
+  `ArcaExtractOptions` and `DcInsideExtractOptions` are result and option types.
 
 Pass `options.baseUrl` when parsing detached HTML (tests, fixtures) so relative
 permalinks and links resolve to absolute URLs; in a live browser the DOM already

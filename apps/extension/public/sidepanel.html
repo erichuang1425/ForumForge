@@ -16,6 +16,7 @@
       .ff-bar {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
         gap: 8px;
         margin-bottom: 8px;
       }
@@ -26,19 +27,23 @@
       }
       #ff-extract {
         font: inherit;
+        max-width: 100%;
         padding: 6px 10px;
         cursor: pointer;
+        white-space: normal;
       }
       /* Export saved posts to a Markdown file. Disabled until there is
          something to export, so the action never produces an empty note. */
       #ff-export {
         font: inherit;
+        max-width: 100%;
         padding: 6px 10px;
         cursor: pointer;
         background: transparent;
         color: inherit;
         border: 1px solid #8886;
         border-radius: 4px;
+        white-space: normal;
       }
       #ff-export:hover:not([disabled]) {
         border-color: #888a;
@@ -66,12 +71,14 @@
       }
       #ff-clear-data {
         font: inherit;
+        max-width: 100%;
         padding: 5px 9px;
         cursor: pointer;
         background: transparent;
         color: inherit;
         border: 1px solid #8886;
         border-radius: 4px;
+        white-space: normal;
       }
       #ff-clear-data:hover:not([disabled]) {
         border-color: #b91c1c;
@@ -83,6 +90,7 @@
       .ff-thread__title {
         font-size: 16px;
         margin: 0 0 8px;
+        overflow-wrap: anywhere;
       }
       .ff-posts {
         list-style: none;
@@ -116,12 +124,15 @@
       }
       .ff-post__meta {
         display: flex;
+        flex-wrap: wrap;
         gap: 8px;
         align-items: baseline;
         margin-bottom: 4px;
       }
       .ff-post__author {
         font-weight: 600;
+        min-width: 0;
+        overflow-wrap: anywhere;
       }
       .ff-post__role {
         font-size: 11px;

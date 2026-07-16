@@ -39,8 +39,10 @@ explicitly exercising the documented upgrade procedure.
 
 1. Confirm installation shows version 0.1.0, the ForumForge icon, and no host
    access request or extension error.
-2. Open the toolbar action, then read one appropriate page from each applicable
-   extractor class. Record missing, duplicated, misordered, or unsafe content.
+2. Invoke the toolbar action, then read one appropriate page from each
+   applicable extractor class in the immersive view. Close it, confirm the slim
+   launcher does not obstruct the forum, reopen it from the launcher, and record
+   missing, duplicated, misordered, unsafe, or visually obstructed content.
 3. Navigate or switch tabs during one read attempt. Wrong-tab content must never
    render or enter read history.
 4. Test a restricted Chrome page and record whether the failure message explains
@@ -48,9 +50,9 @@ explicitly exercising the documented upgrade procedure.
 5. Save and un-save a sample post, create and clear a deliberately non-sensitive
    note, export saved posts, restart Chrome, and verify the expected remaining
    state.
-6. Use only the keyboard for a pass through the core controls, then check a
-   narrow panel and 200% zoom. Record lost focus, hidden controls, and unclear
-   announcements.
+6. Use only the keyboard for a pass through the immersive reader and local
+   library, then check narrow widths and 200% zoom. Record lost focus, hidden
+   controls, page content covered by the launcher, and unclear announcements.
 7. If the participant agrees to test deletion, seed only disposable sample
    data, cancel the first confirmation, then confirm a clear and verify that the
    UI and restart state agree. Do not ask a pilot participant to risk valuable

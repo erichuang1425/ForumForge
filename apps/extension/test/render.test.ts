@@ -211,6 +211,19 @@ describe("renderThread", () => {
     expect(view.querySelector(".ff-empty__guidance")?.textContent).toContain("full thread");
   });
 
+  it("can defer the title to an immersive reader shell", () => {
+    const view = renderThread(
+      freshDocument(),
+      {
+        title: "A title owned by the shell",
+        posts: [{ id: "1", author: "ada", contentText: "first" }],
+      },
+      { showTitle: false },
+    );
+    expect(view.querySelector(".ff-thread__title")).toBeNull();
+    expect(view.querySelectorAll(".ff-post")).toHaveLength(1);
+  });
+
   it("renders sanitized rich contentHtml as real elements", () => {
     const thread: ExtractedThread = {
       posts: [

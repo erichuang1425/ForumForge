@@ -4,8 +4,10 @@
 knowledge-saving experience.**
 
 ForumForge is an open-source browser extension and adapter framework. It reads
-the forum page the user explicitly opens, renders a clearer side-panel view, and
-stores personal reading state on the device.
+the forum page the user explicitly opens and turns it into an immersive,
+publication-like reading view inside that page. A slim edge launcher keeps the
+reader close without permanently occupying the screen, while a secondary local
+library holds compact reading, exports, and privacy controls.
 
 > Your favorite forum does not need to modernize. ForumForge can modernize it
 > from your browser.
@@ -18,7 +20,10 @@ stores personal reading state on the device.
 
 ## Available in the current source build
 
-- Clean side-panel reading mode with allowlist-sanitized rich text.
+- A compact on-page launcher and full-window, forum-native reading mode with
+  allowlist-sanitized rich text.
+- A secondary side-panel library for compact reading, saved-post export, and
+  local-data controls.
 - Original-poster, moderator, and administrator highlighting.
 - New-since-last-visit tracking stored in `chrome.storage.local`.
 - Locally saved posts and private per-author notes.
@@ -70,7 +75,9 @@ Then load the extension:
 2. Enable **Developer mode**.
 3. Choose **Load unpacked**.
 4. Select `apps/extension/dist`.
-5. Open a forum thread and click the ForumForge toolbar action.
+5. Open a forum thread and click the ForumForge toolbar action. The immersive
+   reader opens in the page; close it to leave the slim launcher available for
+   the rest of the visit. Use **Local library** for the compact companion panel.
 
 This is a source build, not a published store release. Please report results
 using the [browser test checklist](docs/TESTING.md).
@@ -111,7 +118,7 @@ offline-safe HTML fixtures rather than repeated live-site requests. See
 ## Architecture
 
 ```text
-apps/extension     Manifest V3 extension and side-panel UI
+apps/extension     Manifest V3 extension, on-page reader, and local-library panel
 packages/core      Shared ForumForgePost model and helpers
 packages/parser    Generic, Discourse, Hacker News, phpBB, XenForo, and vBulletin extraction
 packages/storage   Local-first storage contracts

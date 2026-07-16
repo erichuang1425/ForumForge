@@ -52,7 +52,13 @@ a clean profile for install testing and an existing profile for upgrade testing.
 
 - [ ] Final ZIP extracts and loads with no manifest or service-worker error.
 - [ ] Install requests no host access.
-- [ ] Toolbar action opens a panel for the intended tab.
+- [ ] Toolbar action injects only the intended top-frame document and opens the
+      immersive reader for that page.
+- [ ] Before invocation there is no ForumForge host in the page. Closing the
+      reader restores the original page and leaves only the slim edge launcher.
+- [ ] The launcher reopens and closes the reader without duplicating hosts,
+      even after repeated toolbar invocation.
+- [ ] **Local library** opens the secondary side panel for the intended tab.
 - [ ] A normal forum page can be read only after the user invokes ForumForge.
 - [ ] Restricted pages such as `chrome://`, the Web Store, and the PDF viewer
       fail with a useful message.
@@ -150,12 +156,12 @@ exists, actual Chrome upgrade preservation is **unverified**.
       operational marker contains user data.
 - [ ] The visible thread remains readable; New badges, Saved state, note text,
       expanded note editors, and export availability reset. Focus returns to the
-      clear button. In another open panel, focus also moves to its clear button
-      if the lifecycle disabled or hid the control that had focus.
-- [ ] With ForumForge panels open in two Chrome windows, a write already running
+      clear button. In another open panel or page reader, focus also moves to a
+      valid control if the lifecycle disabled or hid the control that had focus.
+- [ ] With ForumForge views open in two Chrome windows, a write already running
       in one finishes before the other clears it. A write started or queued
       across that clear is rejected rather than recreating deleted data. Both
-      panels disable persistence during deletion and reset stale New/Saved/note
+      views disable persistence during deletion and reset stale New/Saved/note
       cues after success.
 - [ ] Reading the unchanged page again behaves as a first visit; new saves/notes
       work, and a browser restart does not restore deleted data.
@@ -181,7 +187,14 @@ exists, actual Chrome upgrade preservation is **unverified**.
 
 - [ ] Core controls work with keyboard only and retain visible focus.
 - [ ] Labels and expanded/pressed states are announced sensibly.
-- [ ] Content remains usable at 200% zoom and in narrow/wide side panels.
+- [ ] Opening the reader moves focus inside it, Tab/Shift+Tab stay inside, Escape
+      closes it, and focus returns to the invoking control or launcher.
+- [ ] The underlying forum is not focusable while the reader is open and its
+      prior scroll-lock/inert state is restored when the reader closes.
+- [ ] The launcher remains discoverable without covering meaningful page
+      content at default size, 200% zoom, and narrow viewport widths.
+- [ ] Content remains usable at 200% zoom in narrow/wide page readers and side
+      panels; the three-column reader reflows without horizontal page scrolling.
 - [ ] Long code blocks, tables, links, and notes do not hide controls.
 
 ## Evidence record

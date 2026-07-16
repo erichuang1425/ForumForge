@@ -12,8 +12,10 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
 
 ### Added
 
-- Manifest V3 extension shell with an on-demand content script and side panel.
-- Clean reading mode with allowlist sanitization of untrusted forum HTML.
+- Manifest V3 extension shell with an on-demand content script, compact
+  on-page launcher, immersive reader, and secondary local-library side panel.
+- Publication-like reading mode with allowlist sanitization of untrusted forum
+  HTML.
 - OP/staff highlighting, local read history, saved posts, private author notes,
   and Markdown export.
 - Generic, Discourse, and Hacker News extractors with deterministic fixtures.
@@ -43,8 +45,11 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
 
 ### Security
 
-- Validate complete extraction-response payloads before the side panel consumes
-  content-script messages.
+- Validate complete extraction-response payloads before extension views consume
+  content-script messages, and validate requests that cross between the page
+  reader and service worker.
+- Isolate the on-page interface in a closed shadow root without remote styles,
+  fonts, images, or other assets.
 - Enforce the reviewed manifest permission set and absence of host permissions
   and always-on content scripts.
 - Fail closed on invalid or newer local-storage versions and restrict bulk
@@ -62,9 +67,14 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   reject any duplicate-id extraction payload that crosses the message boundary.
 - Reflow primary controls, post metadata, and long labels without horizontal
   overflow in narrow side panels at 200% browser scaling.
+- Make the toolbar open a full-window reading experience in the current page,
+  with thread overview, conversation navigation, local reading tools, focus
+  containment, and a slim edge launcher for reopening or closing it.
+- Keep saves and notes fail-closed in the page reader while local data is being
+  cleared, including when an earlier write finishes during the clear.
 - Refresh the side panel with clearer action hierarchy, card-based reading,
   explicit light/dark colors, visible keyboard focus, and structured empty and
-  status states.
+  status states as a compact library and privacy companion.
 - Build release ZIPs without source maps or source-map references and verify
   every manifest icon is present in the deterministic package.
 

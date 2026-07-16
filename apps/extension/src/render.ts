@@ -15,6 +15,8 @@ const ROLE_LABELS: Record<ForumRole, string> = {
 
 /** View options for {@link renderThread}. */
 export type RenderOptions = {
+  /** Hide the built-in heading when a larger reader shell already owns it. */
+  showTitle?: boolean;
   /**
    * Ids of posts that are new since the reader's last visit (see
    * {@link ../readHistory}). New posts get a "New" badge and an edge accent so
@@ -55,7 +57,7 @@ export function renderThread(
   const root = doc.createElement("section");
   root.className = "ff-thread";
 
-  if (thread.title) {
+  if (thread.title && options.showTitle !== false) {
     const title = doc.createElement("h2");
     title.className = "ff-thread__title";
     title.textContent = thread.title;

@@ -12,6 +12,15 @@ import type { ExtractedThread } from "@forumforge/parser";
 /** Ask the content script to extract the thread on its page. */
 export type ExtractRequest = { type: "forumforge/extract" };
 
+/** Ask the on-demand content script to toggle its immersive page reader. */
+export type ToggleReaderRequest = { type: "forumforge/toggle-reader" };
+
+/** Ask the background worker to open the extension's local-library side panel. */
+export type OpenLibraryRequest = { type: "forumforge/open-library" };
+
+/** Report whether the requested local-library panel actually opened. */
+export type LibraryResult = { type: "forumforge/library-result"; opened: boolean };
+
 /** A successful extraction, returned to the requester. */
 export type ThreadResponse = { type: "forumforge/thread"; thread: ExtractedThread };
 
@@ -23,8 +32,32 @@ export type ExtractResponse = ThreadResponse | ErrorResponse;
 /** The single, shared extract-request value. */
 export const EXTRACT_REQUEST: ExtractRequest = { type: "forumforge/extract" };
 
+export const TOGGLE_READER_REQUEST: ToggleReaderRequest = {
+  type: "forumforge/toggle-reader",
+};
+
+export const OPEN_LIBRARY_REQUEST: OpenLibraryRequest = {
+  type: "forumforge/open-library",
+};
+
 export function isExtractRequest(value: unknown): value is ExtractRequest {
   return isTagged(value) && value.type === "forumforge/extract";
+}
+
+export function isToggleReaderRequest(value: unknown): value is ToggleReaderRequest {
+  return isTagged(value) && value.type === "forumforge/toggle-reader";
+}
+
+export function isOpenLibraryRequest(value: unknown): value is OpenLibraryRequest {
+  return isTagged(value) && value.type === "forumforge/open-library";
+}
+
+export function isLibraryResult(value: unknown): value is LibraryResult {
+  return (
+    isTagged(value) &&
+    value.type === "forumforge/library-result" &&
+    typeof value.opened === "boolean"
+  );
 }
 
 export function isExtractResponse(value: unknown): value is ExtractResponse {

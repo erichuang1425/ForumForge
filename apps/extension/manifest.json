@@ -3,7 +3,7 @@
   "name": "ForumForge",
   "version": "0.1.0",
   "minimum_chrome_version": "116",
-  "description": "Modernize messy forum threads into a clean, readable view — local-first, from your own browser.",
+  "description": "Transform forum threads into an immersive, local-first reading view inside the page.",
   "permissions": [
     "activeTab",
     "scripting",
@@ -17,7 +17,7 @@
     "128": "icons/icon-128.png"
   },
   "action": {
-    "default_title": "Open ForumForge",
+    "default_title": "Open ForumForge reader",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",

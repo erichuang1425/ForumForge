@@ -14,9 +14,10 @@ The release is tracked in
 in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot in
 [#17](https://github.com/erichuang1425/ForumForge/issues/17).
 
-- [x] MV3 shell, on-demand content script, and side panel
+- [x] MV3 shell, on-demand content script, compact page launcher, immersive
+      reader, and local-library side panel
 - [x] Core post model, generic parser, and local storage seam
-- [x] Clean reading mode and allowlist HTML sanitizer
+- [x] Publication-like reading mode and allowlist HTML sanitizer
 - [x] OP/staff highlighting
 - [x] New-since-last-visit tracking
 - [x] Saved posts, private author notes, and Markdown export

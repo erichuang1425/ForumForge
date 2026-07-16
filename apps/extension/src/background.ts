@@ -1,20 +1,61 @@
+import {
+  TOGGLE_READER_REQUEST,
+  isOpenLibraryRequest,
+  type LibraryResult,
+} from "./messaging";
+
+/** The built content script, injected only after an explicit toolbar click. */
+const CONTENT_SCRIPT = "content.js";
+
 /**
- * Background service worker — the extension shell.
- *
- * Clicking the toolbar action opens the side panel. We open it from this
- * `action.onClicked` handler rather than via
- * `setPanelBehavior({ openPanelOnActionClick: true })`: that built-in path opens
- * the panel but does **not** confer the `activeTab` grant the panel relies on to
- * read the page (crbug.com/40916430). Because the manifest declares no host
- * permissions, the panel's later `scripting.executeScript` would then reject on
- * ordinary forum pages. Handling the click ourselves means its `activeTab` grant
- * covers the tab, so on-demand content-script injection succeeds.
+ * Inject ForumForge into the tab covered by the toolbar click's `activeTab`
+ * grant, then target the exact top-level document returned by Chrome. This
+ * keeps the compact launcher and immersive reader on-demand: no host access and
+ * no always-on content script are introduced.
  */
-chrome.action.onClicked.addListener((tab) => {
+async function toggleReader(tab: chrome.tabs.Tab): Promise<void> {
   if (tab.id === undefined) return;
-  chrome.sidePanel.open({ tabId: tab.id }).catch((error: unknown) => {
-    console.error("ForumForge: failed to open the side panel", error);
+  const results = await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    files: [CONTENT_SCRIPT],
   });
+  const documentId = results.find((result) => result.frameId === 0)?.documentId;
+  if (!documentId) throw new Error("ForumForge: top-level page document was not injected");
+  await chrome.tabs.sendMessage(tab.id, TOGGLE_READER_REQUEST, { documentId });
+}
+
+chrome.action.onClicked.addListener((tab) => {
+  void toggleReader(tab).catch((error: unknown) => {
+    console.error("ForumForge: failed to open the page reader", error);
+  });
+});
+
+/**
+ * The immersive reader keeps the side panel as a secondary local library and
+ * privacy utility. Only its namespaced, runtime-validated request can open it,
+ * and it must originate from a tab so the panel remains scoped to that tab.
+ */
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (!isOpenLibraryRequest(message)) return;
+  const tabId = sender.tab?.id;
+  if (tabId === undefined) {
+    const response: LibraryResult = { type: "forumforge/library-result", opened: false };
+    sendResponse(response);
+    return;
+  }
+
+  void chrome.sidePanel.open({ tabId }).then(
+    () => {
+      const response: LibraryResult = { type: "forumforge/library-result", opened: true };
+      sendResponse(response);
+    },
+    (error: unknown) => {
+      console.error("ForumForge: failed to open the local library", error);
+      const response: LibraryResult = { type: "forumforge/library-result", opened: false };
+      sendResponse(response);
+    },
+  );
+  return true;
 });
 
 export {};

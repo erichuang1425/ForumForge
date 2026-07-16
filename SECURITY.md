@@ -39,7 +39,10 @@ will be shared with the reporter.
 - **Untrusted content:** extracted HTML is rebuilt through the allowlist
   sanitizer in `apps/extension/src/sanitize.ts` before rendering.
 - **Validated boundaries:** messages crossing extension contexts are checked by
-  runtime guards before the side panel consumes them.
+  runtime guards before the page reader, side panel, or service worker acts on
+  them.
+- **Isolated page UI:** the on-page launcher and reader render in a closed
+  shadow root using packaged styles and no remote assets.
 - **Local-first storage:** read history, saved post snapshots, and notes use
   `chrome.storage.local`.
 - **Non-destructive upgrades:** storage migrations are idempotent, commit their
@@ -63,7 +66,7 @@ decision, matching tests, and maintainer approval.
 
 Examples include:
 
-- cross-site scripting or unsafe URL handling in the side panel;
+- cross-site scripting or unsafe URL handling in either reading interface;
 - malformed message payloads that cause unsafe behavior;
 - unauthorized page access or unexpectedly broad extension permissions;
 - leakage, corruption, or unintended cross-origin mixing of local user data;

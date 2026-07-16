@@ -8,11 +8,16 @@ ForumForge account, analytics service, or remote backend.
 
 ## Data processed on a forum page
 
-The toolbar action opens ForumForge's side panel. When the user then selects
-**Read this thread**, ForumForge temporarily reads the active tab's thread
-structure and visible post data, including titles, authors, timestamps, post
-bodies, permalinks, and reply relationships. Processing occurs inside the
-browser to create the side-panel view.
+The toolbar action injects ForumForge only into the active tab selected by the
+user, temporarily reads that page's thread structure and visible post data, and
+opens the immersive reader. Processed fields can include titles, authors,
+timestamps, post bodies, permalinks, and reply relationships. Processing occurs
+inside the browser to create the isolated on-page view. Closing the reader leaves
+a slim launcher in that document until the page is navigated or closed.
+
+The reader's **Local library** action can open a secondary side panel for
+compact reading, exports, and privacy controls. It does not grant access to any
+additional tab or page.
 
 The current code does not transmit that page content to the maintainer or any
 third-party service.
@@ -66,12 +71,12 @@ same-profile Chrome upgrade check for the release artifact remains pending in
 | Permission | Why it is needed |
 | --- | --- |
 | `activeTab` | Read only the tab on which the user invokes ForumForge |
-| `scripting` | Inject the extractor on demand after that user action |
-| `sidePanel` | Display the reading interface beside the current tab |
+| `scripting` | Inject the packaged extractor and reader on demand after that user action |
+| `sidePanel` | Display the optional local-library and privacy companion beside the current tab |
 | `storage` | Keep read history, saves, and notes on the device |
 
 The manifest declares no host permissions and no always-on content scripts.
-Chrome 116 is the current minimum because the toolbar action calls
+Chrome 116 is the current minimum because the optional library action calls
 `sidePanel.open()`.
 
 ## Network activity and telemetry

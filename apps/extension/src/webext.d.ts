@@ -27,6 +27,7 @@ declare namespace chrome {
         ) => boolean | void,
       ): void;
     };
+    function sendMessage(message: unknown): Promise<unknown>;
   }
 
   namespace tabs {

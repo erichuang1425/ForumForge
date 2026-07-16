@@ -2,7 +2,7 @@
   "name": "@forumforge/extension",
   "version": "0.1.0",
   "private": true,
-  "description": "ForumForge browser extension — the MV3 shell, on-demand content script, and side panel that bring an extracted thread into a clean reading view.",
+  "description": "ForumForge browser extension — an on-demand immersive thread reader with a compact page launcher and local library.",
   "type": "module",
   "license": "MIT",
   "scripts": {

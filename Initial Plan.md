@@ -432,7 +432,7 @@ Advanced JavaScript or TypeScript adapters should be clearly marked and reviewed
 
 * [x] Extension shell
 * [x] Content script
-* [x] Side panel UI
+* [x] Compact on-page launcher, immersive reader, and local-library side panel
 * [x] Core post model
 * [x] Local storage layer
 * [x] Basic generic extractor

@@ -12,19 +12,26 @@ artifact evidence supports them.
 - **Category:** Productivity
 - **Short description:** Modernize messy forum threads into a clean, readable
   view — local-first, from your own browser.
-- **Single purpose:** Turn a forum thread the user explicitly chooses into a
-  clearer side-panel reading view, with related reading state stored locally.
+- **Single purpose:** Turn a forum thread the user explicitly chooses into an
+  immersive on-page reading view, with related reading state stored locally.
 
 ### Detailed description
 
-ForumForge turns the forum thread you choose into a cleaner side-panel reading
-view. Open a thread, select ForumForge, and choose “Read this thread.” The
-extension then extracts the page currently loaded in that tab and organizes its
-posts without changing the original site.
+ForumForge turns the forum thread you choose into an immersive reading
+experience. Open a thread and select ForumForge: the extension extracts only the
+page currently loaded in that tab and reorganizes its posts into a focused,
+publication-like workspace. Close the workspace to return to the untouched
+forum, with a slim edge launcher available when you want the reader again.
+
+A secondary local-library panel provides compact reading, saved-post export,
+and privacy controls. The redesign is for forum conversations: it emphasizes
+authors, chronology, unread context, and readable replies rather than making the
+site resemble a coding platform or a generic dashboard.
 
 Current features:
 
-- a focused thread view with sanitized rich text;
+- a full-window thread view with sanitized rich text and conversation overview;
+- a compact in-page launcher and secondary local library;
 - original-poster and staff labels when the page exposes those roles;
 - local new-since-last-visit markers;
 - saved posts and private per-author notes;
@@ -54,8 +61,8 @@ These explanations must match the submitted manifest exactly.
 | Permission | Store explanation |
 | --- | --- |
 | `activeTab` | Temporarily access only the tab where the user invokes ForumForge, so it can read that chosen thread. |
-| `scripting` | Inject the packaged extractor into the chosen tab on demand after the user selects **Read this thread**. |
-| `sidePanel` | Show the ForumForge reading interface beside the current page. |
+| `scripting` | Inject the packaged extractor and reader into the chosen tab on demand after the user invokes ForumForge. |
+| `sidePanel` | Show the optional local-library, export, and privacy companion beside the current page. |
 | `storage` | Keep read history, saved posts, private author notes, and storage-lifecycle metadata locally in the browser profile. |
 
 The package must continue to declare no host permissions, optional host
@@ -96,18 +103,18 @@ The current Chrome Web Store requirements call for:
 - an optional 1400×560 marquee promotional tile.
 
 The small promotional tile should use the ForumForge mark and a representative
-reading-panel composition, not a raw screenshot, and should remain legible when
+immersive-reader composition, not a raw screenshot, and should remain legible when
 reduced by half. Avoid text in the tile so it can serve future locales.
 
 ### Screenshot shot list
 
 | Order | Candidate scene | Required truth check |
 | --- | --- | --- |
-| 1 | ForumForge beside a synthetic generic thread | Exact packaged UI; clear title, authors, timestamps, and readable posts |
-| 2 | A representative Discourse fixture/page with rich text and role labels | Sanitized links, quotes, code, and labels actually observed |
-| 3 | A representative Hacker News item with nested replies | Actual nesting and missing/deleted-field behavior |
-| 4 | Saved state, a non-sensitive sample note, and enabled Markdown export | Persistence confirmed after restart; no private note content |
-| 5 | Local-data controls in a narrow or zoomed panel | Keyboard/200% zoom behavior confirmed; no claim that a clear has run if it has not |
+| 1 | Immersive reader over a synthetic generic forum | Exact packaged UI; clear overview, authors, timestamps, and readable replies |
+| 2 | The slim launcher beside the unchanged forum, followed by the open reader | Launcher intrusion and open/close behavior actually observed |
+| 3 | A representative Discourse or Hacker News conversation | Sanitized rich text or actual nesting and missing-field behavior |
+| 4 | Saved state and a non-sensitive sample note in the reader, plus export in the library | Persistence confirmed after restart; no private note content |
+| 5 | Local library and privacy controls in a narrow or 200%-zoomed panel | Keyboard/zoom behavior confirmed; no claim that a clear has run if it has not |
 
 Each final asset record should include the candidate commit, ZIP SHA-256,
 Chrome/OS version, capture date, source scenario, dimensions, and reviewer.

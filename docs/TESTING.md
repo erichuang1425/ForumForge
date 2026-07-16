@@ -261,3 +261,14 @@ Copy this table into the release issue or pull request:
 | Date | Baseline -> target | Artifact / extension ID | Browser + OS | Scenario | Result | Evidence/notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | YYYY-MM-DD | `91fc205` -> target SHA | ZIP SHA-256 / ID | Chrome 000 / OS | Schema 0 -> 1 upgrade | Pass/Fail | Before/after keys + link |
+
+### Current local candidate evidence
+
+These rows are narrower than release acceptance. They do not mark any manual
+matrix checkbox complete and must not be used as substitutes for testing the
+exact ZIP in Chrome.
+
+| Date | Source | Artifact / environment | Scenario | Result | Evidence/notes |
+| --- | --- | --- | --- | --- | --- |
+| 2026-07-16 | Extension source `9b721fa`, version `0.1.0` | `forumforge-0.1.0-chrome.zip`; SHA-256 `0634bf1c973bc82ac6af4d053de329f590f04560e0f077286865d69c66e954e4` | Package twice from the same clean source; compare hashes; inspect the ZIP entry allowlist, manifest permissions, source-map references, and bundled network/eval/storage-sync API patterns | Pass for deterministic structure only | Both hashes matched. The ZIP contained the five runtime files plus `icons/icon-{16,32,48,128}.png`; permissions were exactly `activeTab`, `scripting`, `sidePanel`, and `storage`. No host permissions, optional permissions, declared content scripts, source-map references, or scanned runtime API patterns were present. The ZIP was not loaded in Chrome. |
+| 2026-07-16 | Reader source `9b721fa`, version `0.1.0` | Temporary synthetic local page in an isolated in-app browser; browser version unavailable; Microsoft Windows 10.0.26200 x64 | Closed launcher and open reader at 1280 x 720 and 600 x 900 | Pass for observed visual layout only | The real reader component and stylesheet showed a mostly hidden edge launcher, compact desktop top bar, no launcher over the open reader, and a usable single-column narrow layout without reader-level horizontal overflow. The temporary page and generated bundle were removed. This was not packaged-extension evidence; the browser surface could not target controls inside the closed shadow root, so keyboard/focus behavior, 200% zoom, persistence, and network behavior remain pending. |

@@ -12,13 +12,33 @@ still requires explicit maintainer approval.
   unpacked release candidate.
 - Public or synthetic forum pages only. Do not use confidential, paywalled, or
   access-controlled content for a report.
-- Discourse, Hacker News item pages, and a small variety of generic forum
-  layouts. A result on one site does not establish compatibility with an
-  entire forum engine.
+- One or more applicable rows from the current
+  [compatibility matrix](COMPATIBILITY.md). The visual-release priorities are
+  Nairaland, Hacker News, PTT, 4chan, Arca, DC Inside, FMKorea, and Stack
+  Overflow. A result on one page does not establish broad site, theme, forum-
+  engine, or version compatibility.
+- F95Zone is not a claimed pilot target until the evidence-intake procedure
+  below produces a sanitized representative fixture and a real-browser result.
 
 Known limitations: ForumForge reads only the DOM currently loaded in the active
 tab. It does not crawl pagination, force lazy content to load, or bypass login
 and access controls. Firefox and Safari are outside this pilot.
+
+### F95Zone evidence intake (not a support claim)
+
+Only a maintainer who can lawfully access a harmless public thread should
+prepare this input. Start from a logged-out page and retain only the smallest
+DOM fragment needed to identify a thread, its posts, authors, timestamps,
+permalinks, hierarchy, and missing-field behavior. Replace all prose, names,
+IDs, dates, and URLs with neutral synthetic values. Remove scripts, styles,
+forms, media, advertisements, analytics markup, tokens, cookies, account data,
+private messages, and adult or otherwise sensitive content.
+
+The fixture must be reviewed as text before it enters the repository. A
+dedicated detector and extractor then need positive, missing-field, malformed-
+identity, and false-positive tests. Finally, the exact candidate ZIP must be
+run on a harmless public page in an isolated browser profile. A generic or
+XenForo-derived parse by itself is not F95Zone compatibility evidence.
 
 ## Package handoff
 
@@ -70,7 +90,10 @@ Source commit:
 ZIP SHA-256:
 Chrome version and OS:
 Extension ID:
-Page class: Discourse / Hacker News / generic / restricted
+Page class:
+  Nairaland / Hacker News / PTT / 4chan / Arca / DC Inside /
+  FMKorea / Stack Overflow / Discourse / phpBB / XenForo /
+  vBulletin / generic / restricted / F95Zone evidence intake
 Public URL or redacted page description:
 Scenario:
 Expected:

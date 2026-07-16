@@ -148,4 +148,38 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts[0]?.author).toBe("ivy");
     expect(thread.posts[0]?.role).toBe("op");
   });
+
+  it("picks the PTT adapter only for a signed article page", () => {
+    const html = `<!doctype html><html><body>
+      <div id="main-content" class="bbs-screen bbs-content">
+        <div class="article-metaline"><span class="article-meta-tag">作者</span>
+          <span class="article-meta-value">ivy (小艾)</span></div>
+        <div class="article-metaline"><span class="article-meta-tag">看板</span>
+          <span class="article-meta-value">FixIt</span></div>
+        <div class="article-metaline"><span class="article-meta-tag">標題</span>
+          <span class="article-meta-value">[討論] 合成主題</span></div>
+        <div class="article-metaline"><span class="article-meta-tag">時間</span>
+          <span class="article-meta-value">Thu Jul 16 10:00:00 2026</span></div>
+        <p>來自 PTT 的合成文章。</p>
+        <span class="f2">※ 發信站: 批踢踢實業坊(ptt.cc)</span>
+        <div class="push"><span class="push-tag">推</span>
+          <span class="push-userid">mira</span>
+          <span class="push-content">: 合成回覆。</span></div>
+      </div></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("[討論] 合成主題");
+    expect(thread.posts).toHaveLength(2);
+    expect(thread.posts[0]).toMatchObject({
+      id: "article",
+      author: "ivy (小艾)",
+      role: "op",
+    });
+    expect(thread.posts[1]).toMatchObject({
+      id: "push-1",
+      author: "mira",
+      contentText: "推 合成回覆。",
+      parentId: "article",
+    });
+  });
 });

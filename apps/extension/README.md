@@ -35,8 +35,8 @@ reader "Local library" ─▶ background ─▶ opens the secondary side panel
   and local-data controls. It is the compact companion rather than the primary
   invocation surface.
 - **`src/extract.ts`** — the seam that chooses how to read a page: the
-  Discourse, Hacker News, phpBB, XenForo, vBulletin, or Nairaland adapter when
-  the page's own markup signals one, otherwise the generic fallback parser.
+  Discourse, Hacker News, phpBB, XenForo, vBulletin, Nairaland, or PTT adapter
+  when the page's own markup signals one, otherwise the generic fallback parser.
   More site-specific adapters land here as they're built (Phase 2 adds the JSON
   adapter format for community-contributed ones).
 - **`src/render.ts`** — builds the read-only view. Author, role and timestamp are

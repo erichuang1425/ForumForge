@@ -31,6 +31,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
       with a synthetic offline 4.2.5 fixture for legacy/EOL compatibility
 - [x] Add narrowly detected Nairaland topic extraction with a synthetic offline
       paired-row fixture
+- [x] Add narrowly detected PTT article extraction with a synthetic offline
+      article-and-push fixture
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract

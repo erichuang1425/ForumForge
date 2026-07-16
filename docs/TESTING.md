@@ -102,6 +102,12 @@ a clean profile for install testing and an existing profile for upgrade testing.
 - [ ] Nairaland forum indexes and unrelated compact tables do not select the
       dedicated extractor. Record pagination and any layout that does not pair
       a post metadata row with the next `.narrow` body row as pending.
+- [ ] PTT article page: Chinese title/author metadata, OP article, timestamp,
+      body links, station/footer exclusion, push direction, push authors and
+      timestamps, OP replies, empty pushes, and restart behavior.
+- [ ] PTT board indexes and unrelated `.push` lookalikes do not select the
+      dedicated extractor. Record pagination, deleted articles, IP/date
+      variants, and layouts missing the signed article shell as pending.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

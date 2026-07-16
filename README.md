@@ -44,6 +44,9 @@ library holds compact reading, exports, and privacy controls.
 - Narrowly detected Nairaland topic extraction, backed by a synthetic offline
   paired-row fixture. Live-site, pagination, and packaged-browser evidence is
   pending.
+- Narrowly detected PTT article extraction, backed by a synthetic offline
+  article-and-push fixture. Live-site, pagination, and packaged-browser evidence
+  is pending.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
@@ -100,6 +103,7 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | XenForo 2.3 default public thread views | Synthetic offline fixture tests | 2026-07-16 read-only official normal/question/article markup comparison; no packaged-extension or live extraction success |
 | vBulletin 4.x stock/classic showthread pages | Synthetic offline 4.2.5 fixture tests | No packaged-extension or live browser evidence |
 | Nairaland topic pages | Synthetic paired-row fixture tests | No packaged-extension or live-site evidence |
+| PTT article pages | Synthetic article-and-push fixture tests | No packaged-extension or live-site evidence |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 
@@ -124,7 +128,7 @@ offline-safe HTML fixtures rather than repeated live-site requests. See
 ```text
 apps/extension     Manifest V3 extension, on-page reader, and local-library panel
 packages/core      Shared ForumForgePost model and helpers
-packages/parser    Generic, Discourse, Hacker News, phpBB, XenForo, and vBulletin extraction
+packages/parser    Generic and dedicated forum/site extraction
 packages/storage   Local-first storage contracts
 scripts            Verification, versioning, and release packaging
 docs               Product, contributor, privacy, testing, and release guidance

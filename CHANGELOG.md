@@ -34,6 +34,10 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   for paired post metadata/body rows, explicit OP/moderator markers, missing
   fields, and false-positive rejection. Live-site, pagination, and packaged
   browser behavior remain unverified.
+- A narrowly detected PTT article extractor with synthetic offline tests for
+  Chinese metadata, article/footer isolation, flat push replies, missing fields,
+  and false-positive rejection. Live-site, pagination, and packaged-browser
+  behavior remain unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

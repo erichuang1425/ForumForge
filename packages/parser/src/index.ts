@@ -29,4 +29,9 @@ export {
   isNairalandPage,
   type NairalandExtractOptions,
 } from "./nairaland";
+export {
+  extractThreadPtt,
+  isPttPage,
+  type PttExtractOptions,
+} from "./ptt";
 export type { ExtractedThread, ExtractOptions } from "./types";

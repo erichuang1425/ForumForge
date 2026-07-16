@@ -14,4 +14,9 @@ export {
   isPhpBBPage,
   type PhpBBExtractOptions,
 } from "./phpbb";
+export {
+  extractThreadXenForo,
+  isXenForoPage,
+  type XenForoExtractOptions,
+} from "./xenforo";
 export type { ExtractedThread, ExtractOptions } from "./types";

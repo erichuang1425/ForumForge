@@ -20,6 +20,10 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
 - A narrowly detected phpBB 3.3 stock prosilver topic-page extractor with a
   synthetic offline fixture. Live-site and custom-theme verification remain
   pending.
+- A narrowly detected XenForo 2.3 default public thread-view extractor with
+  synthetic offline fixture tests and a 2026-07-16 read-only structural
+  comparison against official normal, question, and article thread pages.
+  Packaged-extension and live extraction verification remain pending.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

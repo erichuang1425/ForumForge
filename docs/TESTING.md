@@ -71,6 +71,15 @@ a clean profile for install testing and an existing profile for upgrade testing.
 - [ ] phpBB forum indexes and unrelated lookalike pages do not select the phpBB
       extractor; the first visible author is never inferred to be the OP because
       phpBB display order and direct-post views can hide the true topic start.
+- [ ] XenForo 2.3 default public normal, question, and article thread views:
+      title, numeric post IDs, authors, timestamps, profile links, permalinks,
+      body links, article-profile layout, explicit English moderator/admin
+      evidence, staff-only non-inference, and missing fields.
+- [ ] XenForo forum indexes, unrelated lookalike pages, and mismatched post IDs
+      do not select the XenForo extractor. OP remains unset on normal, later-page,
+      direct-post, and sorted views because the default markup has no reliable
+      OP marker. Record custom themes, localized/custom roles, non-2.3 versions,
+      pagination, and lazy loading as pending unless separately observed.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

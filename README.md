@@ -28,14 +28,19 @@ stores personal reading state on the device.
 - Dedicated Discourse and Hacker News extractors.
 - Narrowly detected phpBB 3.3 stock prosilver topic-page extraction, backed by
   a synthetic offline fixture. Live-site and custom-theme evidence is pending.
+- Narrowly detected XenForo 2.3 default public thread-view extraction, backed
+  by synthetic offline fixture tests and a 2026-07-16 read-only structural
+  comparison with official normal, question, and article thread pages. No
+  packaged-extension or live extraction success has been recorded.
 - A best-effort generic forum extractor as the fallback.
 - Fixture-backed automated tests, strict TypeScript checks, and a bundled MV3
   extension build.
 
 ## Planned, not shipped
 
-- User-authored JSON adapters, validation, import/export, and an adapter SDK.
-- Wider phpBB version/theme coverage plus XenForo and vBulletin-style adapters.
+- User-authored JSON adapters, validation, import/export, an adapter SDK, and
+  declarative migration of the bundled hand-written extractors.
+- Wider phpBB version/theme coverage plus vBulletin-style adapters.
 - Adapter Studio, thread maps, best-answer/unanswered detection, and an adapter
   registry.
 - Optional AI features. These come last, stay isolated, and are opt-in.
@@ -78,6 +83,7 @@ in [docs/STORE_LISTING.md](docs/STORE_LISTING.md).
 | Discourse threads | Sanitized fixture tests | Live-site matrix pending |
 | Hacker News item pages | Sanitized fixture tests | Live-site matrix pending |
 | phpBB 3.3 stock prosilver topic pages | Synthetic fixture tests | Live-site and custom-theme testing pending |
+| XenForo 2.3 default public thread views | Synthetic offline fixture tests | 2026-07-16 read-only official normal/question/article markup comparison; no packaged-extension or live extraction success |
 | Other forum pages | Generic parser tests | Site-specific results vary |
 | Firefox/Safari | None | Not currently supported |
 
@@ -102,7 +108,7 @@ offline-safe HTML fixtures rather than repeated live-site requests. See
 ```text
 apps/extension     Manifest V3 extension and side-panel UI
 packages/core      Shared ForumForgePost model and helpers
-packages/parser    Generic, Discourse, Hacker News, and phpBB extraction
+packages/parser    Generic, Discourse, Hacker News, phpBB, and XenForo extraction
 packages/storage   Local-first storage contracts
 scripts            Verification, versioning, and release packaging
 docs               Product, contributor, privacy, testing, and release guidance

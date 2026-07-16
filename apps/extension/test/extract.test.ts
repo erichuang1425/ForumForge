@@ -87,4 +87,25 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts[0]?.id).toBe("81");
     expect(thread.posts[0]?.author).toBe("ivy");
   });
+
+  it("picks the XenForo adapter only for a signed 2.3 public thread view", () => {
+    const html = `<!doctype html><html id="XF" data-xf="2.3" data-app="public"><body
+      data-template="thread_view"><h1 class="p-title-value">Synthetic thread</h1>
+      <article class="message message--post js-post" data-author="ivy"
+        data-content="post-91" id="js-post-91"><div class="message-inner">
+        <aside class="message-cell message-cell--user"><h4 class="message-name">
+          <a class="username" href="/members/ivy.4/">ivy</a>
+        </h4></aside><div class="message-cell message-cell--main">
+          <header><ul class="message-attribution-main"><li><a href="/posts/91/">
+            <time class="u-dt" datetime="2026-06-02T08:00:00Z">June 2</time>
+          </a></li></ul></header>
+          <article class="message-body"><div class="bbWrapper">Hello from XenForo.</div></article>
+        </div></div></article></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("Synthetic thread");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]?.id).toBe("91");
+    expect(thread.posts[0]?.author).toBe("ivy");
+  });
 });

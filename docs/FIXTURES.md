@@ -11,10 +11,14 @@ you never write an adapter yourself. See **[../CONTRIBUTING.md](../CONTRIBUTING.
 and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
 
 > **Status:** Fixture-backed parser tests exist today for the generic, Discourse,
-> Hacker News, and phpBB 3.3 stock prosilver extractors. The phpBB fixture is
-> synthetic and offline-safe; it is not live-site compatibility evidence. Phase 2
-> extends the same pattern to contributor-made declarative adapters; Phase 5 adds
-> registry-wide quality reporting.
+> Hacker News, phpBB 3.3 stock prosilver, and XenForo 2.3 default public thread
+> extractors. The phpBB and XenForo fixtures are synthetic and offline-safe. On
+> 2026-07-16, the XenForo fixture selectors received a read-only structural
+> comparison against normal, question, and article thread pages on the official
+> `xenforo.com/community` forum; ForumForge extraction was not run there and no
+> page content was retained. Neither synthetic fixture is packaged-extension or
+> live extraction evidence. Phase 2 extends the same pattern to contributor-made
+> declarative adapters; Phase 5 adds registry-wide quality reporting.
 
 ## What makes a good fixture
 
@@ -22,6 +26,9 @@ and the adapter guide in **[ADAPTERS.md](ADAPTERS.md)**.
   tested. Prefer a sanitized public-page capture when one can be shared safely;
   a small hand-authored synthetic fixture is also appropriate when it follows a
   documented stock-template contract.
+- When a synthetic fixture is compared with public markup, record the date,
+  exact software/version/theme, page types, and whether the extractor was run.
+  A selector-level structural comparison is not live extraction evidence.
 - Ideally a thread with some variety: an original post, several replies, and — if
   the forum has them — a moderator/admin post, a quote, and a code block.
 - If the thread is paginated, capturing **page 1** (and optionally page 2) helps

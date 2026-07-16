@@ -21,10 +21,18 @@ Last updated: 2026-07-16
 | Discourse topic pages | Dedicated | Sanitized representative fixture | Live markup, lazy loading, login states, and pagination need release testing |
 | Hacker News item pages | Dedicated | Thread and Ask HN fixtures; non-item detection tests | Only item pages; deleted/dead variants need browser evidence |
 | phpBB 3.3 topic pages using stock prosilver markup | Dedicated | Synthetic topic fixture; missing-field, English staff-rank, OP non-inference, and false-positive detection tests | No dated packaged-browser or live-site evidence; custom themes, localized/custom ranks, other versions, and pagination remain unverified |
+| XenForo 2.3 default public thread views | Dedicated | Synthetic offline fixture tests covering extraction, alternate article profiles, detection, missing fields, explicit English moderator/administrator evidence, staff-only non-inference, and OP non-inference | No packaged-extension or live extraction success; custom themes, localized/custom roles, non-2.3 versions, pagination, and lazy loading remain unverified; OP is intentionally unset without a reliable marker |
 | Other forums | Generic fallback | Representative generic fixture | Accuracy varies; pagination and custom DOM often need a dedicated adapter |
 
 The phpBB row is evidence for the tested stock prosilver DOM contract only. It
 is not a claim of broad phpBB compatibility.
+
+On 2026-07-16, the XenForo comparison checked public DOM structure for official
+normal, question, and article thread pages on `xenforo.com/community` without
+running ForumForge extraction or retaining page content. It is structural
+evidence only, not packaged-extension or live extraction evidence. The default
+XenForo 2.3 public markup does not expose a reliable OP marker, so the extractor
+does not infer OP from display order.
 
 ForumForge currently extracts the DOM loaded in the active tab. It does not crawl
 additional pages, expand every lazy-loaded post, or bypass a login/access

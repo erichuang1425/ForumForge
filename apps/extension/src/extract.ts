@@ -3,10 +3,12 @@ import {
   extractThreadDiscourse,
   extractThreadHackerNews,
   extractThreadPhpBB,
+  extractThreadVBulletin,
   extractThreadXenForo,
   isDiscoursePage,
   isHackerNewsPage,
   isPhpBBPage,
+  isVBulletinPage,
   isXenForoPage,
   type ExtractedThread,
 } from "@forumforge/parser";
@@ -16,8 +18,9 @@ import {
  *
  * Picks a site-specific adapter when the page's own markup signals one: Hacker
  * News item pages first, then Discourse's generator marker, XenForo's versioned
- * public-thread signature, and phpBB's narrow topic-page signature. All other
- * pages fall back to the generic best-effort parser. This is the one seam
+ * public-thread signature, phpBB's narrow topic-page signature, and a signed
+ * vBulletin 4.x showthread page. All other pages fall back to the generic
+ * best-effort parser. This is the one seam
  * where adapter selection happens, so the content script never imports the
  * parser directly.
  *
@@ -29,5 +32,6 @@ export function extractThreadFromDocument(doc: Document): ExtractedThread {
   if (isDiscoursePage(doc)) return extractThreadDiscourse(doc);
   if (isXenForoPage(doc)) return extractThreadXenForo(doc);
   if (isPhpBBPage(doc)) return extractThreadPhpBB(doc);
+  if (isVBulletinPage(doc)) return extractThreadVBulletin(doc);
   return extractThreadGeneric(doc);
 }

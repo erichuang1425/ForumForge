@@ -80,6 +80,16 @@ a clean profile for install testing and an existing profile for upgrade testing.
       direct-post, and sorted views because the default markup has no reliable
       OP marker. Record custom themes, localized/custom roles, non-2.3 versions,
       pagination, and lazy loading as pending unless separately observed.
+- [ ] vBulletin 4.x stock/classic showthread page, with 4.2.5 as the fixture
+      baseline: horizontal and legacy postbits, title, numeric post IDs, authors,
+      timestamps, profile links, permalinks, message links, explicit English
+      moderator/administrator titles, and missing fields.
+- [ ] vBulletin forum indexes, unrelated lookalike pages, other-major generator
+      signatures, and mismatched post/permalink IDs do not select the dedicated
+      extractor. OP remains unset because stock postbits have no reliable marker.
+      Record branding-free installs, customized templates, localized roles,
+      other major versions, pagination, and live browser behavior as pending
+      unless separately observed.
 - [ ] Generic forum: representative old layout, sparse markup, missing fields,
       duplicate/missing IDs, and no-post page.
 - [ ] Paginated and lazy-loaded limitations are recorded rather than hidden.

@@ -24,6 +24,10 @@ same-extension-ID upgrade evidence, tagging, and publication remain pending.
   synthetic offline fixture tests and a 2026-07-16 read-only structural
   comparison against official normal, question, and article thread pages.
   Packaged-extension and live extraction verification remain pending.
+- A narrowly detected stock/classic vBulletin 4.x showthread extractor with
+  synthetic offline 4.2.5 fixture tests for legacy/EOL compatibility. It does
+  not infer OP; branding-free, customized, localized, other-major, and live
+  browser behavior remain unverified.
 - Local-first storage contracts and a `chrome.storage.local` implementation.
 - Storage schema 1 with marker-last, retry-safe adoption of existing unversioned
   read history, saved posts, and private notes, plus cross-panel clear generation

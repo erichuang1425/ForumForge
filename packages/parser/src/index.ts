@@ -19,4 +19,9 @@ export {
   isXenForoPage,
   type XenForoExtractOptions,
 } from "./xenforo";
+export {
+  extractThreadVBulletin,
+  isVBulletinPage,
+  type VBulletinExtractOptions,
+} from "./vbulletin";
 export type { ExtractedThread, ExtractOptions } from "./types";

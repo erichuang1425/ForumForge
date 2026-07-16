@@ -108,4 +108,26 @@ describe("extractThreadFromDocument", () => {
     expect(thread.posts[0]?.id).toBe("91");
     expect(thread.posts[0]?.author).toBe("ivy");
   });
+
+  it("picks the vBulletin adapter only for a signed 4.x showthread page", () => {
+    const html = `<!doctype html><html id="vbulletin_html"><head>
+      <meta name="generator" content="vBulletin 4.2.5" /></head><body>
+      <div id="pagetitle"><h1><span class="threadtitle">Synthetic thread</span></h1></div>
+      <ol id="posts"><li class="postbitlegacy" id="post_101">
+        <div class="posthead"><span class="postdate"><span class="date">June 3</span></span>
+          <a class="postcounter" href="showthread.php?1#post101">#1</a></div>
+        <div class="postdetails"><div class="userinfo"><div class="username_container">
+          <a class="username" href="member.php?2">ivy</a></div></div>
+          <div class="postbody"><blockquote class="postcontent restore">
+            <div id="post_message_101">Hello from vBulletin.</div>
+          </blockquote></div></div>
+      </li></ol></body></html>`;
+    const { document } = parseHTML(html);
+    const thread = extractThreadFromDocument(document as unknown as Document);
+    expect(thread.title).toBe("Synthetic thread");
+    expect(thread.posts).toHaveLength(1);
+    expect(thread.posts[0]?.id).toBe("101");
+    expect(thread.posts[0]?.author).toBe("ivy");
+    expect(thread.posts[0]?.role).toBeUndefined();
+  });
 });

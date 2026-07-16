@@ -13,8 +13,8 @@ This guide is the how-to. For the security model behind adapters, see
 > The runtime that loads and validates them is not built yet (see
 > **[../ROADMAP.md](../ROADMAP.md)**, Phase 2), and formats may evolve before the
 > first release. **Discourse, Hacker News, phpBB 3.3 stock prosilver topic
-> pages, and XenForo 2.3 default public thread views have hand-written
-> extractors today** in
+> pages, XenForo 2.3 default public thread views, and stock/classic vBulletin
+> 4.x showthread pages have hand-written extractors today** in
 > [`packages/parser`](../packages/parser), not yet JSON or `ForumForgeAdapter`
 > adapters. The phpBB claim is limited to synthetic fixture evidence; live-site,
 > packaged-browser, custom-theme, and other-version verification remains
@@ -23,8 +23,11 @@ This guide is the how-to. For the security model behind adapters, see
 > article thread pages on the official `xenforo.com/community` forum; the
 > extractor was not run there. Packaged-extension and live extraction success,
 > custom themes, localized or custom roles, non-2.3 versions, pagination, and
-> lazy loading remain pending. Migration to declarative adapters happens once
-> the Phase 2 runtime exists.
+> lazy loading remain pending. vBulletin evidence is limited to synthetic
+> offline 4.2.5 fixture tests for legacy/EOL compatibility. OP is not inferred;
+> branding-free installs, customized templates, localized roles, other major
+> versions, and packaged-extension or live browser behavior remain pending.
+> Migration to declarative adapters happens once the Phase 2 runtime exists.
 
 ## Choose the safest tier that works
 

@@ -3,7 +3,7 @@
 The ForumForge **extraction engine**. It turns forum-page DOM into
 [`ForumForgePost`](../core/README.md) values that the rest of ForumForge consumes.
 
-This package ships five extractors:
+This package ships six extractors:
 
 - **`extractThreadGeneric`** — the best-effort fallback for pages with no
   site-specific adapter. It walks a prioritized set of common forum/comment
@@ -45,6 +45,18 @@ This package ships five extractors:
   pages; the extractor was not run on those pages. Packaged-extension and live
   extraction success, custom themes, localized/custom roles, non-2.3 versions,
   pagination, and lazy loading remain unverified.
+- **`extractThreadVBulletin`** targets stock/classic vBulletin 4.x showthread
+  pages. `isVBulletinPage(root)` requires the vBulletin 4 generator signature,
+  thread title, and a coherent numeric postbit/permalink pair, keeping forum
+  indexes, other major versions, and unrelated lookalike pages on the generic
+  fallback. It handles horizontal and legacy postbits and extracts titles,
+  authors, timestamps, profile URLs, permalinks, message links, and explicit
+  English moderator/administrator titles. OP remains unset because stock
+  postbits expose no reliable marker and display order is unsafe. Evidence is
+  limited to synthetic offline vBulletin 4.2.5 fixture tests for legacy/EOL
+  compatibility. Branding-free installations, customized templates, localized
+  roles, other major versions, pagination, and packaged-extension or live
+  browser behavior remain unverified.
 
 `apps/extension/src/extract.ts` is the one place that chooses between them —
 each extractor here is independent and adapter selection isn't this package's
@@ -54,15 +66,17 @@ concern.
 
 - `extractThreadGeneric(root, options?)`, `extractThreadDiscourse(root, options?)`,
   `extractThreadHackerNews(root, options?)`,
-  `extractThreadPhpBB(root, options?)`, and
-  `extractThreadXenForo(root, options?)` extract a thread from a `Document` or
-  any element containing it. Each returns `{ title?, baseUrl?, posts }`
+  `extractThreadPhpBB(root, options?)`, `extractThreadXenForo(root, options?)`,
+  and `extractThreadVBulletin(root, options?)` extract a thread from a `Document`
+  or any element containing it. Each returns `{ title?, baseUrl?, posts }`
   (`ExtractedThread`).
-- `isDiscoursePage(root)`, `isHackerNewsPage(root)`, `isPhpBBPage(root)`, and
-  `isXenForoPage(root)` detect whether a document matches that extractor.
+- `isDiscoursePage(root)`, `isHackerNewsPage(root)`, `isPhpBBPage(root)`,
+  `isXenForoPage(root)`, and `isVBulletinPage(root)` detect whether a document
+  matches that extractor.
 - `ExtractedThread`, `ExtractOptions`, `GenericExtractOptions`,
   `DiscourseExtractOptions`, `HackerNewsExtractOptions`,
-  `PhpBBExtractOptions`, and `XenForoExtractOptions` are result and option types.
+  `PhpBBExtractOptions`, `XenForoExtractOptions`, and `VBulletinExtractOptions`
+  are result and option types.
 
 Pass `options.baseUrl` when parsing detached HTML (tests, fixtures) so relative
 permalinks and links resolve to absolute URLs; in a live browser the DOM already

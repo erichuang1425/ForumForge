@@ -26,6 +26,8 @@ in [#16](https://github.com/erichuang1425/ForumForge/issues/16); and the pilot i
 - [x] Add a narrowly detected XenForo 2.3 default public thread extractor with
       synthetic offline fixture tests and a dated read-only comparison against
       official normal, question, and article thread markup
+- [x] Add a narrowly detected stock/classic vBulletin 4.x showthread extractor
+      with a synthetic offline 4.2.5 fixture for legacy/EOL compatibility
 - [x] Canonical automated verification and manifest/privacy guardrails
 - [x] Deterministic extension ZIP and checksum tooling
 - [x] Document the unversioned storage baseline and schema 1 contract
@@ -53,9 +55,9 @@ The implementation epic is
 - [ ] Add adapter matching, extraction, and generic fallback orchestration
 - [ ] Add safe local import/export
 - [ ] Publish minimal JSON and TypeScript examples
-- [ ] Express the bundled hand-written targets in declarative adapters, expand
-      phpBB beyond the current fixture-backed 3.3 stock prosilver markup, and
-      add vBulletin-style fixtures/adapters
+- [ ] Express the bundled hand-written targets in declarative adapters and
+      expand phpBB and vBulletin beyond their current narrow fixture-backed
+      stock markup
 - [ ] Update the adapter contribution guide against the working runtime
 
 ## Later
